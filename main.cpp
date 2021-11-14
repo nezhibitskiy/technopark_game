@@ -3,19 +3,20 @@
 
 #include "move.h"
 
+#include "Player.h"
 
 class AttackHandler : public AbstractHandler {
 public:
     enum Type {
         ATTACK = 1,
     };
-    void Handle(Message request) override {
+    void Handle(Message request, Map *map) override {
         if (request.getType() == AttackHandler::ATTACK) {
             std::cout << "Attack: Player " << request.getPlayerID() << " will attack on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             return;
         } else {
-            return AbstractHandler::Handle(request);
+            return AbstractHandler::Handle(request, map);
         }
     }
 };
@@ -25,13 +26,13 @@ public:
     enum Type {
         PUT_BLOCK = 2
     };
-    void Handle(Message request) override {
+    void Handle(Message request, Map *map) override {
         if (request.getType() == PutBlockHandler::PUT_BLOCK) {
             std::cout << "Put block: Player " << request.getPlayerID() << " will pul block on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             return;
         } else {
-            return AbstractHandler::Handle(request);
+            return AbstractHandler::Handle(request, map);
         }
     }
 };
@@ -42,7 +43,7 @@ public:
         SET_ENCHANT = 3
     };
     // Message* Handle(Message request) override
-    void Handle(Message request) override {
+    void Handle(Message request, Map *map) override {
         if (request.getType() == SetEnchantHandler::SET_ENCHANT) {
             std::cout << "Set enchant: Player " << request.getPlayerID() << " will set enchant on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
@@ -52,7 +53,7 @@ public:
                     return; // newMessage
             // else return nullptr;
         } else {
-            return AbstractHandler::Handle(request);
+            return AbstractHandler::Handle(request, map);
         }
     }
 };
@@ -63,6 +64,9 @@ void ClientCode(Handler &handler) {
     event.addEventToQueue(AttackHandler::ATTACK, 0, 2, 1);
     event.addEventToQueue(PutBlockHandler::PUT_BLOCK, 2, 1, 2);
     event.addEventToQueue(SetEnchantHandler::SET_ENCHANT, 0, 2, 5);
+
+    Map map;
+    Player player;
 
     while (!event.empty())
     {
@@ -81,7 +85,7 @@ void ClientCode(Handler &handler) {
         }
         std::cout << std::endl;
 
-        handler.Handle(tmpMsg);
+        handler.Handle(tmpMsg, &map);
     }
 }
 
@@ -93,6 +97,15 @@ public:
         // newMessage = handler.Handle(tmpMsg);
         // if (newMessage != nullptr)
             // EventQueue.add(newMessage);
+        // else return
+    }
+
+    void clientIteration(/* RequestQueue *requestQueue, EventQueue *eventQueue */) {
+        // if (requestQueue.empty) { return }
+        // tmpMsg = RequestQueue.getElementFromQueue()
+        // newMessage = handler.Handle(tmpMsg);
+        // if (newMessage != nullptr)
+        // EventQueue.add(newMessage);
         // else return
     }
 };

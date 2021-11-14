@@ -12,13 +12,13 @@ public:
     enum MoveType {
         MOVE = 0,
     };
-    void Handle(Message request) override {
+    void Handle(Message request, Map *map) override {
         if (request.getType() == MoveHandler::MOVE) {
             std::cout << "Move: Player " << request.getPlayerID() << " will move on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             return;
         } else {
-            return AbstractHandler::Handle(request);
+            return AbstractHandler::Handle(request, map);
         }
     }
 };

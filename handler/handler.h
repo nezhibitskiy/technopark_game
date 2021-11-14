@@ -6,11 +6,13 @@
 #define CHAINOFRESPONSABILITY_HANDLER_H
 
 #include "message.h"
+// #include "map.h"
+class Map {};
 
 class Handler {
 public:
     virtual Handler *SetNext(Handler *handler) = 0;
-    virtual void Handle(Message request) = 0;
+    virtual void Handle(Message request, Map *map) = 0;
 };
 
 class AbstractHandler : public Handler {
@@ -24,9 +26,9 @@ public:
         this->next_handler_ = handler;
         return handler;
     }
-    void Handle(Message request) override {
+    void Handle(Message request, Map *map) override {
         if (this->next_handler_) {
-            return this->next_handler_->Handle(request);
+            return this->next_handler_->Handle(request, map);
         }
         else {
             // default action for unknown request
