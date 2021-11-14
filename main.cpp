@@ -6,8 +6,11 @@
 
 class AttackHandler : public AbstractHandler {
 public:
+    enum Type {
+        ATTACK = 1,
+    };
     void Handle(Message request) override {
-        if (request.getType() == Message::ATTACK) {
+        if (request.getType() == AttackHandler::ATTACK) {
             std::cout << "Attack: Player " << request.getPlayerID() << " will attack on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             return;
@@ -19,8 +22,11 @@ public:
 
 class PutBlockHandler : public AbstractHandler {
 public:
+    enum Type {
+        PUT_BLOCK = 2
+    };
     void Handle(Message request) override {
-        if (request.getType() == Message::PUT_BLOCK) {
+        if (request.getType() == PutBlockHandler::PUT_BLOCK) {
             std::cout << "Put block: Player " << request.getPlayerID() << " will pul block on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             return;
@@ -30,24 +36,46 @@ public:
     }
 };
 
+class SetEnchantHandler : public AbstractHandler {
+public:
+    enum Type {
+        SET_ENCHANT = 3
+    };
+    // Message* Handle(Message request) override
+    void Handle(Message request) override {
+        if (request.getType() == SetEnchantHandler::SET_ENCHANT) {
+            std::cout << "Set enchant: Player " << request.getPlayerID() << " will set enchant on x: " << request.getX();
+            std::cout << " y: " << request.getY() << std::endl;
+            //  if (check_can_player_move_on_coords())
+            //      map movePlayer
+            //      Message* newMessage = new Message(MoveHandler::MOVE, playerId, x, y);
+                    return; // newMessage
+            // else return nullptr;
+        } else {
+            return AbstractHandler::Handle(request);
+        }
+    }
+};
+
 void ClientCode(Handler &handler) {
     MessageQueue event;
-    event.addEventToQueue(Message::MOVE, 1, 1, 1);
-    event.addEventToQueue(Message::ATTACK, 0, 2, 1);
-    event.addEventToQueue(Message::PUT_BLOCK, 2, 1, 2);
+    event.addEventToQueue(MoveHandler::MOVE, 1, 1, 1);
+    event.addEventToQueue(AttackHandler::ATTACK, 0, 2, 1);
+    event.addEventToQueue(PutBlockHandler::PUT_BLOCK, 2, 1, 2);
+    event.addEventToQueue(SetEnchantHandler::SET_ENCHANT, 0, 2, 5);
 
     while (!event.empty())
     {
         Message tmpMsg = event.getEventFromQueue();
         std::cout << "Player " << tmpMsg.getPlayerID() << ": I want to ";
         switch (tmpMsg.getType()) {
-            case (Message::MOVE):
+            case (MoveHandler::MOVE):
                 std::cout << "move";
                 break;
-            case (Message::ATTACK):
+            case (AttackHandler::ATTACK):
                 std::cout << "attack";
                 break;
-            case (Message::PUT_BLOCK):
+            case (PutBlockHandler::PUT_BLOCK):
                 std::cout << "put block";
                 break;
         }
@@ -56,6 +84,18 @@ void ClientCode(Handler &handler) {
         handler.Handle(tmpMsg);
     }
 }
+
+class Core {
+public:
+    void iteration(/* RequestQueue *requestQueue, EventQueue *eventQueue */) {
+        // if (requestQueue.empty) { return }
+        // tmpMsg = RequestQueue.getElementFromQueue()
+        // newMessage = handler.Handle(tmpMsg);
+        // if (newMessage != nullptr)
+            // EventQueue.add(newMessage);
+        // else return
+    }
+};
 
 class Game {
 public:
@@ -66,10 +106,25 @@ public:
 
         // }
     }
+
+    void runGame() {
+        while (gameRuns) {
+            // core.iteration(Message message)
+            // gui.iteration
+            // server.iteration
+        }
+    };
+private:
+    bool gameRuns;
+    // Map *map
+    // Player *players
+    // Block *blocks
+    // Object *objects
+
 };
 
 int main() {
-
+    Game game;
     // init
     // while ...
     // graphic.iteration
@@ -79,7 +134,8 @@ int main() {
     auto *move = new MoveHandler;
     auto *attack = new AttackHandler;
     auto *putBlock = new PutBlockHandler;
-    move->SetNext(attack)->SetNext(putBlock);
+    auto *enchant = new SetEnchantHandler;
+    move->SetNext(attack)->SetNext(putBlock)->SetNext(enchant);
 
     std::cout << "Chain: Move > Attack > Put Block\n\n";
     ClientCode(*move);

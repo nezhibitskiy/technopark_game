@@ -14,9 +14,6 @@ public:
 };
 
 class AbstractHandler : public Handler {
-    /**
-     * @var Handler
-     */
 private:
     Handler *next_handler_;
 
@@ -34,6 +31,7 @@ public:
         else {
             // default action for unknown request
             std::cout << " Action was left untouched.\n";
+            return; // nullptr
         }
     }
 };
