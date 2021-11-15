@@ -3,10 +3,11 @@
 
 #include "map_class.h"
 
-Map::Map(size_t width, size_t height) {
+Map::Map(unsigned int width, unsigned int height) {
     width_ = width;
     height_ = height;
-    map_ = new field *[width_];
+    //не то
+    /*map_ = new Object *[width_];
     for (size_t i = 0; i < width_; ++i) {
         map_[i] = new field[height_];
     }
@@ -18,7 +19,21 @@ Map::Map(size_t width, size_t height) {
                 map_[i][j].fld_ = clear_field;
             }
         }
+    }*/
+
+    /*map_ = new Object**[height_];
+    for (size_t i = 0; i < height; ++i) {
+        map_[i] = new Object*[width_];
     }
+    auto block1 = new Block(1, 1);
+    map_[1][1] = block1;
+    if (map_[1][1]->Damagable()) {
+        if (map_[1][1]->Damage(1)) {
+            map_[1][1]->Respawn();
+        } else {
+            delete map_[1][1];
+        }
+    }*/
 }
 
 Map::~Map() {
@@ -26,24 +41,4 @@ Map::~Map() {
         delete[] map_[i];
     }
     delete[] map_;
-}
-
-void Map::out() {
-    for (size_t i = 0; i < width_; ++i) {
-        for (size_t j = 0; j < height_; ++j) {
-            if (map_[i][j].fld_ == player) {
-                std::cout << "U ";
-            }else if (map_[i][j].fld_ == end_block) {
-                std::cout << "# ";
-            } else if (map_[i][j].fld_ == clear_field) {
-                std::cout << "* ";
-            }
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
-
-void Map::change_map(size_t x, size_t y, key fld) {
-    map_[x][y].fld_ = fld;
 }

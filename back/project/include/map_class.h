@@ -4,28 +4,23 @@
 #include <iostream>
 #include <vector>
 
-typedef enum key {
-    player = 0,
-    end_block = 1,
-    clear_field = 2
-};
+#include "objects.h"
 
-class field {
-public:
-    key fld_;
-    void *data_;
-};
 
 class Map {
 public:
-    Map(size_t width, size_t height);
+    Map(unsigned int width, unsigned int height);
     ~Map();
-    void out();
-    void change_map(size_t x, size_t y, key fld);
+    char get_team_count(); //
+    char get_team_players_count();
+
+
 private:
+    Object*** map_;
     size_t width_;
     size_t height_;
-    field** map_;
+    char team_count_;
+    std::pair<int, int>* spawns;
 };
 
 #endif //PROJECT_MAP_CLASS_H
