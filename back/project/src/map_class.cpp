@@ -3,47 +3,63 @@
 
 #include "map_class.h"
 
-Map::Map(size_t width, size_t height) {
-    width_ = width;
-    height_ = height;
-    map_ = new field *[width_];
-    for (size_t i = 0; i < width_; ++i) {
-        map_[i] = new field[height_];
+Map::Map() {
+    teamCount = 2;
+    playersInTeamCount = 2;
+    width = 20;
+    height = 20;
+
+    map = new Object**[height];
+
+    for (unsigned int i = 0; i < height; i++) {
+        map[i] = new Object*[width];
     }
-    for (size_t i = 0; i < width_; ++i) {
-        for (size_t j = 0; j < height_; ++j) {
-            if (i == 0 || i == width_ - 1 || j == 0 || j == height_ - 1) {
-                map_[i][j].fld_ = end_block;
-            } else {
-                map_[i][j].fld_ = clear_field;
-            }
+
+    spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
+
+    for (unsigned short i = 0; i < teamCount * playersInTeamCount; i++) {
+        if (i < playersInTeamCount) {
+            spawnpoints[i].first = 0;
         }
+        else {
+            spawnpoints[i].first = height - 1;
+        }
+        spawnpoints[i].second = i;
     }
+
+    EndBlock *endBlocks = new EndBlock[2 * height];
+
+    for (unsigned int i = 0; i < 2 * height; i += 2) {
+        map[i / 2][0] = &endBlocks[i];
+        map[i / 2][width - 1] = &endBlocks[i + 1];
+    }
+
+    endBlocks = new EndBlock[2 * (width - 1)];
+
+    for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
+        map[0][j / 2] = &endBlocks[j];
+        map[height - 1][j / 2] = &endBlocks[j + 1];
+    }
+
 }
 
 Map::~Map() {
-    for (size_t i = 0; i < width_; ++i) {
-        delete[] map_[i];
+    for (size_t i = 0; i < width; ++i) {
+        delete[] map[i];
     }
-    delete[] map_;
+    delete[] map;
 }
 
 void Map::out() {
-    for (size_t i = 0; i < width_; ++i) {
-        for (size_t j = 0; j < height_; ++j) {
-            if (map_[i][j].fld_ == player) {
-                std::cout << "U ";
-            }else if (map_[i][j].fld_ == end_block) {
-                std::cout << "# ";
-            } else if (map_[i][j].fld_ == clear_field) {
-                std::cout << "* ";
+    for (unsigned int i = 0; i < height; ++i) {
+        for (unsigned int j = 0; j < width; ++j) {
+            if (map[i][j] != nullptr) {
+                std::cout << map[i][j]->getObjectSymbol() << " ";
+            } else {
+                std::cout << ". ";
             }
         }
         std::cout << std::endl;
     }
     std::cout << std::endl;
-}
-
-void Map::change_map(size_t x, size_t y, key fld) {
-    map_[x][y].fld_ = fld;
 }

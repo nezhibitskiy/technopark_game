@@ -3,29 +3,33 @@
 
 #include <iostream>
 #include <vector>
-
-typedef enum key {
-    player = 0,
-    end_block = 1,
-    clear_field = 2
-};
-
-class field {
-public:
-    key fld_;
-    void *data_;
-};
+#include "endBlock.h"
+#include "defaultBlock.h"
 
 class Map {
 public:
-    Map(size_t width, size_t height);
+    Map();
     ~Map();
+    void addObject(Object *object, unsigned int x, unsigned int y) {
+        map[y][x] = object;
+    }
+    char getTeamCount() {
+        return teamCount;
+    };
+    char getPlayersInTeamCount() {
+        return playersInTeamCount;
+    };
+    std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) {
+        return spawnpoints[playerID];
+    }
     void out();
-    void change_map(size_t x, size_t y, key fld);
 private:
-    size_t width_;
-    size_t height_;
-    field** map_;
+    size_t width;
+    size_t height;
+    Object*** map;
+    std::pair<unsigned int, unsigned int> *spawnpoints;
+    char teamCount;
+    char playersInTeamCount;
 };
 
 #endif //PROJECT_MAP_CLASS_H

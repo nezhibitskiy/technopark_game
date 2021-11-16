@@ -7,15 +7,19 @@
 #include "player_class.h"
 #include "map_class.h"
 
-
 class Game {
 public:
-    explicit Game(size_t players_number, std::vector<std::pair<size_t, size_t>> coords);
+    Game(); // size_t players_number, std::vector<std::pair<size_t, size_t>> coords);
     void start_game();
-
+    void printMap() {
+        map.out();
+    }
+    void addObject(Object* object, unsigned int x, unsigned int y) {
+        map.addObject(object, x, y);
+    }
 private:
-    Map mapa_;
-    Player* players_;
+    Map map;
+    Player* players;
 };
 
 #endif // PROJECT_GAME_CLASS_H
