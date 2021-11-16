@@ -5,7 +5,7 @@
 #include "message.h"
 #include "Object.h"
 
-class Player: private Object {
+class Player: public Object {
 public:
     Player() = default;
 
@@ -28,6 +28,9 @@ public:
     void saveSpawnpoint(std::pair<unsigned int, unsigned int> recievedSpawnpoint) {
         spawnpoint = recievedSpawnpoint;
         return;
+    }
+    std::pair<unsigned int, unsigned int> getSpawnpoint() {
+        return spawnpoint;
     }
 
     ~Player() override {  };

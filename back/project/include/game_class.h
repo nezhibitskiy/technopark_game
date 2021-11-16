@@ -9,14 +9,8 @@
 
 class Game {
 public:
-    Game(); // size_t players_number, std::vector<std::pair<size_t, size_t>> coords);
+    Game();
     void start_game();
-    void printMap() {
-        map.out();
-    }
-    void addObject(Object* object, unsigned int x, unsigned int y) {
-        map.addObject(object, x, y);
-    }
 private:
     Map map;
     Player* players;

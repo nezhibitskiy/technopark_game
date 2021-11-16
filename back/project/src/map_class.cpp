@@ -19,12 +19,13 @@ Map::Map() {
 
     for (unsigned short i = 0; i < teamCount * playersInTeamCount; i++) {
         if (i < playersInTeamCount) {
-            spawnpoints[i].first = 0;
+            spawnpoints[i].second = 1;
+            spawnpoints[i].first = i + 1;
         }
         else {
-            spawnpoints[i].first = height - 1;
+            spawnpoints[i].second = height - 2;
+            spawnpoints[i].first = width - (i % playersInTeamCount) - 2;
         }
-        spawnpoints[i].second = i;
     }
 
     EndBlock *endBlocks = new EndBlock[2 * height];
