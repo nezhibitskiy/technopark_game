@@ -8,10 +8,10 @@
 #include "Object.h"
 
 class EndBlock : public Object {
-    bool Damagable() override {
+    bool Damagable() const override {
         return false;
     };
-    bool CanBeStandOn() override {
+    bool CanBeStandOn() const override {
         return false;
     };
     char getObjectSymbol() override {

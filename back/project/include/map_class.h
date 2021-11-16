@@ -22,6 +22,12 @@ public:
     std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) {
         return spawnpoints[playerID];
     }
+    Object* getObject(unsigned int x, unsigned int y) {
+        return map[y][x];
+    }
+    void moveObject(unsigned int oldX, unsigned int oldY, unsigned int newX, unsigned int newY) {
+        std::swap(map[oldY][oldX], map[newY][newX]);
+    }
     void out();
 private:
     size_t width;

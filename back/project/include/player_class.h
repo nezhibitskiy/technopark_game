@@ -9,7 +9,7 @@ class Player: public Object {
 public:
     Player() = default;
 
-    bool Damagable() override { return true; };
+    bool Damagable() const override { return true; };
 
     bool Damage(const char damageValue) {
         if (health > damageValue) {
@@ -23,14 +23,42 @@ public:
 
         return false;
     }
-    bool CanBeStandOn() override { return false; };
+    bool CanBeStandOn() const override { return false; };
 
     void saveSpawnpoint(std::pair<unsigned int, unsigned int> recievedSpawnpoint) {
         spawnpoint = recievedSpawnpoint;
         return;
     }
-    std::pair<unsigned int, unsigned int> getSpawnpoint() {
+
+    char getObjectSymbol() override {
+        if (team == 0) {
+            return 'o';
+        }
+        if (team == 1) {
+            return 'x';
+        }
+
+    };
+
+    std::pair<unsigned int, unsigned int> getSpawnpoint() const {
         return spawnpoint;
+    }
+
+    unsigned int getX() const {
+        return x;
+    }
+
+    unsigned int getY() const {
+        return y;
+    }
+
+    void setCoords(unsigned int rX, unsigned int rY) {
+        x = rX;
+        y = rY;
+    }
+
+    void setTeam(char rTeam) {
+        team = rTeam;
     }
 
     ~Player() override {  };
@@ -38,6 +66,9 @@ public:
 private:
     char id;
     char health;
+    char team;
+    unsigned int x;
+    unsigned int y;
     std::pair<unsigned int, unsigned int> spawnpoint;
 };
 

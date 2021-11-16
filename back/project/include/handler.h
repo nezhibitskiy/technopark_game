@@ -26,9 +26,9 @@ public:
         this->next_handler_ = handler;
         return handler;
     }
-    void Handle(Message request, Map *map) override {
+    void Handle(Message request, Map *map, Player *players) override {
         if (this->next_handler_) {
-            return this->next_handler_->Handle(request, map);
+            return this->next_handler_->Handle(request, map, players);
         }
         else {
             // default action for unknown request

@@ -7,14 +7,14 @@
 
 class Object {
 public:
-    virtual bool Damagable() = 0;
+    virtual bool Damagable() const = 0;
     virtual bool Damage(const char damageValue) {
         return false;                               // Если умер - возвращает true
     };
     virtual bool Respawn() {
         return false;
     }
-    virtual bool CanBeStandOn() = 0;
+    virtual bool CanBeStandOn() const { return true; };
     virtual void ToDo(Object *player) {}
     virtual char getObjectSymbol() {
         return '0';

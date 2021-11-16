@@ -1,25 +1,29 @@
 #include <iostream>
 
 #include "game_class.h"
-#include "player_class.h"
-#include "map_class.h"
-#include "endBlock.h"
-#include "defaultBlock.h"
-
-
 
 Game::Game() : map() {
     players = new Player[map.getPlayersInTeamCount() * map.getTeamCount()];
     for (unsigned short i = 0; i < map.getPlayersInTeamCount() * map.getTeamCount(); i++) {
+        players[i].setTeam((i / map.getPlayersInTeamCount()));
         players[i].saveSpawnpoint(map.getPlayerSpawnpoint(i));
         map.addObject(&players[i], players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+        players[i].setCoords(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
     }
 
+    moveHandler = new MoveHandler;
 }
 
 void Game::start_game() {
+    MessageQueue event;
+    event.addEventToQueue(MoveHandler::MOVE, 1, 1, 3);
+    event.addEventToQueue(MoveHandler::MOVE, 0, 5, 7);
 
     map.out();
+    while(!event.empty()) {
+        moveHandler->Handle(event.getEventFromQueue(), &map, players);
+        map.out();
+    }
 
 //    mapa_.out();
 //    while(true) {
