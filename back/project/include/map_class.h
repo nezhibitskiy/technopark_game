@@ -10,6 +10,7 @@
 class Map {
 public:
     Map(unsigned int width, unsigned int height);
+    Map(const char* filename);
     ~Map();
     char get_team_count(); //
     char get_team_players_count();
@@ -17,8 +18,8 @@ public:
 
 private:
     Object*** map_;
-    size_t width_;
-    size_t height_;
+    unsigned int width_;
+    unsigned int height_;
     char team_count_;
     std::pair<int, int>* spawns;
 };

@@ -3,17 +3,17 @@
 
 #include "objects.h"
 
-class Player: private Object {
+class Player: public Object {
 private:
     char id_;
     char health_;
     //int armor_;
-    int x_;
-    int y_;
+    unsigned int x_;
+    unsigned int y_;
 public:
     Player(char i, unsigned int x, unsigned int y) :id_(i), x_(x), y_(y), health_(3) {}
     ~Player() override = default;
-    void addHealth(char value) {
+    void AddHealth(const char value) {
         health_ += value;
     }
     bool Damagable() override { return true; };

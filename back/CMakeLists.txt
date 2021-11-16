@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(project_tp)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 add_library(player STATIC project/src/player_class.cpp)
 add_library(map STATIC project/src/map_class.cpp)
