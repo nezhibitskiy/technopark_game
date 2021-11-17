@@ -17,6 +17,8 @@ public:
             // Check if player can move and if true, move him
             if (map->getObject(request.getX(), request.getY()) != nullptr) {
                 if (map->getObject(request.getX(), request.getY())->CanBeStandOn()) {
+                    // Обработчик объекта
+                    // Если обработали - удаляем
                     map->moveObject(players[request.getPlayerID()].getX(),
                                     players[request.getPlayerID()].getY(),
                                     request.getX(),

@@ -19,6 +19,7 @@ private:
     Map map;
     Player* players;
     MoveHandler *moveHandler;
+    AttackHandler *attackHandler;
 };
 
 #endif // PROJECT_GAME_CLASS_H

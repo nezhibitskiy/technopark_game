@@ -5,7 +5,7 @@
 Game::Game() : map() {
     players = new Player[map.getPlayersInTeamCount() * map.getTeamCount()];
     for (unsigned short i = 0; i < map.getPlayersInTeamCount() * map.getTeamCount(); i++) {
-        players[i].setTeam((i / map.getPlayersInTeamCount()));
+        players[i].setTeam((char)(i / map.getPlayersInTeamCount()));
         players[i].saveSpawnpoint(map.getPlayerSpawnpoint(i));
         map.addObject(&players[i], players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
         players[i].setCoords(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
