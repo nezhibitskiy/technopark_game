@@ -6,7 +6,6 @@
 
 #include "map_class.h"
 #include "player.h"
-#include "objects.h"
 
 class Game {
 public:
