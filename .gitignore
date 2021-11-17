@@ -1,2 +1,6 @@
 cmake-build-debug
 .idea
+/client io/html/
+/client io/latex/
+/client io/tests/
+/client io/uml diagram/
