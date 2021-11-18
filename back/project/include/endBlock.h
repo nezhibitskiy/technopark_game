@@ -4,6 +4,7 @@
 #include "Object.h"
 
 class EndBlock : public Object {
+public:
     EndBlock() = default;
     bool Damagable() const override {
         return false;

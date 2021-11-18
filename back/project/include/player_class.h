@@ -6,7 +6,9 @@
 
 class Player: public Object {
 public:
-    Player() = default;
+    Player(char i) : id(i) {
+
+    }
 
     bool Damagable() const override { return true; };
 
@@ -60,7 +62,7 @@ public:
         team = rTeam;
     }
 
-    ~Player() override {  };
+    ~Player() {  };
 
 private:
     char id;

@@ -4,6 +4,7 @@
 #include "Object.h"
 
 class DefaultBlock : public Object {
+public:
     DefaultBlock() = default;
     bool Damagable() const override {
         return true;
