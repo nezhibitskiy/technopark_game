@@ -1,0 +1,4 @@
+bul: 
+	g++ client/main_client.cpp -o client/main_client
+	g++ client/main_client.cpp -o client/1/main_client
+	g++ server/main.cpp -o server/main
