@@ -4,17 +4,19 @@
 #include <iostream>
 #include <vector>
 
+#include "player_class.h"
 #include "map_class.h"
-#include "player.h"
 
 class Game {
 public:
-    explicit Game(unsigned int width, unsigned int height);
+    Game();
     void start_game();
-
+    ~Game() {
+        //
+    }
 private:
-    Map mapa_;
-    Player** players_;
+    Map map;
+    Player* players;
 };
 
 #endif // PROJECT_GAME_CLASS_H

@@ -3,28 +3,39 @@
 
 #include <iostream>
 #include <vector>
-
-#include "objects.h"
-#include "player.h"
-
+#include "endBlock.h"
+#include "defaultBlock.h"
 
 class Map {
 public:
-    Map(unsigned int width, unsigned int height); //??????????
+    Map();
     Map(const char* filename);
     ~Map();
-    char get_team_count(); //
-    char get_team_players_count();
-    Object* get_map_object(unsigned int i, unsigned int j);
-    int set_map_object(unsigned int i, unsigned int j, Object* obj);
-    void move_player(Player* player_, unsigned int x, unsigned int y);
-
+    void addObject(Object *object, unsigned int x, unsigned int y) {
+        map[y][x] = object;
+    }
+    char getTeamCount() {
+        return teamCount;
+    };
+    char getPlayersInTeamCount() {
+        return playersInTeamCount;
+    };
+    std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(char playerID) {
+        return spawnpoints[playerID];
+    }
+    Object* getObject(unsigned int x, unsigned int y) {
+        return map[y][x];
+    }
+    void moveObject(unsigned int oldX, unsigned int oldY, unsigned int newX, unsigned int newY) {
+        std::swap(map[oldY][oldX], map[newY][newX]);
+    }
 private:
-    Object*** map_;
-    unsigned int width_;
-    unsigned int height_;
-    char team_count_;
-    std::pair<int, int>* spawns;
+    size_t width;
+    size_t height;
+    Object*** map;
+    std::pair<unsigned int, unsigned int> *spawnpoints;
+    char teamCount;
+    char playersInTeamCount;
 };
 
 #endif //PROJECT_MAP_CLASS_H

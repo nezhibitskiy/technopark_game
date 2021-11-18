@@ -13,12 +13,8 @@ add_library(game STATIC project/src/game_class.cpp)
 target_include_directories(game PUBLIC project/include)
 target_link_libraries(game PUBLIC map)
 
-
 add_executable(test_map project/tests/test_map.cpp)
 target_link_libraries(test_map GTest::gtest map)
-
-add_executable(test_game project/tests/test_game.cpp)
-target_link_libraries(test_game GTest::gtest map)
 
 add_executable(project_tp project/src/main.cpp)
 target_link_libraries(project_tp game player map)
