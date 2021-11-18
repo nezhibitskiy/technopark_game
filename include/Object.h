@@ -6,7 +6,7 @@ class Object {
 public:
 
     virtual void setPos(float x, float y) = 0;
-    virtual sf::Sprite getSprite() = 0;
+    virtual void draw(sf::RenderWindow & l_window) = 0;
 };
 
 

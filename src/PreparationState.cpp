@@ -2,8 +2,8 @@
 #include "PreparationState.h"
 
 PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context) {
-    font.loadFromFile("PEPSI_pl.ttf");
 
+    sf::Font &font = *getContext().font;
     sf::Text GameText("Waiting room", font, 50);
     sf::FloatRect textRect = GameText.getLocalBounds();// set to center
     GameText.setOrigin(textRect.left + textRect.width / 2.0f, 0);
@@ -22,7 +22,7 @@ void PreparationState::draw() {
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
 
-    for(sf::Text& text : textbuf) {
+    for (sf::Text &text: textbuf) {
         text.setColor(sf::Color::White);
         window.draw(text);
     }
@@ -30,13 +30,14 @@ void PreparationState::draw() {
 
 bool PreparationState::handleEvent(const sf::Event &event) {
 
-    if (event.type != sf::Event::KeyPressed)
-        return false;
 
-    if (event.key.code == sf::Keyboard::Space) {
+    if (event.key.code == sf::Keyboard::Space && event.type == sf::Event::KeyReleased) {
         std::cout << "change state to Game \n";
         requestStackPop();
         requestStackPush(States::Game);
-    }
+
+    } else return false;
+
+    return true;
 }
 

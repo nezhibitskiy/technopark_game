@@ -4,3 +4,7 @@ cmake-build-debug
 /client io/latex/
 /client io/tests/
 /client io/uml diagram/
+/html/
+/html/
+/latex/
+/CMake/

@@ -10,9 +10,10 @@ void Map::Draw() {
 
             mBlock.setPos(i*40,j*39);
 
-            mWindow.draw(mBlock.getSprite());
+            mBlock.draw(mWindow);
         }
     }
+
     Unit m(0);
     Unit m_enemy(10);
     Unit m_enemy_1(10);
@@ -21,10 +22,11 @@ void Map::Draw() {
     m_enemy.setPos(560,39);
     m_enemy_1.setPos(400,195);
     m_ally.setPos(80,39);
-    mWindow.draw(m.getSprite());
-    mWindow.draw(m_enemy.getSprite());
-    mWindow.draw(m_enemy_1.getSprite());
-    mWindow.draw(m_ally.getSprite());
+    m.draw(mWindow);
+    m_enemy.draw(mWindow);
+    m_enemy_1.draw(mWindow);
+    m_ally.draw(mWindow);
+
 }
 
 

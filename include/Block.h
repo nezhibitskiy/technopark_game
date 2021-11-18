@@ -9,11 +9,11 @@
 
 class Block : public Object {
 public:
-    explicit Block(unsigned int _id = 0);
+    explicit Block(unsigned int _id = 0, const std::string& filename = "../resources/block.png");
 
     void setPos(float x, float y) override;
 
-    sf::Sprite getSprite() override;
+    void draw(sf::RenderWindow & l_window) override;
 
     ~Block() = default;
 

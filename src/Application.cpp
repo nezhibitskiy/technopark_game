@@ -8,7 +8,7 @@
 Application::Application()
         : mWindow(sf::VideoMode(640, 480), "BLOCK WARS", sf::Style::Close)
         , mPlayer()
-        , mStateStack(State::Context(mWindow, mPlayer))
+        , mStateStack(State::Context(mWindow, mPlayer,"../resources/PEPSI_pl.ttf"))
 
 {
     mWindow.setKeyRepeatEnabled(false);

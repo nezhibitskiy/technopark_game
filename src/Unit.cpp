@@ -1,6 +1,6 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int _id): id(_id) {
+Unit::Unit(unsigned int _id, const std::string& filename): id(_id) {
     switch (id) {
         case 10:
             mUnit.setColor(sf::Color(220, 70, 70, 255));
@@ -12,7 +12,9 @@ Unit::Unit(unsigned int _id): id(_id) {
             mUnit.setColor(sf::Color(70, 220, 70, 255));
             break;
     }
-    texUnit.loadFromFile("Boo.png");
+    if(!texUnit.loadFromFile(filename)){
+        throw std::runtime_error("Failed to load texture" + filename);
+    }
     mUnit.setScale(1/6.4,1/6.56);
     mUnit.setTexture(texUnit);
 }
@@ -21,13 +23,11 @@ void Unit::setPos(float x, float y) {
     mUnit.setPosition(x,y);
 }
 
-sf::Sprite Unit::getSprite() {
-    return mUnit;
+
+void Unit::draw(sf::RenderWindow &l_window) {
+        l_window.draw(mUnit);
 }
 
-void Unit::SetScale() {
-
-}
 
 
 

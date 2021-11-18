@@ -8,15 +8,16 @@
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "Object.h"
 
 class Unit : public Object{
 public:
-    explicit Unit(unsigned int _id);
-    sf::Sprite getSprite() override;
+    explicit Unit(unsigned int _id = 0, const std::string& filename = "../resources/Boo.png");
     void  setPos(float x, float y) override;
+    void draw(sf::RenderWindow & l_window) override;
     ~Unit() = default;
-    void SetScale();
+
 private:
     unsigned int id;
     sf::Sprite mUnit;

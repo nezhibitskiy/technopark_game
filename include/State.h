@@ -5,6 +5,7 @@
 #include <SFML/Window/Event.hpp>
 #include <memory>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include "StateIdentifiers.h"
 
 class StateStack;
@@ -18,7 +19,9 @@ public:
     typedef std::unique_ptr<State> Ptr;
 
     struct Context {
-        Context(sf::RenderWindow &window, Player &player);
+        Context(sf::RenderWindow &window, Player &player, std::string fontfile);
+        std::string fontfile;
+        sf::Font *font;
         sf::RenderWindow *window;
         Player *player;
     };

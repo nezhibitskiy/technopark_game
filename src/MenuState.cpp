@@ -5,8 +5,7 @@
 
 MenuState::MenuState(StateStack &stack, State::Context context) : State(stack, context), textbuf() {
 
-    font.loadFromFile("PEPSI_pl.ttf");
-
+    sf::Font &font = *getContext().font;
     sf::Text MenuText("Menu", font, 50);
     sf::FloatRect textRect = MenuText.getLocalBounds();// set to center
     MenuText.setOrigin(textRect.left + textRect.width / 2.0f, 0);
@@ -43,20 +42,21 @@ void MenuState::draw() {
 
 bool MenuState::handleEvent(const sf::Event &event) {
 
-    if (event.type != sf::Event::KeyPressed)
-        return false;
-
-    if (event.key.code == sf::Keyboard::Space) {
+    if (event.key.code == sf::Keyboard::Space && event.type == sf::Event::KeyReleased) {
         std::cout << "change state to Waiting room \n";
         requestStackPop();
         requestStackPush(States::Preparation);
-    } else if (event.key.code == sf::Keyboard::BackSpace) {
+
+    }
+    else if (event.key.code == sf::Keyboard::BackSpace && event.type == sf::Event::KeyReleased) {
         std::cout << "change state to Close window \n";
         requestStackPop();
         requestStateClear();
-    }
+
+    } else return false;
 
     return true;
+
 }
 
 void MenuState::updateActiveText() {
