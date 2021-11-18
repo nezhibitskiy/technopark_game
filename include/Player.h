@@ -23,7 +23,7 @@ public:
 
     Player();
 
-    bool handleEvent(const sf::Event &event); /* + Элемент очереди message*/
+    void handleEvent(const sf::Event &event); /* + Элемент очереди message*/
 
 
 private:

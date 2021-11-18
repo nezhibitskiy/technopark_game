@@ -12,7 +12,7 @@ Player::Player()
 
 }
 
-bool Player::handleEvent(const sf::Event& event) /* + Элемент очереди message*/
+void Player::handleEvent(const sf::Event& event) /* + Элемент очереди message*/
 {
     if (event.type == sf::Event::KeyReleased)
     {
@@ -30,7 +30,7 @@ bool Player::handleEvent(const sf::Event& event) /* + Элемент очере�
                 std::cout << "Down"<< std::endl;
 
             // добавить в request  queue
-            return true;
+
         }
 
     } // клики мыши аналогично else if(){}

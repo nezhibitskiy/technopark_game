@@ -25,17 +25,17 @@ bool GameState::handleEvent(const sf::Event &event) {
 
 
     // control player
-    if (!mPlayer.handleEvent(event)) {
+    mPlayer.handleEvent(event);
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
             std::cout << "change state to Menu \n";
             requestStackPop();
             requestStackPush(States::Menu);
             std::cout << "check KEY\n";
-            return true;
+
         }
-        return false;
-    }
+
+
 
     return true;
 

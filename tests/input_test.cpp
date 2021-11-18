@@ -72,12 +72,7 @@ TEST(TEST_INPUT_GAME_STATE, HandleInput) {
     event.key.code = sf::Keyboard::S;
     EXPECT_TRUE(fgame.mState.handleEvent(event));
 
-    event.type = sf::Event::KeyPressed;
-    EXPECT_FALSE(fgame.mState.handleEvent(event));
-
-    event.type = sf::Event::KeyReleased;
-    event.key.code = sf::Keyboard::Space;
-    EXPECT_FALSE(fgame.mState.handleEvent(event));
+    
 
 }
 
