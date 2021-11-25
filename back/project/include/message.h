@@ -9,8 +9,8 @@
 
 class Message {
 public:
-    Message(unsigned short rType, unsigned short rPlayerID, unsigned int rX, unsigned int rY) :
-            type(rType), playerID(rPlayerID), x(rX), y(rY) {};
+    Message(unsigned short rType, unsigned short rPlayerID, unsigned int rX, unsigned int rY, unsigned short rData = 0) :
+            type(rType), playerID(rPlayerID), x(rX), y(rY), data(rData) {};
     unsigned short getType() const {
         return type;
     }
@@ -23,12 +23,16 @@ public:
     unsigned int getY() const {
         return y;
     }
+    unsigned short getData() const {
+        return data;
+    }
 
 private:
     unsigned short type;
     unsigned short playerID;
     unsigned int x;
     unsigned int y;
+    unsigned short data;
 };
 
 class MessageQueue {

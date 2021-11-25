@@ -15,6 +15,13 @@ public:
     void Handle(Message request, Map *map, Player *players) override {
         if (request.getType() == MoveHandler::MOVE) {
             // Check if player can move and if true, move him
+            if ((std::max(request.getX(), players[request.getPlayerID()].getX()) -
+                 std::min(request.getX(), players[request.getPlayerID()].getX())) > 1 ||
+                 (std::max(request.getY(), players[request.getPlayerID()].getY()) -
+                 std::min(request.getY(), players[request.getPlayerID()].getY())) > 1) {
+                return;
+            }
+
             if (map->getObject(request.getX(), request.getY()) != nullptr) {
                 if (map->getObject(request.getX(), request.getY())->CanBeStandOn()) {
                     // Обработчик объекта
@@ -48,6 +55,15 @@ public:
     };
     void Handle(Message request, Map *map, Player *players) override {
         if (request.getType() == AttackHandler::ATTACK) {
+            if (map->getObject(request.getX(), request.getY()) != nullptr) {
+                if (map->getObject(request.getX(), request.getY())->Damagable()) {
+                    if (map->getObject(request.getX(), request.getY())->Damage(1)) {
+                        if (!map->getObject(request.getX(), request.getY())->Respawn()) {
+                            //Удалить объект
+                        }
+                    }
+                }
+            }
 //            std::cout << "Attack: Player " << request.getPlayerID() << " will attack on x: " << request.getX();
 //            std::cout << " y: " << request.getY() << std::endl;
             return;

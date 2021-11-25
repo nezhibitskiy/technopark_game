@@ -12,12 +12,11 @@ class Game {
 public:
     Game();
     void start_game();
-    ~Game() {
-        delete moveHandler;
-    }
+    ~Game();
 private:
     Map map;
     Player* players;
+    Object* objects;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;
 };

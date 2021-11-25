@@ -14,41 +14,44 @@ Game::Game() : map() {
     moveHandler = new MoveHandler;
 }
 
+Game::~Game() {
+    delete moveHandler;
+}
+
 void Game::start_game() {
-    MessageQueue event;
-    event.addEventToQueue(MoveHandler::MOVE, 1, 1, 3);
-    event.addEventToQueue(MoveHandler::MOVE, 0, 5, 7);
+    MessageQueue request;
+//    request.addEventToQueue(MoveHandler::MOVE, 1, 1, 3);
+//    request.addEventToQueue(MoveHandler::MOVE, 0, 5, 7);
 
     map.out();
-    while(!event.empty()) {
-        moveHandler->Handle(event.getEventFromQueue(), &map, players);
-        map.out();
-    }
+    bool gameFlag = true;
 
-//    mapa_.out();
-//    while(true) {
-//        char key;
-//        std::cin >> key;
-//        if (key == 'q') {
-//            break;
-//        } else if (key == 'w') {
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), clear_field);
-//            players_[0].move_top();
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), player);
-//        } else if (key == 'a') {
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), clear_field);
-//            players_[0].move_left();
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), player);
-//        } else if (key == 's') {
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), clear_field);
-//            players_[0].move_bottom();
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), player);
-//        } else if (key == 'd') {
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), clear_field);
-//            players_[0].move_right();
-//            mapa_.change_map(players_[0].get_x(), players_[0].get_y(), player);
-//        }
-//        mapa_.out();
-//    }
+    while(gameFlag) {
+        char key;
+        std::cin >> key;
+        switch (key) {
+            case('q'):
+                gameFlag = false;
+                break;
+            case('w'):
+                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX(), players[0].getY() - 1);
+                break;
+            case('a'):
+                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX() - 1, players[0].getY());
+                break;
+            case('s'):
+                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX(), players[0].getY() + 1);
+                break;
+            case('d'):
+                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX() + 1, players[0].getY());
+                break;
+            default:
+                break;
+        }
+        if (!request.empty()) {
+            moveHandler->Handle(request.getEventFromQueue(), &map, players);
+            map.out();
+        }
+    }
 }
 
