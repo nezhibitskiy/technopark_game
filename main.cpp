@@ -42,14 +42,14 @@ public:
     enum Type {
         SET_ENCHANT = 3
     };
-    // Message* Handle(Message request) override
+    // EventMessage* Handle(EventMessage request) override
     void Handle(Message request, Map *map) override {
         if (request.getType() == SetEnchantHandler::SET_ENCHANT) {
             std::cout << "Set enchant: Player " << request.getPlayerID() << " will set enchant on x: " << request.getX();
             std::cout << " y: " << request.getY() << std::endl;
             //  if (check_can_player_move_on_coords())
             //      map movePlayer
-            //      Message* newMessage = new Message(MoveHandler::MOVE, playerId, x, y);
+            //      EventMessage* newMessage = new EventMessage(MoveHandler::MOVE, playerId, x, y);
                     return; // newMessage
             // else return nullptr;
         } else {
@@ -122,7 +122,7 @@ public:
 
     void runGame() {
         while (gameRuns) {
-            // core.iteration(Message message)
+            // core.iteration(EventMessage message)
             // gui.iteration
             // server.iteration
         }

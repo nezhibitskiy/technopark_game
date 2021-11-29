@@ -10,15 +10,24 @@
 
 class Game {
 public:
+    enum State {
+        INIT = 0,
+        WAITING_FOR_GAME = 1,
+        STARTED = 2
+    };
     Game();
+    int Iteration();
     void start_game();
     ~Game();
 private:
+    State state;
     Map map;
     Player* players;
     Object* objects;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;
+    std::queue<EventMessage> event;
+    std::queue<BaseMessage> request;
 };
 
 #endif // PROJECT_GAME_CLASS_H

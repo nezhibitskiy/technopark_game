@@ -13,13 +13,13 @@ public:
     void addObject(Object *object, unsigned int x, unsigned int y) {
         map[y][x] = object;
     }
-    char getTeamCount() {
+    char getTeamCount() const {
         return teamCount;
     };
-    char getPlayersInTeamCount() {
+    char getPlayersInTeamCount() const {
         return playersInTeamCount;
     };
-    std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) {
+    std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) const {
         return spawnpoints[playerID];
     }
     Object* getObject(unsigned int x, unsigned int y) {
@@ -27,6 +27,12 @@ public:
     }
     void moveObject(unsigned int oldX, unsigned int oldY, unsigned int newX, unsigned int newY) {
         std::swap(map[oldY][oldX], map[newY][newX]);
+    }
+    size_t getWidth() const {
+        return width;
+    }
+    size_t getHeight() const {
+        return height;
     }
     void out();
 private:

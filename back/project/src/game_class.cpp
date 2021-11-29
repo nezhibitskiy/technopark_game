@@ -16,13 +16,33 @@ Game::Game() : map() {
 
 Game::~Game() {
     delete moveHandler;
+    delete [] players;
+}
+
+
+int Game::Iteration() {
+
+    // INIT
+
+    while (state != STARTED) {
+
+        switch(state) {
+            case (INIT):
+                // Вписываются все функции частей игры и условия перехода
+                // if (window.init()) {
+                // state = SERVER_STARTED
+                // state = CLIENT_CONNECT_TO_SERVER
+                // window.find_serv()
+                //}
+                break;
+
+        }
+    }
+
+    return EXIT_SUCCESS;
 }
 
 void Game::start_game() {
-    MessageQueue request;
-//    request.addEventToQueue(MoveHandler::MOVE, 1, 1, 3);
-//    request.addEventToQueue(MoveHandler::MOVE, 0, 5, 7);
-
     map.out();
     bool gameFlag = true;
 
@@ -33,23 +53,33 @@ void Game::start_game() {
             case('q'):
                 gameFlag = false;
                 break;
-            case('w'):
-                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX(), players[0].getY() - 1);
+            case('w'): {
+                BaseMessage moveUp(MoveHandler::MOVE_UP, 0);
+                request.push(moveUp);
                 break;
-            case('a'):
-                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX() - 1, players[0].getY());
+            }
+            case('a'): {
+                BaseMessage moveLeft(MoveHandler::MOVE_LEFT, 0);
+                request.push(moveLeft);
                 break;
-            case('s'):
-                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX(), players[0].getY() + 1);
+            }
+            case('s'): {
+                BaseMessage moveDown(MoveHandler::MOVE_DOWN, 0);
+                request.push(moveDown);
                 break;
-            case('d'):
-                request.addEventToQueue(MoveHandler::MOVE, 0, players[0].getX() + 1, players[0].getY());
+            }
+            case('d'): {
+                BaseMessage moveRight(MoveHandler::MOVE_RIGHT, 0);
+                request.push(moveRight);
                 break;
-            default:
+            }
+            default: {
                 break;
+            }
         }
         if (!request.empty()) {
-            moveHandler->Handle(request.getEventFromQueue(), &map, players);
+            moveHandler->Handle(request.front(), &map, players);
+            request.pop();
             map.out();
         }
     }
