@@ -24,6 +24,8 @@ public:
         unsigned int x = 0;
         unsigned int y = 0;
 
+        if (x >= map->getWidth() || y >= map->getHeight()) return;
+
         Player *player = &players[request.getID()];
 
 
@@ -90,6 +92,7 @@ public:
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
 
+        if (x >= map->getWidth() || y >= map->getHeight()) return;
 
         if ((std::max(x, player->getX()) -
              std::min(x, player->getX())) > DEFAULT_ATTACK_RADIUS ||
@@ -134,6 +137,8 @@ public:
         Player *player = &players[request.getID()];
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
+
+        if (x >= map->getWidth() || y >= map->getHeight()) return;
 
         if ((std::max(x, player->getX()) -
              std::min(x, player->getX())) > DEFAULT_PUT_BLOCK_RADIUS ||
