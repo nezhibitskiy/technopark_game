@@ -18,7 +18,7 @@ class DefaultBlock : public Object {
         return false;
     };
     char getObjectSymbol() override {
-        return 'o';
+        return '4';
     }
     ~DefaultBlock() = default;
 };

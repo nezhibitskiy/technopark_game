@@ -12,10 +12,15 @@ Game::Game() : map() {
     }
 
     moveHandler = new MoveHandler;
+    attackHandler = new AttackHandler;
+    putBlockHandler = new PutBlockHandler;
+    moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
 }
 
 Game::~Game() {
     delete moveHandler;
+    delete attackHandler;
+    delete putBlockHandler;
     delete [] players;
 }
 
@@ -73,6 +78,50 @@ void Game::start_game() {
                 request.push(moveRight);
                 break;
             }
+
+            case('t'): {
+                BaseMessage attackUp(AttackHandler::ATTACK, 0, players[0].getX(), players->getY() - 1);
+                request.push(attackUp);
+                break;
+            }
+            case('f'): {
+                BaseMessage attackLeft(AttackHandler::ATTACK, 0, players[0].getX() - 1, players->getY());
+                request.push(attackLeft);
+                break;
+            }
+            case('g'): {
+                BaseMessage attackDown(AttackHandler::ATTACK, 0, players[0].getX(), players->getY() + 1);
+                request.push(attackDown);
+                break;
+            }
+            case('h'): {
+                BaseMessage attackRight(AttackHandler::ATTACK, 0, players[0].getX() + 1, players->getY());
+                request.push(attackRight);
+                break;
+            }
+
+
+            case('i'): {
+                BaseMessage putBlockUp(PutBlockHandler::PUT_BLOCK, 0, players[0].getX(), players->getY() - 1);
+                request.push(putBlockUp);
+                break;
+            }
+            case('j'): {
+                BaseMessage putBlockLeft(PutBlockHandler::PUT_BLOCK, 0, players[0].getX() - 1, players->getY());
+                request.push(putBlockLeft);
+                break;
+            }
+            case('k'): {
+                BaseMessage putBlockDown(PutBlockHandler::PUT_BLOCK, 0, players[0].getX(), players->getY() + 1);
+                request.push(putBlockDown);
+                break;
+            }
+            case('l'): {
+                BaseMessage putBlockRight(PutBlockHandler::PUT_BLOCK, 0, players[0].getX() + 1, players->getY());
+                request.push(putBlockRight);
+                break;
+            }
+
             default: {
                 break;
             }

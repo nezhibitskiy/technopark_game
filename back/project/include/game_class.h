@@ -26,6 +26,7 @@ private:
     Object* objects;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;
+    PutBlockHandler *putBlockHandler;
     std::queue<EventMessage> event;
     std::queue<BaseMessage> request;
 };
