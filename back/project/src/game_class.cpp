@@ -130,10 +130,12 @@ void Game::start_game() {
         if (!request.empty()) {
             unsigned int msgCount = moveHandler->Handle(request.front(), &map, players, &newEventMessages);
 
-            if (newEventMessages != nullptr)
+            if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {
                     event.push(newEventMessages[i]);
                 }
+                delete newEventMessages;
+            }
 
             if (!event.empty()) {
                 std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
