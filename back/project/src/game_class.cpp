@@ -51,7 +51,6 @@ void Game::start_game() {
     map.out();
     bool gameFlag = true;
 
-    EventMessage *newEventMessages = nullptr;
     while(gameFlag) {
         char key;
         std::cin >> key;
@@ -128,16 +127,19 @@ void Game::start_game() {
             }
         }
         if (!request.empty()) {
-            unsigned int msgCount = moveHandler->Handle(request.front(), &map, players, &newEventMessages);
+
+            unsigned int msgCount = 0;
+            EventMessage **newEventMessages = moveHandler->Handle(request.front(), &map, players, &msgCount);
 
             if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {
-                    event.push(newEventMessages[i]);
+                    event.push((*newEventMessages)[i]);
                 }
                 delete newEventMessages;
+                newEventMessages = nullptr;
             }
 
-            if (!event.empty()) {
+            while (!event.empty()) {
                 std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
                 "; X: " << event.front().getX() << "; Y: " << event.front().getY() << "; Data: " << event.front().getData() << ";\n";
                 event.pop();

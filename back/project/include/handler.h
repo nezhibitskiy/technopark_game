@@ -12,7 +12,7 @@ template<typename Message, typename ReturnMessage, typename Map, typename Object
 class Handler {
 public:
     virtual Handler *SetNext(Handler *handler) = 0;
-    virtual unsigned int Handle(Message request, Map *map, Objects *objects, ReturnMessage **returnMessage) = 0;
+    virtual ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount) = 0;
 };
 
 template<typename Message, typename ReturnMessage, typename Objects = Object, typename Map = Map>
@@ -27,9 +27,9 @@ public:
         this->next_handler_ = handler;
         return handler;
     }
-    unsigned int Handle(Message request, Map *map, Objects *objects, ReturnMessage **returnMessage) override {
+    ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount) override {
         if (this->next_handler_) {
-            return this->next_handler_->Handle(request, map, objects, returnMessage);
+            return this->next_handler_->Handle(request, map, objects, returnMsgCount);
         }
         else {
             // default action for unknown request

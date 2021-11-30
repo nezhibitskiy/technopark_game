@@ -5,13 +5,15 @@
 #include "message.h"
 #include "Object.h"
 
+#define DEFAULT_HEALTH_VALUE 5
+
 class Player: public Object {
 public:
-    Player() = default;
+    Player() : health(DEFAULT_HEALTH_VALUE) { };
 
     bool Damagable() const override { return true; };
 
-    char Damage(const char damageValue) {
+    unsigned char Damage(const unsigned char damageValue) override {
         if (health > damageValue) {
             health -= damageValue;
             return health;
@@ -20,14 +22,15 @@ public:
     };
 
     bool Respawn() override {
-
-        return false;
+        health = DEFAULT_HEALTH_VALUE;
+        x = spawnpoint.first;
+        y = spawnpoint.second;
+        return true;
     }
     bool CanBeStandOn() const override { return false; };
 
     void saveSpawnpoint(std::pair<unsigned int, unsigned int> recievedSpawnpoint) {
         spawnpoint = recievedSpawnpoint;
-        return;
     }
 
     char getObjectSymbol() override {
