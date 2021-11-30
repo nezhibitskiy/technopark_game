@@ -11,8 +11,10 @@ class DefaultBlock : public Object {
     bool Damagable() const override {
         return true;
     };
-    bool Damage(const char damageValue) override {
-        return damageValue > 0; // Если умер - возвращает true
+    unsigned char Damage(const unsigned char damageValue) override {
+        if (damageValue > health)
+            return 0; // Если умер - возвращает true
+        else return (health - damageValue);
     };
     bool CanBeStandOn() const override {
         return false;
@@ -21,6 +23,8 @@ class DefaultBlock : public Object {
         return '4';
     }
     ~DefaultBlock() = default;
+private:
+    unsigned char health = 1;
 };
 
 #endif //CHAINOFRESPONSABILITY_DEFAULTBLOCK_H

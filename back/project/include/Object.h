@@ -8,9 +8,9 @@
 class Object {
 public:
     virtual bool Damagable() const = 0;
-    virtual bool Damage(const char damageValue) {
-        return false;                               // Если умер - возвращает true
-    };
+    virtual unsigned char Damage(const unsigned char damageValue) {
+        return 1;                               // Если умер - возвращает true
+    }
     virtual bool Respawn() {
         return false;
     }
@@ -18,7 +18,7 @@ public:
     virtual void ToDo(Object *player) {}
     virtual char getObjectSymbol() {
         return '0';
-    };
+    }
     virtual ~Object() = default;
 };
 

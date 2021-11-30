@@ -11,12 +11,12 @@ public:
 
     bool Damagable() const override { return true; };
 
-    bool Damage(const char damageValue) {
+    char Damage(const char damageValue) {
         if (health > damageValue) {
             health -= damageValue;
-            return false;
+            return health;
         }
-        return true;
+        return 0;
     };
 
     bool Respawn() override {

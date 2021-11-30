@@ -5,33 +5,36 @@
 #ifndef CHAINOFRESPONSABILITY_HANDLER_H
 #define CHAINOFRESPONSABILITY_HANDLER_H
 
-template<typename Message, typename Map,typename Objects>
+#include "map_class.h"
+#include "player_class.h"
+
+template<typename Message, typename ReturnMessage, typename Map, typename Objects>
 class Handler {
 public:
     virtual Handler *SetNext(Handler *handler) = 0;
-    virtual void Handle(Message request, Map *map, Objects *players) = 0;
+    virtual unsigned int Handle(Message request, Map *map, Objects *objects, ReturnMessage **returnMessage) = 0;
 };
 
-template<typename Message, typename Map,typename Objects>
-class AbstractHandler : public Handler<Message,Map,Objects> {
+template<typename Message, typename ReturnMessage, typename Objects = Object, typename Map = Map>
+class AbstractHandler : public Handler<Message, ReturnMessage, Map, Objects> {
 private:
-    Handler<Message,Map,Objects> *next_handler_;
+    Handler<Message, ReturnMessage, Map, Objects> *next_handler_;
 
 public:
     AbstractHandler() : next_handler_(nullptr) {
     }
-    Handler<Message,Map,Objects> *SetNext(Handler<Message,Map,Objects> *handler) override {
+    Handler<Message, ReturnMessage, Map, Objects> *SetNext(Handler<Message, ReturnMessage, Map, Objects> *handler) override {
         this->next_handler_ = handler;
         return handler;
     }
-    void Handle(Message request, Map *map, Objects *players) override {
+    unsigned int Handle(Message request, Map *map, Objects *objects, ReturnMessage **returnMessage) override {
         if (this->next_handler_) {
-            return this->next_handler_->Handle(request, map, players);
+            return this->next_handler_->Handle(request, map, objects, returnMessage);
         }
         else {
             // default action for unknown request
             std::cerr << " Action was left untouched.\n";
-            return; // nullptr
+            return 0; // nullptr
         }
     }
 };

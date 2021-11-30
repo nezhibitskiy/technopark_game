@@ -30,8 +30,16 @@ private:
     unsigned int y;
 };
 
+
 class EventMessage : public BaseMessage {
 public:
+    enum {
+        CREATE_MAP = 0,
+        CREATE_OBJECT = 1,
+        SET_HEALTH = 2,
+        MOVE = 3,
+        DELETE = 4
+    };
     EventMessage(unsigned short Type, unsigned short ID,
                  unsigned int X, unsigned int Y, unsigned short Data = 0) :
                     BaseMessage(Type, ID, X, Y), data(Data) {};

@@ -3,11 +3,9 @@
 
 #include "handler.h"
 #include "message.h"
-#include "map_class.h"
-#include "player_class.h"
 
-class AbstractRequestHandler : public AbstractHandler<BaseMessage, Map, Player> {};
-class AbstractEventHandler : public AbstractHandler<EventMessage, Map, Object> {};
+class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, Player> {};
+class AbstractEventHandler : public AbstractHandler<EventMessage, void> {};
 
 class MoveHandler : public AbstractRequestHandler {
 public:
@@ -17,39 +15,39 @@ public:
         MOVE_LEFT = 2,
         MOVE_RIGHT = 3,
     };
-    void Handle(BaseMessage request, Map *map, Player *players) override {
+    unsigned int Handle(BaseMessage request, Map *map, Player *players, EventMessage **returnMessages) override {
         if (request.getType() > MoveHandler::MOVE_RIGHT)
-            return AbstractHandler::Handle(request, map, players);
+            return AbstractHandler::Handle(request, map, players, returnMessages);
 
         unsigned int x = 0;
         unsigned int y = 0;
 
-        if (x >= map->getWidth() || y >= map->getHeight()) return;
+        if (x >= map->getWidth() || y >= map->getHeight()) return 0;
 
         Player *player = &players[request.getID()];
 
 
         switch (request.getType()) {
             case(MOVE_UP): {
-                if (player->getY() == 0) return;
+                if (player->getY() == 0) return 0;
                 x = player->getX();
                 y = player->getY() - 1;
                 break;
             }
             case(MOVE_DOWN): {
-                if (player->getY() == (map->getHeight() - 1)) return;
+                if (player->getY() == (map->getHeight() - 1)) return 0;
                 x = player->getX();
                 y = player->getY() + 1;
                 break;
             }
             case(MOVE_LEFT): {
-                if (player->getX() == 0) return;
+                if (player->getX() == 0) return 0;
                 x = player->getX() - 1;
                 y = player->getY();
                 break;
             }
             case(MOVE_RIGHT): {
-                if (player->getX() == (map->getWidth() - 1)) return;
+                if (player->getX() == (map->getWidth() - 1)) return 0;
                 x = player->getX() + 1;
                 y = player->getY();
                 break;
@@ -61,7 +59,9 @@ public:
         if (object == nullptr) {
             map->moveObject(player->getX(), player->getY(), x, y);
             players[request.getID()].setCoords(x, y);
-            return;
+
+            *returnMessages = new EventMessage(EventMessage::MOVE, request.getID(), x, y);
+            return 1;
         }
 
         if (object->CanBeStandOn()) {
@@ -73,7 +73,11 @@ public:
 
             map->moveObject(player->getX(), player->getY(), x, y);
             player->setCoords(x, y);
+
+            *returnMessages = new EventMessage(EventMessage::MOVE, request.getID(), x, y);
+            return 1;
         }
+        return 0;
     }
 };
 
@@ -84,21 +88,21 @@ public:
     enum Type {
         ATTACK = 4,
     };
-    void Handle(BaseMessage request, Map *map, Player *players) override {
+    unsigned int Handle(BaseMessage request, Map *map, Player *players, EventMessage **returnMessages) override {
         if (request.getType() != AttackHandler::ATTACK)
-            return AbstractHandler::Handle(request, map, players);
+            return AbstractHandler::Handle(request, map, players, returnMessages);
 
         Player *player = &players[request.getID()];
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
 
-        if (x >= map->getWidth() || y >= map->getHeight()) return;
+        if (x >= map->getWidth() || y >= map->getHeight()) return 0;
 
         if ((std::max(x, player->getX()) -
              std::min(x, player->getX())) > DEFAULT_ATTACK_RADIUS ||
             (std::max(y, player->getY()) -
              std::min(y, player->getY())) > DEFAULT_ATTACK_RADIUS) {
-            return;
+            return 0;
         }
 
         Object *object = map->getObject(x, y);
@@ -110,6 +114,9 @@ public:
                         //Удалить объект
                         delete object;
                         map->addObject(nullptr, x, y);
+
+                        *returnMessages = new EventMessage(EventMessage::SET_HEALTH, request.getID(), x, y);
+                        return 1;
                     } else {
                         // Добавить респавн
 
@@ -130,21 +137,21 @@ public:
     enum Type {
         PUT_BLOCK = 5
     };
-    void Handle(BaseMessage request, Map *map, Player *players) override {
+    unsigned int Handle(BaseMessage request, Map *map, Player *players, EventMessage **returnMessages) override {
         if (request.getType() != PutBlockHandler::PUT_BLOCK)
-            return AbstractHandler::Handle(request, map, players);
+            return AbstractHandler::Handle(request, map, players, returnMessages);
 
         Player *player = &players[request.getID()];
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
 
-        if (x >= map->getWidth() || y >= map->getHeight()) return;
+        if (x >= map->getWidth() || y >= map->getHeight()) return 0;
 
         if ((std::max(x, player->getX()) -
              std::min(x, player->getX())) > DEFAULT_PUT_BLOCK_RADIUS ||
             (std::max(y, player->getY()) -
              std::min(y, player->getY())) > DEFAULT_PUT_BLOCK_RADIUS) {
-            return;
+            return 0;
         }
 
         Object *object = map->getObject(x, y);
@@ -156,6 +163,9 @@ public:
             }
             DefaultBlock *block = new DefaultBlock;
             map->addObject(block, x, y);
+
+            *returnMessages = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            return 1;
         }
 
 //            std::cout << "Put block: Player " << request.getPlayerID() << " will pul block on x: " << request.getX();
