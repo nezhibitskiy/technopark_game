@@ -7,24 +7,9 @@ Map::Map(const char* filename) {
 
 }
 
-Object* Map::get_map_object(unsigned int i, unsigned int j) {
-
-
-}
-
-int Map::set_map_object(unsigned int i, unsigned int j, Object* obj) {
-
-
-}
-
-void Map::move_player(Player *player_, unsigned int x, unsigned int y) {
-
-
-}
-
-Map::Map(unsigned int width, unsigned int height) {
-    width_ = width;
-    height_ = height;
+Map::Map() {
+    //width_ = width;
+    //height_ = height;
     //не то
     /*map_ = new Object *[width_];
     for (size_t i = 0; i < width_; ++i) {
@@ -56,16 +41,6 @@ Map::Map(unsigned int width, unsigned int height) {
 }
 
 Map::~Map() {
-    for (size_t i = 0; i < width_; ++i) {
-        delete[] map_[i];
-    }
-    delete[] map_;
-}
-
-char Map::get_team_count() {
 
 }
 
-char Map::get_team_players_count() {
-
-}

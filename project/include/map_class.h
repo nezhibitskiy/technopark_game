@@ -11,8 +11,8 @@ public:
     Map();
     Map(const char* filename);
     ~Map();
-    void addObject(Object *object, unsigned int x, unsigned int y) {
-        map[y][x] = object;
+    void addObject(unsigned int id, unsigned int x, unsigned int y) {
+        map[y][x] = id;
     }
     char getTeamCount() {
         return teamCount;
@@ -23,16 +23,26 @@ public:
     std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(char playerID) {
         return spawnpoints[playerID];
     }
-    Object* getObject(unsigned int x, unsigned int y) {
+    unsigned int getObjectId(unsigned int x, unsigned int y) {
         return map[y][x];
     }
     void moveObject(unsigned int oldX, unsigned int oldY, unsigned int newX, unsigned int newY) {
         std::swap(map[oldY][oldX], map[newY][newX]);
     }
+
+    size_t getWidth() const {
+        return width;
+    }
+
+    size_t getHeight() const {
+        return height;
+    }
+
 private:
     size_t width;
     size_t height;
-    Object*** map;
+    //Object*** map;
+    unsigned int** map;
     std::pair<unsigned int, unsigned int> *spawnpoints;
     char teamCount;
     char playersInTeamCount;

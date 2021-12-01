@@ -6,8 +6,8 @@
 
 class Player: public Object {
 public:
-    Player(char i) : id(i) {
-
+    Player(char id_) {
+        id = id_;
     }
 
     bool Damagable() const override { return true; };
@@ -62,7 +62,7 @@ public:
         team = rTeam;
     }
 
-    ~Player() {  };
+    ~Player() = default;
 
 private:
     char id;
