@@ -4,6 +4,9 @@
 
 Game::Game() : map() {
 
+    EventMessage message(EventMessage::CREATE_MAP, 0, 20,20);
+    event.push(message);
+
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
     unsigned int width = 20;
