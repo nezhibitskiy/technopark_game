@@ -12,17 +12,14 @@ class Game {
 public:
     Game();
     void start_game();
-    static unsigned int fabr();
-    unsigned int hash(unsigned int id);
     void addObject(Object* obj, unsigned int x, unsigned int y);
     bool deleteObject(unsigned int id);
-    void grow();
+    static unsigned int fabr();
     ~Game();
 private:
     Map* map;
     Player* players;
-    std::unordered_multimap<unsigned int, std::pair<unsigned int, Object*>> mapObjects;
-    size_t objects_count;
+    std::unordered_multimap<unsigned int, Object*> mapObjects;
 };
 
 #endif // PROJECT_GAME_CLASS_H
