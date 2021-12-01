@@ -35,7 +35,7 @@ unsigned int Game::fabr() {
 }
 
 unsigned int Game::hash(unsigned int id) {
-    return (id % mapObjects.size());
+    return (id % mapObjects.bucket_count());
 }
 
 void Game::addObject(Object *obj, unsigned int x, unsigned int y) {
