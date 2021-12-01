@@ -209,7 +209,11 @@ public:
 
         DefaultBlock *block = new DefaultBlock;
 
-        static unsigned int id = 0;
+        // Данный костыль необходимо исправить
+        // Первые 80 значений отладочно были созданы в конструкторе карты
+        // Необходимо создать уникальный класс фабрику, которая будет во всей игре создавать ID, включая
+        // процесс инициализации и дальнейшую игру (сделать объект видимым и там, и там)
+        static unsigned int id = 80;
         map->addObject(id, x, y);
         hashTable->insert(std::make_pair(id, block));
         id++;

@@ -22,7 +22,11 @@ public:
 private:
     State state;
     Map map;
-    Object* players;
+
+    std::pair<unsigned int, unsigned int> *spawnpoints;
+    char teamCount;
+    char playersInTeamCount;
+
     std::unordered_multimap<unsigned int, Object*> objects;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;

@@ -16,15 +16,6 @@ public:
     void addObject(unsigned int id, unsigned int x, unsigned int y) {
         map[y][x] = id;
     }
-    char getTeamCount() const {
-        return teamCount;
-    };
-    char getPlayersInTeamCount() const {
-        return playersInTeamCount;
-    };
-    std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) const {
-        return spawnpoints[playerID];
-    }
     unsigned int getObject(unsigned int x, unsigned int y) {
         return map[y][x];
     }
@@ -42,9 +33,6 @@ private:
     size_t width;
     size_t height;
     unsigned int** map;
-    std::pair<unsigned int, unsigned int> *spawnpoints;
-    char teamCount;
-    char playersInTeamCount;
 };
 
 #endif //PROJECT_MAP_CLASS_H

@@ -4,16 +4,67 @@
 
 Game::Game() : map() {
 
-    objects.reserve(map.getPlayersInTeamCount() * map.getTeamCount());
+
+    // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
+    unsigned int width = 20;
+    unsigned int height = 20;
+
+    unsigned int id = 0;
+
+    teamCount = 2;
+    playersInTeamCount = 2;
+
+    objects.reserve(100);
+
+    spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
+
+    for (unsigned short i = 0; i < teamCount * playersInTeamCount; i++) {
+        if (i < playersInTeamCount) {
+            spawnpoints[i].second = 1;
+            spawnpoints[i].first = i + 1;
+        }
+        else {
+            spawnpoints[i].second = height - 2;
+            spawnpoints[i].first = width - (i % playersInTeamCount) - 2;
+        }
+    }
+
+    EndBlock *endBlocks = new EndBlock[2 * height];
+
+    Player *players = new Player[playersInTeamCount * teamCount];
+
+    for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
+        players[i].setTeam((char)(i / playersInTeamCount));
+        players[i].saveSpawnpoint(spawnpoints[i]);
+        players[i].setXY(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+
+        objects.insert(std::pair<unsigned int, Object*>(id, &players[i]));
+        map.addObject(id, players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+        id++;
+    }
+
+    for (unsigned int i = 0; i < 2 * height; i += 2) {
+        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
+        map.addObject(id, i / 2, 0);
+        id++;
+        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
+        map.addObject(id, i / 2, width - 1);
+        id++;
+    }
+
+    endBlocks = new EndBlock[2 * (width - 1)];
+
+    for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
+        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
+        map.addObject(id, 0, j / 2);
+        id++;
+
+        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
+        map.addObject(id, height - 1, j / 2);
+        id++;
+    }
 
 
-//    players = new Object[map.getPlayersInTeamCount() * map.getTeamCount()];
-//    for (unsigned short i = 0; i < map.getPlayersInTeamCount() * map.getTeamCount(); i++) {
-//        players[i].setTeam((char)(i / map.getPlayersInTeamCount()));
-//        players[i].saveSpawnpoint(map.getPlayerSpawnpoint(i));
-//        map.addObject(&players[i], players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
-//        players[i].setCoords(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
-//    }
 
     moveHandler = new MoveHandler;
     attackHandler = new AttackHandler;
@@ -25,7 +76,6 @@ Game::~Game() {
     delete moveHandler;
     delete attackHandler;
     delete putBlockHandler;
-    delete [] players;
 }
 
 
@@ -84,44 +134,60 @@ void Game::start_game() {
             }
 
             case('t'): {
-                BaseMessage attackUp(AttackHandler::ATTACK, 0, players[0].getX(), players->getY() - 1);
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage attackUp(AttackHandler::ATTACK, 0, playerNode->second->getX(), playerNode->second->getY() - 1);
                 request.push(attackUp);
                 break;
             }
             case('f'): {
-                BaseMessage attackLeft(AttackHandler::ATTACK, 0, players[0].getX() - 1, players->getY());
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage attackLeft(AttackHandler::ATTACK, 0, playerNode->second->getX() - 1, playerNode->second->getY());
                 request.push(attackLeft);
                 break;
             }
             case('g'): {
-                BaseMessage attackDown(AttackHandler::ATTACK, 0, players[0].getX(), players->getY() + 1);
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage attackDown(AttackHandler::ATTACK, 0, playerNode->second->getX(), playerNode->second->getY() + 1);
                 request.push(attackDown);
                 break;
             }
             case('h'): {
-                BaseMessage attackRight(AttackHandler::ATTACK, 0, players[0].getX() + 1, players->getY());
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage attackRight(AttackHandler::ATTACK, 0, playerNode->second->getX() + 1, playerNode->second->getY());
                 request.push(attackRight);
                 break;
             }
 
 
             case('i'): {
-                BaseMessage putBlockUp(PutBlockHandler::PUT_BLOCK, 0, players[0].getX(), players->getY() - 1);
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage putBlockUp(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX(), playerNode->second->getY() - 1);
                 request.push(putBlockUp);
                 break;
             }
             case('j'): {
-                BaseMessage putBlockLeft(PutBlockHandler::PUT_BLOCK, 0, players[0].getX() - 1, players->getY());
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage putBlockLeft(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX() - 1, playerNode->second->getY());
                 request.push(putBlockLeft);
                 break;
             }
             case('k'): {
-                BaseMessage putBlockDown(PutBlockHandler::PUT_BLOCK, 0, players[0].getX(), players->getY() + 1);
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage putBlockDown(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX(), playerNode->second->getY() + 1);
                 request.push(putBlockDown);
                 break;
             }
             case('l'): {
-                BaseMessage putBlockRight(PutBlockHandler::PUT_BLOCK, 0, players[0].getX() + 1, players->getY());
+                auto playerNode = objects.find(0);
+                if (playerNode == objects.end()) break;
+                BaseMessage putBlockRight(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX() + 1, playerNode->second->getY());
                 request.push(putBlockRight);
                 break;
             }
