@@ -40,15 +40,23 @@ Game::Game() : map() {
 
         objects.insert(std::pair<unsigned int, Object*>(id, &players[i]));
         map.addObject(id, players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+
+        EventMessage message(EventMessage::CREATE_PLAYER, id, players[i].getSpawnpoint().first,
+                players[i].getSpawnpoint().second, (i / playersInTeamCount));
+        event.push(message);
         id++;
     }
 
     for (unsigned int i = 0; i < 2 * height; i += 2) {
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
         map.addObject(id, i / 2, 0);
+        EventMessage message1(EventMessage::CREATE_OBJECT, id, i / 2, 0);
+        event.push(message1);
         id++;
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
         map.addObject(id, i / 2, width - 1);
+        EventMessage message2(EventMessage::CREATE_OBJECT, id, i / 2, width - 1);
+        event.push(message2);
         id++;
     }
 
@@ -57,14 +65,16 @@ Game::Game() : map() {
     for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
         map.addObject(id, 0, j / 2);
+        EventMessage message1(EventMessage::CREATE_OBJECT, id, 0, j / 2);
+        event.push(message1);
         id++;
 
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
         map.addObject(id, height - 1, j / 2);
+        EventMessage message2(EventMessage::CREATE_OBJECT, id, height - 1, j / 2);
+        event.push(message2);
         id++;
     }
-
-
 
     moveHandler = new MoveHandler;
     attackHandler = new AttackHandler;
@@ -76,6 +86,7 @@ Game::~Game() {
     delete moveHandler;
     delete attackHandler;
     delete putBlockHandler;
+    // Добавить очистку объектов хэш таблицы
 }
 
 
@@ -102,6 +113,12 @@ int Game::Iteration() {
 }
 
 void Game::start_game() {
+
+    while (!event.empty()) {
+        std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
+                  "; X: " << event.front().getX() << "; Y: " << event.front().getY() << "; Data: " << event.front().getData() << ";\n";
+        event.pop();
+    }
     map.out(&objects);
     bool gameFlag = true;
 
