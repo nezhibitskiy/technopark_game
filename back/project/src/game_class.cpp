@@ -133,7 +133,7 @@ void Game::start_game() {
 
             if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {
-                    event.push((*newEventMessages)[i]);
+                    event.push(*(newEventMessages[i]));
                 }
                 delete newEventMessages;
                 newEventMessages = nullptr;
