@@ -3,10 +3,16 @@
 
 #include "handler.h"
 #include "message.h"
+#include <unordered_map>
 
-class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, Player> {};
+class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, std::unordered_multimap<unsigned int, Object*>> {};
 class AbstractEventHandler : public AbstractHandler<EventMessage, void> {};
 
+
+//unsigned int IDFabric() {
+//    static unsigned int id = 0;
+//    return id++;
+//}
 
 class MoveHandler : public AbstractRequestHandler {
 public:
@@ -16,17 +22,20 @@ public:
         MOVE_LEFT = 2,
         MOVE_RIGHT = 3,
     };
-    EventMessage **Handle(BaseMessage request, Map *map, Player *players, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
         if (request.getType() > MoveHandler::MOVE_RIGHT)
-            return AbstractHandler::Handle(request, map, players, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
 
         unsigned int x = 0;
         unsigned int y = 0;
 
         if (x >= map->getWidth() || y >= map->getHeight()) return nullptr;
 
-        Player *player = &players[request.getID()];
+        auto playerNode = hashTable->find(request.getID());
 
+        if (playerNode == hashTable->end()) return nullptr;
+
+        Object *player = playerNode->second;
 
         switch (request.getType()) {
             case(MOVE_UP): {
@@ -55,31 +64,33 @@ public:
             }
         }
 
-        Object *object = map->getObject(x, y);
+        auto objectNode = hashTable->find(map->getObject(x, y));
 
-        if (object == nullptr) {
+        if (objectNode == hashTable->end()) {
+
             map->moveObject(player->getX(), player->getY(), x, y);
-            players[request.getID()].setCoords(x, y);
+            player->setXY(x, y);
 
             *returnMsgCount = 1;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::MOVE, request.getID(), x, y);
+            returnMessages[0] = new EventMessage(EventMessage::MOVE, playerNode->first, x, y);
             return returnMessages;
         }
-
+        Object *object = objectNode->second;
         if (object->CanBeStandOn()) {
 
-            object->ToDo(player);
-            delete object;
-
-            map->addObject(nullptr, x, y);
+            object->ToDo(player); // Необходимо добавить ответ в виде сообщений
 
             map->moveObject(player->getX(), player->getY(), x, y);
-            player->setCoords(x, y);
+            player->setXY(x, y);
 
-            *returnMsgCount = 1;
+            *returnMsgCount = 2;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::MOVE, request.getID(), x, y);
+            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+            returnMessages[1] = new EventMessage(EventMessage::MOVE, playerNode->first, x, y);
+
+            hashTable->erase(objectNode);
+
             return returnMessages;
         }
         return nullptr;
@@ -93,11 +104,16 @@ public:
     enum Type {
         ATTACK = 4,
     };
-    EventMessage **Handle(BaseMessage request, Map *map, Player *players, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
         if (request.getType() != AttackHandler::ATTACK)
-            return AbstractHandler::Handle(request, map, players, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
 
-        Player *player = &players[request.getID()];
+
+        auto playerNode = hashTable->find(request.getID());
+        if (playerNode == hashTable->end()) return nullptr;
+
+        Object *player = playerNode->second;
+
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
 
@@ -110,20 +126,21 @@ public:
             return nullptr;
         }
 
-        Object *object = map->getObject(x, y);
+        auto objectNode = hashTable->find(map->getObject(x, y));
 
-        if (object != nullptr) {
+        if (objectNode != hashTable->end()) {
+            Object *object = objectNode->second;
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
                     if (!object->Respawn()) {
                         //Удалить объект
-                        delete object;
-                        map->addObject(nullptr, x, y);
 
                         *returnMsgCount = 1;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-                        returnMessages[0] = new EventMessage(EventMessage::DELETE, request.getID(), x, y);
+                        returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+
+                        hashTable->erase(objectNode);
                         return returnMessages;
                     } else {
                         // Добавить респавн
@@ -131,22 +148,20 @@ public:
 
                         *returnMsgCount = 2;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-                        returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, request.getID(), x, y, DEFAULT_HEALTH_VALUE);
-                        returnMessages[1] = new EventMessage(EventMessage::MOVE, request.getID(), 5, 5);
+                        returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, objectNode->first, x, y, DEFAULT_HEALTH_VALUE);
+                        returnMessages[1] = new EventMessage(EventMessage::MOVE, objectNode->first, 5, 5);
+
                         return returnMessages;
                     }
                 }
                 else {
                     *returnMsgCount = 1;
                     EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-                    returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, request.getID(), x, y, leftHealth);
+                    returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, objectNode->first, x, y, leftHealth);
                     return returnMessages;
                 }
             }
         }
-//            std::cout << "Attack: Player " << request.getPlayerID() << " will attack on x: " << request.getX();
-//            std::cout << " y: " << request.getY() << std::endl;
-
     }
 };
 
@@ -157,11 +172,15 @@ public:
     enum Type {
         PUT_BLOCK = 5
     };
-    EventMessage **Handle(BaseMessage request, Map *map, Player *players, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
         if (request.getType() != PutBlockHandler::PUT_BLOCK)
-            return AbstractHandler::Handle(request, map, players, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
 
-        Player *player = &players[request.getID()];
+        auto playerNode = hashTable->find(request.getID());
+        if (playerNode == hashTable->end()) return nullptr;
+
+        Object *player = playerNode->second;
+
         const unsigned int x = request.getX();
         const unsigned int y = request.getY();
 
@@ -174,22 +193,42 @@ public:
             return nullptr;
         }
 
-        Object *object = map->getObject(x, y);
+        auto objectNode = hashTable->find(map->getObject(x, y));
 
-        if (object == nullptr || object->CanBeStandOn()) {
-            if (object != nullptr) {
-                delete object;
-                map->addObject(nullptr, x, y);
+        EventMessage *deleteMessage = nullptr;
+        if (objectNode != hashTable->end()) {
+            Object *object = objectNode->second;
+            if (!object->CanBeStandOn()) {
+                return nullptr;
             }
-            DefaultBlock *block = new DefaultBlock;
-            map->addObject(block, x, y);
 
+            deleteMessage = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+            hashTable->erase(objectNode);
+        }
+
+
+        DefaultBlock *block = new DefaultBlock;
+
+        static unsigned int id = 0;
+        map->addObject(id, x, y);
+        hashTable->insert(std::make_pair(id, block));
+        id++;
+
+        if (deleteMessage != nullptr) {
+            *returnMsgCount = 2;
+            EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
+            returnMessages[0] = deleteMessage;
+            returnMessages[1] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            return returnMessages;
+        } else {
+            *returnMsgCount = 1;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
             returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
             return returnMessages;
         }
 
-//            std::cout << "Put block: Player " << request.getPlayerID() << " will pul block on x: " << request.getX();
+
+//            std::cout << "Put block: Object " << request.getPlayerID() << " will pul block on x: " << request.getX();
 //            std::cout << " y: " << request.getY() << std::endl;
     }
 };

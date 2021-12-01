@@ -2,7 +2,7 @@
 #define PROJECT_GAME_CLASS_H
 
 #include <iostream>
-#include <vector>
+#include <unordered_map>
 
 #include "player_class.h"
 #include "map_class.h"
@@ -22,8 +22,8 @@ public:
 private:
     State state;
     Map map;
-    Player* players;
-    Object* objects;
+    Object* players;
+    std::unordered_multimap<unsigned int, Object*> objects;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;
     PutBlockHandler *putBlockHandler;

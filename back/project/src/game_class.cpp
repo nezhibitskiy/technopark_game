@@ -3,13 +3,17 @@
 #include "game_class.h"
 
 Game::Game() : map() {
-    players = new Player[map.getPlayersInTeamCount() * map.getTeamCount()];
-    for (unsigned short i = 0; i < map.getPlayersInTeamCount() * map.getTeamCount(); i++) {
-        players[i].setTeam((char)(i / map.getPlayersInTeamCount()));
-        players[i].saveSpawnpoint(map.getPlayerSpawnpoint(i));
-        map.addObject(&players[i], players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
-        players[i].setCoords(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
-    }
+
+    objects.reserve(map.getPlayersInTeamCount() * map.getTeamCount());
+
+
+//    players = new Object[map.getPlayersInTeamCount() * map.getTeamCount()];
+//    for (unsigned short i = 0; i < map.getPlayersInTeamCount() * map.getTeamCount(); i++) {
+//        players[i].setTeam((char)(i / map.getPlayersInTeamCount()));
+//        players[i].saveSpawnpoint(map.getPlayerSpawnpoint(i));
+//        map.addObject(&players[i], players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+//        players[i].setCoords(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+//    }
 
     moveHandler = new MoveHandler;
     attackHandler = new AttackHandler;
@@ -48,7 +52,7 @@ int Game::Iteration() {
 }
 
 void Game::start_game() {
-    map.out();
+    map.out(&objects);
     bool gameFlag = true;
 
     while(gameFlag) {
@@ -129,7 +133,7 @@ void Game::start_game() {
         if (!request.empty()) {
 
             unsigned int msgCount = 0;
-            EventMessage **newEventMessages = moveHandler->Handle(request.front(), &map, players, &msgCount);
+            EventMessage **newEventMessages = moveHandler->Handle(request.front(), &map, &objects, &msgCount);
 
             if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {
@@ -146,7 +150,7 @@ void Game::start_game() {
             }
 
             request.pop();
-            map.out();
+            map.out(&objects);
         }
 
     }

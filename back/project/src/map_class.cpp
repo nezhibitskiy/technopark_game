@@ -3,16 +3,17 @@
 
 #include "map_class.h"
 
+
 Map::Map() {
     teamCount = 2;
     playersInTeamCount = 2;
     width = 20;
     height = 20;
 
-    map = new Object**[height];
+    map = new unsigned int *[height];
 
     for (unsigned int i = 0; i < height; i++) {
-        map[i] = new Object*[width];
+        map[i] = new unsigned int[width];
     }
 
     spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
@@ -27,7 +28,7 @@ Map::Map() {
             spawnpoints[i].first = width - (i % playersInTeamCount) - 2;
         }
     }
-
+/*
     EndBlock *endBlocks = new EndBlock[2 * height];
 
     for (unsigned int i = 0; i < 2 * height; i += 2) {
@@ -40,7 +41,7 @@ Map::Map() {
     for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
         map[0][j / 2] = &endBlocks[j];
         map[height - 1][j / 2] = &endBlocks[j + 1];
-    }
+    }*/
 
 }
 
@@ -51,11 +52,12 @@ Map::~Map() {
     delete[] map;
 }
 
-void Map::out() {
+void Map::out(std::unordered_multimap<unsigned int, Object*> *hashTable) {
     for (unsigned int i = 0; i < height; ++i) {
         for (unsigned int j = 0; j < width; ++j) {
-            if (map[i][j] != nullptr) {
-                std::cout << map[i][j]->getObjectSymbol() << " ";
+            auto objectNode = hashTable->find(map[i][j]);
+            if (objectNode != hashTable->end()) {
+                std::cout << objectNode->second->getObjectSymbol() << " ";
             } else {
                 std::cout << ". ";
             }

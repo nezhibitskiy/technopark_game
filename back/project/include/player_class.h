@@ -7,7 +7,7 @@
 
 #define DEFAULT_HEALTH_VALUE 5
 
-class Player: public Object {
+class Player: public AbstractObject {
 public:
     Player() : health(DEFAULT_HEALTH_VALUE) { };
 
@@ -23,8 +23,7 @@ public:
 
     bool Respawn() override {
         health = DEFAULT_HEALTH_VALUE;
-        x = spawnpoint.first;
-        y = spawnpoint.second;
+        setXY(spawnpoint.first, spawnpoint.second);
         return true;
     }
     bool CanBeStandOn() const override { return false; };
@@ -47,31 +46,16 @@ public:
         return spawnpoint;
     }
 
-    unsigned int getX() const {
-        return x;
-    }
-
-    unsigned int getY() const {
-        return y;
-    }
-
-    void setCoords(unsigned int rX, unsigned int rY) {
-        x = rX;
-        y = rY;
-    }
-
     void setTeam(char rTeam) {
         team = rTeam;
     }
 
-    ~Player() override {  };
+    ~Player() = default;
 
 private:
     char id;
     char health;
     char team;
-    unsigned int x;
-    unsigned int y;
     std::pair<unsigned int, unsigned int> spawnpoint;
 };
 

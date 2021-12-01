@@ -7,7 +7,7 @@
 
 #include "Object.h"
 
-class DefaultBlock : public Object {
+class DefaultBlock : public AbstractObject {
     bool Damagable() const override {
         return true;
     };

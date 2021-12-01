@@ -6,12 +6,15 @@
 #include "endBlock.h"
 #include "defaultBlock.h"
 
+#include <unordered_map>
+
+
 class Map {
 public:
     Map();
     ~Map();
-    void addObject(Object *object, unsigned int x, unsigned int y) {
-        map[y][x] = object;
+    void addObject(unsigned int id, unsigned int x, unsigned int y) {
+        map[y][x] = id;
     }
     char getTeamCount() const {
         return teamCount;
@@ -22,7 +25,7 @@ public:
     std::pair<unsigned int, unsigned int> getPlayerSpawnpoint(unsigned short playerID) const {
         return spawnpoints[playerID];
     }
-    Object* getObject(unsigned int x, unsigned int y) {
+    unsigned int getObject(unsigned int x, unsigned int y) {
         return map[y][x];
     }
     void moveObject(unsigned int oldX, unsigned int oldY, unsigned int newX, unsigned int newY) {
@@ -34,11 +37,11 @@ public:
     size_t getHeight() const {
         return height;
     }
-    void out();
+    void out(std::unordered_multimap<unsigned int, Object*> *hashTable);
 private:
     size_t width;
     size_t height;
-    Object*** map;
+    unsigned int** map;
     std::pair<unsigned int, unsigned int> *spawnpoints;
     char teamCount;
     char playersInTeamCount;
