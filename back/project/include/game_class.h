@@ -13,7 +13,8 @@ public:
     enum State {
         INIT = 0,
         WAITING_FOR_GAME = 1,
-        STARTED = 2
+        STARTED = 2,
+        END_OF_GAME = 3
     };
     Game();
     int Iteration();

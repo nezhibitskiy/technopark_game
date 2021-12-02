@@ -3,6 +3,8 @@
 #include "game_class.h"
 
 Game::Game() {
+    state = INIT;
+
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
     unsigned int width = 20;
     unsigned int height = 20;
@@ -94,13 +96,11 @@ Game::~Game() {
 
 
 int Game::Iteration() {
-
-    // INIT
-
-    while (state != STARTED) {
-
+    while (state != END_OF_GAME) {
         switch(state) {
             case (INIT):
+                std::cout << "INIT STATE WAS HERE" << std::endl;
+                state = WAITING_FOR_GAME;
                 // Вписываются все функции частей игры и условия перехода
                 // if (window.init()) {
                 // state = SERVER_STARTED
@@ -108,9 +108,20 @@ int Game::Iteration() {
                 // window.find_serv()
                 //}
                 break;
+            case (WAITING_FOR_GAME):
+                std::cout << "WAITING FOR GAME WAS HERE" << std::endl;
+                state = STARTED;
+                break;
+            case (STARTED):
+                start_game();
+                state = END_OF_GAME;
+                break;
+            default:
+                break;
 
         }
     }
+    std::cout << "END OF GAME WAS HERE" << std::endl;
 
     return EXIT_SUCCESS;
 }

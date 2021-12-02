@@ -8,12 +8,6 @@
 class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, std::unordered_multimap<unsigned int, Object*>> {};
 class AbstractEventHandler : public AbstractHandler<EventMessage, void> {};
 
-
-//unsigned int IDFabric() {
-//    static unsigned int id = 0;
-//    return id++;
-//}
-
 class MoveHandler : public AbstractRequestHandler {
 public:
     enum MoveType {
@@ -143,7 +137,6 @@ public:
                         hashTable->erase(objectNode);
                         return returnMessages;
                     } else {
-                        // Добавить респавн
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);

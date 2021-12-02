@@ -3,6 +3,6 @@
 int main() {
    Game my_game;
 
-    my_game.start_game();
+    my_game.Iteration();
     return 0;
 }
