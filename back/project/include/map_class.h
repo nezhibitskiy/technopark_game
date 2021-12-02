@@ -11,7 +11,7 @@
 
 class Map {
 public:
-    Map();
+    Map(unsigned int width, unsigned int height);
     ~Map();
     void addObject(unsigned int id, unsigned int x, unsigned int y) {
         map[y][x] = id;

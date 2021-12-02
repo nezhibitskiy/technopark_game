@@ -144,12 +144,14 @@ public:
                         return returnMessages;
                     } else {
                         // Добавить респавн
-                        map->moveObject(x, y, 5, 5);
+                        unsigned int xSpawnpoint = object->getSpawnpoint().first;
+                        unsigned int ySpawnpoint = object->getSpawnpoint().second;
+                        map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
 
                         *returnMsgCount = 2;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
                         returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, objectNode->first, x, y, DEFAULT_HEALTH_VALUE);
-                        returnMessages[1] = new EventMessage(EventMessage::MOVE, objectNode->first, 5, 5);
+                        returnMessages[1] = new EventMessage(EventMessage::MOVE, objectNode->first, xSpawnpoint, ySpawnpoint);
 
                         return returnMessages;
                     }
@@ -230,10 +232,6 @@ public:
             returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
             return returnMessages;
         }
-
-
-//            std::cout << "Put block: Object " << request.getPlayerID() << " will pul block on x: " << request.getX();
-//            std::cout << " y: " << request.getY() << std::endl;
     }
 };
 

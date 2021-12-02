@@ -4,10 +4,7 @@
 #include "map_class.h"
 
 
-Map::Map() {
-
-    width = 20;
-    height = 20;
+Map::Map(unsigned int width, unsigned int height) : width(width), height(height) {
 
     map = new unsigned int *[height];
 

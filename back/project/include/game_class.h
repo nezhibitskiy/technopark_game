@@ -21,7 +21,7 @@ public:
     ~Game();
 private:
     State state;
-    Map map;
+    Map *map;
 
     std::pair<unsigned int, unsigned int> *spawnpoints;
     char teamCount;

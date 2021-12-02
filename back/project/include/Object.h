@@ -16,6 +16,7 @@ public:
     virtual unsigned int getX() = 0;
     virtual unsigned int getY() = 0;
     virtual void setXY(unsigned int x, unsigned int y) = 0;
+    virtual std::pair<unsigned int, unsigned int> getSpawnpoint() const = 0;
 };
 
 class AbstractObject : public Object {
@@ -37,6 +38,9 @@ public:
     void setXY(unsigned int rX, unsigned int rY) override {
         x = rX;
         y = rY;
+    }
+    std::pair<unsigned int, unsigned int> getSpawnpoint() const override {
+        return std::pair<unsigned int, unsigned int>(x, y);
     }
     ~AbstractObject() = default;
 

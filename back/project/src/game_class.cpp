@@ -2,15 +2,15 @@
 
 #include "game_class.h"
 
-Game::Game() : map() {
-
-    EventMessage message(EventMessage::CREATE_MAP, 0, 20,20);
-    event.push(message);
-
-
+Game::Game() {
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
     unsigned int width = 20;
     unsigned int height = 20;
+
+    EventMessage message(EventMessage::CREATE_MAP, 0, width, height);
+    event.push(message);
+
+    map = new Map(width, height);
 
     unsigned int id = 0;
 
@@ -42,7 +42,7 @@ Game::Game() : map() {
         players[i].setXY(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
 
         objects.insert(std::pair<unsigned int, Object*>(id, &players[i]));
-        map.addObject(id, players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+        map->addObject(id, players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
 
         EventMessage message(EventMessage::CREATE_PLAYER, id, players[i].getSpawnpoint().first,
                 players[i].getSpawnpoint().second, (i / playersInTeamCount));
@@ -52,12 +52,12 @@ Game::Game() : map() {
 
     for (unsigned int i = 0; i < 2 * height; i += 2) {
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
-        map.addObject(id, i / 2, 0);
+        map->addObject(id, i / 2, 0);
         EventMessage message1(EventMessage::CREATE_OBJECT, id, i / 2, 0);
         event.push(message1);
         id++;
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
-        map.addObject(id, i / 2, width - 1);
+        map->addObject(id, i / 2, width - 1);
         EventMessage message2(EventMessage::CREATE_OBJECT, id, i / 2, width - 1);
         event.push(message2);
         id++;
@@ -67,13 +67,13 @@ Game::Game() : map() {
 
     for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
-        map.addObject(id, 0, j / 2);
+        map->addObject(id, 0, j / 2);
         EventMessage message1(EventMessage::CREATE_OBJECT, id, 0, j / 2);
         event.push(message1);
         id++;
 
         objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
-        map.addObject(id, height - 1, j / 2);
+        map->addObject(id, height - 1, j / 2);
         EventMessage message2(EventMessage::CREATE_OBJECT, id, height - 1, j / 2);
         event.push(message2);
         id++;
@@ -117,12 +117,39 @@ int Game::Iteration() {
 
 void Game::start_game() {
 
+
+    BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
+    request.push(moveUp1);
+
+    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
+    request.push(moveUp2);
+    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
+    request.push(moveUp3);
+
+    while (!request.empty()) {
+
+        unsigned int initMsgCount = 0;
+        EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount);
+
+        if (initEventMessages != nullptr) {
+            for (unsigned int i = 0; i < initMsgCount; i++) {
+                event.push(*(initEventMessages[i]));
+            }
+            delete initEventMessages;
+            initEventMessages = nullptr;
+        }
+        request.pop();
+    }
+
+
+
+
     while (!event.empty()) {
         std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
                   "; X: " << event.front().getX() << "; Y: " << event.front().getY() << "; Data: " << event.front().getData() << ";\n";
         event.pop();
     }
-    map.out(&objects);
+    map->out(&objects);
     bool gameFlag = true;
 
     while(gameFlag) {
@@ -219,7 +246,7 @@ void Game::start_game() {
         if (!request.empty()) {
 
             unsigned int msgCount = 0;
-            EventMessage **newEventMessages = moveHandler->Handle(request.front(), &map, &objects, &msgCount);
+            EventMessage **newEventMessages = moveHandler->Handle(request.front(), map, &objects, &msgCount);
 
             if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {
@@ -236,7 +263,7 @@ void Game::start_game() {
             }
 
             request.pop();
-            map.out(&objects);
+            map->out(&objects);
         }
 
     }

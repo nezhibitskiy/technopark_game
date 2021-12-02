@@ -42,7 +42,7 @@ public:
 
     };
 
-    std::pair<unsigned int, unsigned int> getSpawnpoint() const {
+    std::pair<unsigned int, unsigned int> getSpawnpoint() const override {
         return spawnpoint;
     }
 
