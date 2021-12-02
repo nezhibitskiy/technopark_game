@@ -4,6 +4,7 @@
 
 Game::Game() {
     state = INIT;
+    factory = new Factory();
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
     unsigned int width = 20;
@@ -14,7 +15,7 @@ Game::Game() {
 
     map = new Map(width, height);
 
-    unsigned int id = 0;
+    //unsigned int id = 0;
 
     teamCount = 2;
     playersInTeamCount = 2;
@@ -34,51 +35,63 @@ Game::Game() {
         }
     }
 
-    EndBlock *endBlocks = new EndBlock[2 * height];
+    //EndBlock *endBlocks = new EndBlock[2 * height];
 
-    Player *players = new Player[playersInTeamCount * teamCount];
+    //Player *players = new Player[playersInTeamCount * teamCount];
 
     for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
-        players[i].setTeam((char)(i / playersInTeamCount));
-        players[i].saveSpawnpoint(spawnpoints[i]);
-        players[i].setXY(players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+        auto obj = factory->createObject(ObjectClass::playerObject);
+        std::pair<unsigned int, Player*> players;
+        players.first = obj.first;
+        players.second = dynamic_cast<Player *>(obj.second);
+        players.second->setTeam((char)(i / playersInTeamCount));
+        players.second->saveSpawnpoint(spawnpoints[i]);
+        players.second->setXY(players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
-        objects.insert(std::pair<unsigned int, Object*>(id, &players[i]));
-        map->addObject(id, players[i].getSpawnpoint().first, players[i].getSpawnpoint().second);
+        objects.insert(players);
+        map->addObject(players.first, players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
-        EventMessage message(EventMessage::CREATE_PLAYER, id, players[i].getSpawnpoint().first,
-                players[i].getSpawnpoint().second, (i / playersInTeamCount));
+        EventMessage message(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
+                players.second->getSpawnpoint().second, (i / playersInTeamCount));
         event.push(message);
-        id++;
     }
 
     for (unsigned int i = 0; i < 2 * height; i += 2) {
-        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
-        map->addObject(id, i / 2, 0);
-        EventMessage message1(EventMessage::CREATE_OBJECT, id, i / 2, 0);
+        auto obj = factory->createObject(endBlockObject);
+        std::pair<unsigned int, EndBlock*> block;
+        block.first = obj.first;
+        block.second = dynamic_cast<EndBlock *>(obj.second);
+        objects.insert(block);
+        map->addObject(block.first, i / 2, 0);
+        EventMessage message1(EventMessage::CREATE_OBJECT, block.first, i / 2, 0);
         event.push(message1);
-        id++;
-        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[i]));
-        map->addObject(id, i / 2, width - 1);
-        EventMessage message2(EventMessage::CREATE_OBJECT, id, i / 2, width - 1);
+
+        obj = factory->createObject(endBlockObject);
+        block.first = obj.first;
+        block.second = dynamic_cast<EndBlock *>(obj.second);
+        objects.insert(block);
+        map->addObject(block.first, i / 2, width - 1);
+        EventMessage message2(EventMessage::CREATE_OBJECT, block.first, i / 2, width - 1);
         event.push(message2);
-        id++;
     }
 
-    endBlocks = new EndBlock[2 * (width - 1)];
-
     for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
-        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
-        map->addObject(id, 0, j / 2);
-        EventMessage message1(EventMessage::CREATE_OBJECT, id, 0, j / 2);
+        auto obj = factory->createObject(endBlockObject);
+        std::pair<unsigned int, EndBlock*> block;
+        block.first = obj.first;
+        block.second = dynamic_cast<EndBlock *>(obj.second);
+        objects.insert(block);
+        map->addObject(block.first, 0, j / 2);
+        EventMessage message1(EventMessage::CREATE_OBJECT, block.first, 0, j / 2);
         event.push(message1);
-        id++;
 
-        objects.insert(std::pair<unsigned int, Object*>(id, &endBlocks[j]));
-        map->addObject(id, height - 1, j / 2);
-        EventMessage message2(EventMessage::CREATE_OBJECT, id, height - 1, j / 2);
+        obj = factory->createObject(endBlockObject);
+        block.first = obj.first;
+        block.second = dynamic_cast<EndBlock *>(obj.second);
+        objects.insert(block);
+        map->addObject(block.first, height - 1, j / 2);
+        EventMessage message2(EventMessage::CREATE_OBJECT, block.first, height - 1, j / 2);
         event.push(message2);
-        id++;
     }
 
     moveHandler = new MoveHandler;
@@ -92,6 +105,15 @@ Game::~Game() {
     delete attackHandler;
     delete putBlockHandler;
     // Добавить очистку объектов хэш таблицы
+    /*auto it = objects.begin();
+    while (it != objects.end()) {
+        delete it->second;
+        it++;
+    }*/
+    for (auto &elem : objects) {
+        delete elem.second;
+    }
+    objects.clear();
 }
 
 
@@ -140,7 +162,7 @@ void Game::start_game() {
     while (!request.empty()) {
 
         unsigned int initMsgCount = 0;
-        EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount);
+        EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
 
         if (initEventMessages != nullptr) {
             for (unsigned int i = 0; i < initMsgCount; i++) {
@@ -166,6 +188,11 @@ void Game::start_game() {
     while(gameFlag) {
         char key;
         std::cin >> key;
+        //проверка айдишников
+        for (auto &el : objects) {
+            std::cout << el.first << " ";
+        }
+        std::cout << std::endl;
         switch (key) {
             case('q'):
                 gameFlag = false;
@@ -257,7 +284,7 @@ void Game::start_game() {
         if (!request.empty()) {
 
             unsigned int msgCount = 0;
-            EventMessage **newEventMessages = moveHandler->Handle(request.front(), map, &objects, &msgCount);
+            EventMessage **newEventMessages = moveHandler->Handle(request.front(), map, &objects, &msgCount, factory);
 
             if (newEventMessages != nullptr) {
                 for (unsigned int i = 0; i < msgCount; i++) {

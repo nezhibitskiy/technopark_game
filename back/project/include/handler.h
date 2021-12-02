@@ -7,12 +7,13 @@
 
 #include "map_class.h"
 #include "player_class.h"
+#include "factory.h"
 
 template<typename Message, typename ReturnMessage, typename Map, typename Objects>
 class Handler {
 public:
     virtual Handler *SetNext(Handler *handler) = 0;
-    virtual ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount) = 0;
+    virtual ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount, Factory* factory) = 0;
 };
 
 template<typename Message, typename ReturnMessage, typename Objects = Object, typename Map = Map>
@@ -27,9 +28,9 @@ public:
         this->next_handler_ = handler;
         return handler;
     }
-    ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount) override {
+    ReturnMessage **Handle(Message request, Map *map, Objects *objects, unsigned int *returnMsgCount, Factory* factory) override {
         if (this->next_handler_) {
-            return this->next_handler_->Handle(request, map, objects, returnMsgCount);
+            return this->next_handler_->Handle(request, map, objects, returnMsgCount, factory);
         }
         else {
             // default action for unknown request
