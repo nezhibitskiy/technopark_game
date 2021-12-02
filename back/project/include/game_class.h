@@ -29,6 +29,7 @@ private:
     char playersInTeamCount;
 
     std::unordered_multimap<unsigned int, Object*> objects;
+    Factory* factory;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;
     PutBlockHandler *putBlockHandler;

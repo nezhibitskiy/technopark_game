@@ -16,9 +16,9 @@ public:
         MOVE_LEFT = 2,
         MOVE_RIGHT = 3,
     };
-    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
         if (request.getType() > MoveHandler::MOVE_RIGHT)
-            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount, factory);
 
         unsigned int x = 0;
         unsigned int y = 0;
@@ -98,9 +98,9 @@ public:
     enum Type {
         ATTACK = 4,
     };
-    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
         if (request.getType() != AttackHandler::ATTACK)
-            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount, factory);
 
 
         auto playerNode = hashTable->find(request.getID());
@@ -167,9 +167,9 @@ public:
     enum Type {
         PUT_BLOCK = 5
     };
-    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount) override {
+    EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
         if (request.getType() != PutBlockHandler::PUT_BLOCK)
-            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount);
+            return AbstractHandler::Handle(request, map, hashTable, returnMsgCount, factory);
 
         auto playerNode = hashTable->find(request.getID());
         if (playerNode == hashTable->end()) return nullptr;
@@ -202,16 +202,17 @@ public:
         }
 
 
-        DefaultBlock *block = new DefaultBlock;
+        auto obj = factory->createObject(defaultBlockObject);
+        std::pair<unsigned int, DefaultBlock*> block;
+        block.first = obj.first;
+        block.second = dynamic_cast<DefaultBlock *>(obj.second);
 
         // Данный костыль необходимо исправить
         // Первые 80 значений отладочно были созданы в конструкторе карты
         // Необходимо создать уникальный класс фабрику, которая будет во всей игре создавать ID, включая
         // процесс инициализации и дальнейшую игру (сделать объект видимым и там, и там)
-        static unsigned int id = 80;
-        map->addObject(id, x, y);
-        hashTable->insert(std::make_pair(id, block));
-        id++;
+        map->addObject(block.first, x, y);
+        hashTable->insert(block);
 
         if (deleteMessage != nullptr) {
             *returnMsgCount = 2;
