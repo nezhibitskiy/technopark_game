@@ -10,12 +10,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "State.h"
-#include "Player.h"
-
-class PreparationState : public State {
+#include "InputPlayer.h"
+#include "../ilyas/project/include/message.h"
+class PreparationState : public DrawState::State {
 public:
     PreparationState(StateStack &stack, Context context);
-    void draw() override;
+    void draw(std::queue<EventMessage>* eventQueue) override;
     bool handleEvent(const sf::Event &event) override;
 private:
     std::vector<sf::Text> textbuf;

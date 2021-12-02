@@ -6,9 +6,9 @@
 
 
 Application::Application()
-        : mWindow(sf::VideoMode(640, 480), "BLOCK WARS", sf::Style::Close)
-        , mPlayer()
-        , mStateStack(State::Context(mWindow, mPlayer,"../resources/PEPSI_pl.ttf"))
+        : mWindow(sf::VideoMode(640,480), "BLOCK WARS", sf::Style::Close)
+        , mPlayer(mWindow)
+        , mStateStack(DrawState::State::Context(mWindow, mPlayer,"../resources/PEPSI_pl.ttf"))
 
 {
     mWindow.setKeyRepeatEnabled(false);
@@ -22,33 +22,35 @@ void Application::Run()
     while (mWindow.isOpen())
     {
 
-            processInput();
+        sf::Event event;
+        while (mWindow.pollEvent(event)) {
+            processInput(event);
+        }
+
             if (mStateStack.isEmpty())
                 mWindow.close();
 
-
-        render();
+        std::queue<EventMessage> eventQueue;
+            render(&eventQueue);
     }
 }
 
-void  Application::processInput()
+void  Application::processInput(sf::Event event) // внешний while
 {
-    sf::Event event;
-    while (mWindow.pollEvent(event))
-    {
+
         mStateStack.handleEvent(event);
 
         if (event.type == sf::Event::Closed)
             mWindow.close();
-    }
+
 }
 
 
-void Application::render()
+void Application::render(std::queue<EventMessage>* eventQueue)
 {
     mWindow.clear();
 
-    mStateStack.draw();
+    mStateStack.draw(eventQueue);
 
     mWindow.display();
 }

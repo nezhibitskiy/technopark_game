@@ -9,12 +9,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include "State.h"
-
-class MenuState : public State {
+#include "../ilyas/project/include/message.h"
+class MenuState : public DrawState::State {
 public:
     MenuState(StateStack &stack, State::Context context);
 
-    void draw() override;
+    void draw(std::queue<EventMessage>* eventQueue) override;
     void updateActiveText();
     bool handleEvent(const sf::Event &event) override;
 private:

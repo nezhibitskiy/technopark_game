@@ -9,8 +9,12 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <map>
 #include <SFML/Window/Event.hpp>
+#include "../ilyas/project/include/message.h"
+#include "../ilyas/project/include/PlayerHandlers.h"
+#include "Unit.h"
 
-class Player {
+
+class InputPlayer {
 
 public:
     enum Action {
@@ -21,12 +25,13 @@ public:
         Hit
     };
 
-    Player();
+    InputPlayer(sf::RenderWindow &mWindow);
 
-    void handleEvent(const sf::Event &event); /* + Элемент очереди message*/
+    void handleEvent(const sf::Event &event,std::queue<BaseMessage> &request); /* + Элемент очереди message*/
 
 
 private:
+    sf::RenderWindow &mWindow;
     std::map<sf::Keyboard::Key, Action> mKeysMap;
 
 };

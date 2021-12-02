@@ -17,7 +17,7 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
     textbuf.push_back(text);
 }
 
-void PreparationState::draw() {
+void PreparationState::draw(std::queue<EventMessage>* eventQueue) {
 
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);

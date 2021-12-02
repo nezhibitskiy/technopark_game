@@ -1,7 +1,7 @@
 #include "State.h"
 #include "StateStack.h"
 
-State::Context::Context(sf::RenderWindow &window, Player &player, std::string _fontfile = "textures/PEPSI_pl.ttf")
+DrawState::State::Context::Context(sf::RenderWindow &window, InputPlayer &player, std::string _fontfile = "textures/PEPSI_pl.ttf")
         : window(&window), player(&player), fontfile(_fontfile) {
     sf::Font *textfont = new sf::Font;
     if(!textfont->loadFromFile(fontfile)){
@@ -12,18 +12,18 @@ State::Context::Context(sf::RenderWindow &window, Player &player, std::string _f
 
 
 
-void State::requestStackPush(States::ID stateID) {
+void DrawState::State::requestStackPush(States::ID stateID) {
     mStack->pushState(stateID);
 }
 
-void State::requestStackPop() {
+void DrawState::State::requestStackPop() {
     mStack->popState();
 }
 
-void State::requestStateClear() {
+void DrawState::State::requestStateClear() {
     mStack->clearStates();
 }
 
-State::Context State::getContext() const {
+DrawState::State::Context DrawState::State::getContext() const {
     return mContext;
 }

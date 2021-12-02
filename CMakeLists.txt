@@ -25,13 +25,13 @@ endif()
 
 
 set(LIB_SOURCES
-        src/State.cpp  src/Player.cpp src/StateStack.cpp
+        src/State.cpp  src/InputPlayer.cpp src/StateStack.cpp
         src/Application.cpp src/MenuState.cpp src/GameState.cpp
-        src/PreparationState.cpp src/Map.cpp src/Block.cpp src/Unit.cpp)
+        src/PreparationState.cpp src/Map.cpp src/Block.cpp src/Unit.cpp include/Heart.cpp include/Heart.h include/EventManager.cpp include/EventManager.h)
 
 set(LIB_HEADERS
         include/State.h
-        include/Player.h
+        include/InputPlayer.h
         include/StateStack.h
         include/Application.h
         include/MenuState.h
@@ -39,14 +39,16 @@ set(LIB_HEADERS
         include/PreparationState.h
         include/Map.h
         include/Block.h
-        include/Unit.h)
+        include/Unit.h include/DrawHandlers.cpp include/DrawHandlers.h include/Heart.cpp include/Heart.h include/Handler.h include/EventManager.cpp include/EventManager.h)
 
 add_library(lib ${LIB_HEADERS} ${LIB_SOURCES})
 target_include_directories(lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+add_subdirectory(ilyas)
+
 add_executable(test src/main.cpp )
 
-target_link_libraries(test lib)
+target_link_libraries(test lib game player map)
 target_link_libraries (test sfml-graphics sfml-window sfml-system sfml-audio)
 
 

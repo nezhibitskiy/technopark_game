@@ -4,23 +4,28 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <queue>
 #include "State.h"
-#include "Player.h"
+#include "InputPlayer.h"
 #include "Map.h"
+#include "DrawHandlers.h"
+#include "EventManager.h"
+#include "../ilyas/project/include/message.h"
 
-class GameState : public State {
+class GameState : public DrawState::State {
 public:
     GameState(StateStack &stack, Context context);
 
-    void draw() override;
+    void draw(std::queue<EventMessage>* eventQueue) override;
     bool handleEvent(const sf::Event &event) override;
 
 
 private:
-    Player mPlayer;
-    std::vector<sf::Text> textbuf;
-    sf::Font font;
-    Map map;
+    InputPlayer mPlayer;
+    DrawMap map;
+    std::queue<BaseMessage> request;
+   // EventMessage event;
+    Draw::EventManager eventManager;
 };
 
 

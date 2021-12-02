@@ -7,50 +7,52 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include "StateIdentifiers.h"
-
+#include <queue>
+#include "../ilyas/project/include/message.h"
 class StateStack;
 
-class Player;
+class InputPlayer;
+namespace DrawState {
+    class State {
 
-class State {
+    public:
 
-public:
+        typedef std::unique_ptr<State> Ptr;
 
-    typedef std::unique_ptr<State> Ptr;
+        struct Context {
+            Context(sf::RenderWindow &window, InputPlayer &player, std::string fontfile);
 
-    struct Context {
-        Context(sf::RenderWindow &window, Player &player, std::string fontfile);
-        std::string fontfile;
-        sf::Font *font;
-        sf::RenderWindow *window;
-        Player *player;
+            std::string fontfile;
+            sf::Font *font;
+            sf::RenderWindow *window;
+            InputPlayer *player;
+        };
+
+
+        State(StateStack &stack, Context context) : mStack(&stack), mContext(context) {}
+
+        virtual ~State() = default;
+
+        virtual void draw(std::queue<EventMessage>* eventQueue) = 0;
+
+
+        virtual bool handleEvent(const sf::Event &event) = 0;
+
+
+    protected:
+        void requestStackPush(States::ID stateID);
+
+        void requestStackPop();
+
+        void requestStateClear();
+
+        Context getContext() const;
+
+
+    private:
+        StateStack *mStack;
+        Context mContext;
     };
 
-
-    State(StateStack &stack, Context context): mStack(&stack), mContext(context) {}
-    virtual ~State() = default;
-
-    virtual void draw() = 0;
-
-
-
-    virtual bool handleEvent(const sf::Event &event) = 0;
-
-
-protected:
-    void requestStackPush(States::ID stateID);
-
-    void requestStackPop();
-
-    void requestStateClear();
-
-    Context getContext() const;
-
-
-private:
-    StateStack *mStack;
-    Context mContext;
-};
-
-
+}
 #endif //FROMBOOK_STATE_H

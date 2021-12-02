@@ -2,10 +2,12 @@
 #define FROMBOOK_OBJECT_H
 
 
-class Object {
+class DrawObject {
 public:
 
-    virtual void setPos(float x, float y) = 0;
+    virtual void setPos(unsigned int x, unsigned int y) = 0;
+    virtual int getX() = 0;
+    virtual int getY() = 0;
     virtual void draw(sf::RenderWindow & l_window) = 0;
 };
 

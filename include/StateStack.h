@@ -16,12 +16,12 @@ public:
 
 
 public:
-    explicit StateStack(State::Context context);
+    explicit StateStack(DrawState::State::Context context);
 
     template<typename T>
     void registerState(States::ID stateID);
 
-    void draw();
+    void draw(std::queue<EventMessage>* eventQueue);
 
     void handleEvent(const sf::Event &event);
 
@@ -35,7 +35,7 @@ public:
 
 
 private:
-    State::Ptr createState(States::ID stateID);
+    DrawState::State::Ptr createState(States::ID stateID);
     void applyPendingChanges();
 
 
@@ -46,17 +46,17 @@ private:
     };
 
 
-    std::vector<State::Ptr> mStack;
+    std::vector<DrawState::State::Ptr> mStack;
     std::vector<PendingChange> mPendingList;
-    State::Context mContext;
-    std::map<States::ID, std::function<State::Ptr()>> mStatesMap;
+    DrawState::State::Context mContext;
+    std::map<States::ID, std::function<DrawState::State::Ptr()>> mStatesMap;
 };
 
 
 template<typename T>
 void StateStack::registerState(States::ID stateID) {
     mStatesMap[stateID] = [this]() {
-        return State::Ptr(new T(*this, mContext));
+        return DrawState::State::Ptr(new T(*this, mContext));
     };
 }
 

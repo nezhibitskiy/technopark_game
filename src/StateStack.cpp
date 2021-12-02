@@ -4,14 +4,15 @@
 
 
 
-StateStack::StateStack(State::Context context)
+StateStack::StateStack(DrawState::State::Context context)
         : mStack(), mPendingList(), mContext(context), mStatesMap() {
 }
 
 
-void StateStack::draw() {
+void StateStack::draw(std::queue<EventMessage>* eventQueue) {
 
-    for (State::Ptr &state :  mStack) state->draw();
+    for (DrawState::State::Ptr &state :  mStack) state->draw(eventQueue);
+
 }
 
 void StateStack::handleEvent(const sf::Event &event) {
@@ -40,7 +41,7 @@ bool StateStack::isEmpty() const {
     return mStack.empty();
 }
 
-State::Ptr StateStack::createState(States::ID stateID) {
+DrawState::State::Ptr StateStack::createState(States::ID stateID) {
     auto found = mStatesMap.find(stateID);
     assert(found != mStatesMap.end());
 

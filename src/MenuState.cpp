@@ -27,7 +27,7 @@ MenuState::MenuState(StateStack &stack, State::Context context) : State(stack, c
     updateActiveText();
 }
 
-void MenuState::draw() {
+void MenuState::draw(std::queue<EventMessage>* eventQueue) {
 
 
     sf::RenderWindow &window = *getContext().window;

@@ -11,14 +11,17 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "Object.h"
 
-class Unit : public Object{
+class Unit : public DrawObject{
 public:
-    explicit Unit(unsigned int _id = 0, const std::string& filename = "../resources/Boo.png");
-    void  setPos(float x, float y) override;
+    explicit Unit(unsigned int _id = 0, const std::string& filename = "../resources/Unit.png");
+    void  setPos(unsigned int x, unsigned int y) override;
+    int getX() override;
+    int getY() override;
     void draw(sf::RenderWindow & l_window) override;
     ~Unit() = default;
 
 private:
+
     unsigned int id;
     sf::Sprite mUnit;
     sf::Texture texUnit;

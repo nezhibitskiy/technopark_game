@@ -5,8 +5,9 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include "Player.h"
+#include "InputPlayer.h"
 #include "StateStack.h"
+
 
 class Application {
 public:
@@ -16,9 +17,9 @@ public:
 
 
 private:
-    void processInput();
+    void processInput(sf::Event event);
 
-    void render();
+    void render(std::queue<EventMessage>* eventQueue);
 
     void registerStates();
 
@@ -26,7 +27,7 @@ private:
 private:
 
     sf::RenderWindow mWindow;
-    Player mPlayer;
+    InputPlayer mPlayer;
     StateStack mStateStack;
 
 };
