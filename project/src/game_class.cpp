@@ -145,7 +145,15 @@ int Game::Iteration() {
                 app.render(&event);
                 if(app.processInput(&request)){
                     app.changeState();
+                        BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
+    request.push(moveUp1);
+
+    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
+    request.push(moveUp2);
+    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
+    request.push(moveUp3);
                     state = STARTED;
+
                 }
 
 
@@ -185,6 +193,7 @@ void Game::start_game() {
 
 
     while (!request.empty()) {
+
         unsigned int initMsgCount = 0;
         EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
 

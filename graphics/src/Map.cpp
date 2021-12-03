@@ -17,10 +17,10 @@ void DrawMap::DrawBack() {
         }
     }
 
-    for (int i = 0; i < hp.size(); ++i) {
+    /*for (int i = 0; i < hp.size(); ++i) {
         hp[i]->setPos(i * 60 + 60, height - 40);
         hp[i]->draw(mWindow);
-    }
+    }*/
 
 }
 
