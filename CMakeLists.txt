@@ -1,25 +1,18 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.14)
 project(project_tp)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(back)
+add_subdirectory(graphics)
+include_directories(graphics/include)
 
 
-#=======
-#find_package(GTest REQUIRED)
-#
-#add_library(map STATIC project/src/map_class.cpp)s
-#target_include_directories(map PUBLIC project/include)
-#target_link_libraries(map PUBLIC)
-#
-#add_library(game STATIC project/src/game_class.cpp)
-#target_include_directories(game PUBLIC project/include)
-#target_link_libraries(game PUBLIC map)
-#
-#add_executable(test_map project/tests/test_map.cpp)
-#target_link_libraries(test_map GTest::gtest map)
-#
-#add_executable(project_tp project/src/main.cpp)
-#target_link_libraries(project_tp game player map)
-#>>>>>>> back_logic_shevvvo
+add_library(player STATIC project/src/player_class.cpp)
+add_library(map STATIC project/src/map_class.cpp)
+add_library(game STATIC project/src/game_class.cpp project/include/factory.h)
+target_include_directories(player PUBLIC project/include)
+target_include_directories(map PUBLIC project/include)
+target_include_directories(game PUBLIC project/include)
+
+add_executable(project_tp project/src/main.cpp)
+target_link_libraries(project_tp game player map lib sfml-graphics sfml-window sfml-system sfml-audio)

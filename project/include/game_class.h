@@ -8,6 +8,8 @@
 #include "map_class.h"
 #include "PlayerHandlers.h"
 
+#include "Application.h"
+
 class Game {
 public:
     enum State {
@@ -20,6 +22,8 @@ public:
     int Iteration();
     void start_game();
     ~Game();
+
+
 private:
     State state;
     Map *map;
@@ -35,6 +39,9 @@ private:
     PutBlockHandler *putBlockHandler;
     std::queue<EventMessage> event;
     std::queue<BaseMessage> request;
+
+    Application app;
+
 };
 
 #endif // PROJECT_GAME_CLASS_H
