@@ -124,6 +124,7 @@ public:
 
         if (objectNode != hashTable->end()) {
             Object *object = objectNode->second;
+            if (playerNode->first == objectNode->first) return nullptr;
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
