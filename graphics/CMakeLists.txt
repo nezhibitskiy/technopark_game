@@ -58,10 +58,10 @@ target_link_libraries(test lib game player map)
 target_link_libraries (test sfml-graphics sfml-window sfml-system sfml-audio)
 
 
-find_package(GTest REQUIRED)
-include_directories(include)
-set(SOURCES tests/run_tests.cpp tests/input_test.cpp tests/resouces_test.cpp)
-add_executable(runTests ${SOURCES})
-target_link_libraries(runTests GTest::gtest lib)
-target_link_libraries(runTests GTest::gtest sfml-graphics sfml-window sfml-system sfml-audio)
+#find_package(GTest REQUIRED)
+#include_directories(include)
+#set(SOURCES tests/run_tests.cpp tests/input_test.cpp tests/resouces_test.cpp)
+#add_executable(runTests ${SOURCES})
+#target_link_libraries(runTests GTest::gtest lib)
+#target_link_libraries(runTests GTest::gtest sfml-graphics sfml-window sfml-system sfml-audio)
 

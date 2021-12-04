@@ -70,8 +70,9 @@ public:
             threads.push_back(thread);
         }
 
-        outputQueue->push(BaseMessage(0, 0,40,40));
-        outputQueue->push(BaseMessage(0, 1,1,2));
+        outputQueue->push(BaseMessage(0, 3,0,0));
+        outputQueue->push(BaseMessage(0, 2,0,0));
+//        outputQueue->push(BaseMessage(0, 1,1,2));
 
 
         // Wait for all threads in the pool to exit.

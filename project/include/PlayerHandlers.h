@@ -204,27 +204,24 @@ public:
 
 
         auto obj = factory->createObject(defaultBlockObject);
-        std::pair<unsigned int, DefaultBlock*> block;
-        block.first = obj.first;
-        block.second = dynamic_cast<DefaultBlock *>(obj.second);
 
         // Данный костыль необходимо исправить
         // Первые 80 значений отладочно были созданы в конструкторе карты
         // Необходимо создать уникальный класс фабрику, которая будет во всей игре создавать ID, включая
         // процесс инициализации и дальнейшую игру (сделать объект видимым и там, и там)
-        map->addObject(block.first, x, y);
-        hashTable->insert(block);
+        map->addObject(obj.first, x, y);
+        hashTable->insert(obj);
 
         if (deleteMessage != nullptr) {
             *returnMsgCount = 2;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
             returnMessages[0] = deleteMessage;
-            returnMessages[1] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            returnMessages[1] = new EventMessage(EventMessage::CREATE_OBJECT, obj.first, x, y);
             return returnMessages;
         } else {
             *returnMsgCount = 1;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, obj.first, x, y);
             return returnMessages;
         }
     }

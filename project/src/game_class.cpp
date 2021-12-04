@@ -2,7 +2,7 @@
 
 #include "game_class.h"
 
-Game::Game() {
+Game::Game() : gameServer("0.0.0.0", "5000", 4) {
     state = INIT;
     factory = new Factory();
 
@@ -101,6 +101,8 @@ Game::Game() {
     attackHandler = new AttackHandler;
     putBlockHandler = new PutBlockHandler;
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
+
+    gameServer.init();
 }
 
 Game::~Game() {
@@ -145,13 +147,13 @@ int Game::Iteration() {
                 app.render(&event);
                 if(app.processInput(&request)){
                     app.changeState();
-                        BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
-    request.push(moveUp1);
+                    BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
+                    request.push(moveUp1);
 
-    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
-    request.push(moveUp2);
-    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
-    request.push(moveUp3);
+                    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
+                    request.push(moveUp2);
+                    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
+                    request.push(moveUp3);
                     state = STARTED;
 
                 }
@@ -159,9 +161,19 @@ int Game::Iteration() {
 
                 break;
             case (STARTED):
+                unsigned int receivedMsgCount = 0;
+
                 map->out(&objects);
                 while (true) {
-                    app.render(&event);
+                    while(!event.empty()){
+
+                        BaseMessage **receivedMsg = gameServer.run(event.front(), &receivedMsgCount);
+                        for (unsigned int i = 0; i < receivedMsgCount; i++) {
+                            request.push(*receivedMsg[i]);
+                        }
+                        app.render(&event);
+                        event.pop();
+                    }
                     if(app.processInput(&request)){
 
                     }
@@ -170,8 +182,8 @@ int Game::Iteration() {
                 }
                 state = END_OF_GAME;
                 break;
-            default:
-                break;
+            //default:
+              //  break;
 
         }
     }
@@ -205,7 +217,7 @@ void Game::start_game() {
             initEventMessages = nullptr;
         }
         request.pop();
-        map->out(&objects);
+        // map->out(&objects);
     }
 
 

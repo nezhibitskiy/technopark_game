@@ -33,9 +33,7 @@ namespace gameServer {
 
         start_accept();
     }
-
-    void server::run()
-    {
+    void server::init() {
         // Create a pool of threads to run all of the io_contexts.
         for (std::size_t i = 0; i < thread_pool_size_; ++i)
         {
@@ -44,16 +42,28 @@ namespace gameServer {
 
             threads.push_back(thread);
         }
+    }
 
-        while (clientConnectedCount < 1) {
-
-        }
+    BaseMessage **server::run(EventMessage tmpEventMsg, unsigned int *reqMsgCount)
+    {
+//        while (clientConnectedCount < 1) {
+//
+//        }
         // QUEUE HERE
         for (unsigned int i = 0; i < clientConnectedCount; i++) {
-            outputQueue[i]->push(EventMessage(EventMessage::CREATE_MAP, 0,40,40,0));
-            outputQueue[i]->push(EventMessage(EventMessage::CREATE_OBJECT, 1,1,2,0));
+            outputQueue[i]->push(tmpEventMsg);
+            // *reqMsgCount++;
         }
-
+//        BaseMessage **returnMessages = new BaseMessage*[*reqMsgCount];
+//        for (unsigned int i = 0; i < *reqMsgCount; i++) {
+//            returnMessages[i] = new BaseMessage(inputQueue[0]->front().getType(),
+//                                                1, inputQueue[0]->front().getX(),
+//                                                inputQueue[0]->front().getY());
+//            inputQueue[0]->pop();
+        //}
+        return nullptr;
+    }
+    void server::joinThreads() {
         // Wait for all threads in the pool to exit.
         for (std::size_t i = 0; i < threads.size(); ++i)
             threads[i]->join();
@@ -86,8 +96,9 @@ namespace gameServer {
         io_context_.stop();
         std::cout << "STOP COMMAND" << std::endl;
 
-        for (std::size_t i = 0; i < threads.size(); ++i)
-            threads[i]->join();
+        // Wait for all threads in the pool to exit.
+        for (auto & thread : threads)
+            thread->join();
     }
 
 } // namespace gameServer
@@ -98,21 +109,9 @@ namespace gameServer {
 #include <boost/bind/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
-int main()
-{
-    try
-    {
-        // Initialise the server.
-        std::size_t num_threads = 1;
-        gameServer::server gameServer("0.0.0.0", "5000", num_threads);
-
-        // Run the server until stopped.
-        gameServer.run();
-    }
-    catch (std::exception& e)
-    {
-        std::cerr << "exception: " << e.what() << "\n";
-    }
-
-    return 0;
-}
+//int main()
+//{
+//
+//
+//    return 0;
+//}

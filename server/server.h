@@ -22,8 +22,10 @@ namespace gameServer {
         explicit server(const std::string& address, const std::string& port,
                         std::size_t thread_pool_size);
 
+        void init();
         /// Run the server's io_context loop.
-        void run();
+        BaseMessage **run(EventMessage tmpEventMsg, unsigned int *reqMsgCount);
+        void joinThreads();
 
     private:
         /// Initiate an asynchronous accept operation.
