@@ -8,6 +8,8 @@
 #include <boost/array.hpp>
 
 #include "message.h"
+#include "Application.h"
+
 
 using boost::asio::ip::tcp;
 
@@ -45,12 +47,17 @@ class Client
 {
 public:
     Client(boost::asio::io_context& io_context,
-           const std::string& server, const std::string& port)
+           const std::string& server, const std::string& port,
+           std::queue<EventMessage> **rInputQueue,
+           std::queue<BaseMessage> **rOutputQueue)
             : resolver_(io_context),
               socket_(io_context)
     {
         inputQueue = new std::queue<EventMessage>;
         outputQueue = new std::queue<BaseMessage>;
+
+        *rInputQueue = inputQueue;
+        *rOutputQueue = outputQueue;
 
         // Start an asynchronous resolve to translate the server and service names
         // into a list of endpoints.
@@ -60,8 +67,10 @@ public:
                                         boost::asio::placeholders::results));
     }
 
+    std::vector<boost::shared_ptr<std::thread> > threads;
+
+
     void run(boost::asio::io_context *io_context) {
-        std::vector<boost::shared_ptr<std::thread> > threads;
         for (std::size_t i = 0; i < 2; ++i)
         {
             boost::shared_ptr<std::thread> thread(new std::thread(
@@ -70,10 +79,11 @@ public:
             threads.push_back(thread);
         }
 
-        outputQueue->push(BaseMessage(0, 3,0,0));
-        outputQueue->push(BaseMessage(0, 2,0,0));
+//        outputQueue->push(BaseMessage(0, 3,0,0));
+//        outputQueue->push(BaseMessage(0, 2,0,0));
 
-
+    }
+    void endServ() {
         // Wait for all threads in the pool to exit.
         for (std::size_t i = 0; i < threads.size(); ++i)
             threads[i]->join();
@@ -203,19 +213,103 @@ private:
     std::queue<BaseMessage> *outputQueue;
 };
 
+
+class game {
+public:
+    enum State {
+        INIT = 0,
+        WAITING_FOR_GAME = 1,
+        STARTED = 2,
+        END_OF_GAME = 3
+    };
+
+    boost::asio::io_context io_context;
+    game() {
+        c = new Client(io_context, "0.0.0.0", "5000", &event, &request);
+    }
+    ~game() {
+        delete c;
+    }
+    Client *c;//(io_context, "0.0.0.0", "5000", &event, &request);
+
+    void Iteration() {
+        while (state != END_OF_GAME) {
+            switch(state) {
+                case (INIT):
+
+
+
+                    // std::cout << "INIT STATE WAS HERE" << std::endl;
+                    app.render(event);
+                    if(app.processInput(request)){
+                        app.changeState();
+                        state = WAITING_FOR_GAME;
+
+
+                        try
+                        {
+
+                            c->run(&io_context);
+                        }
+                        catch (std::exception& e)
+                        {
+                            std::cout << "Exception: " << e.what() << "\n";
+                        }
+
+                    }
+
+                    break;
+                case (WAITING_FOR_GAME):
+
+                    // std::cout << "WAITING FOR GAME WAS HERE" << std::endl;
+                    app.render(event);
+                    if(app.processInput(request)){
+                        app.changeState();
+
+
+                        state = STARTED;
+
+                    }
+
+
+                    break;
+                case (STARTED):
+                    unsigned int receivedMsgCount = 0;
+
+                    while (true) {
+                        while(!event->empty()){
+
+                            app.render(event);
+                            event->pop();
+                        }
+                        if(app.processInput(request)){
+
+                        }
+
+                    }
+
+                    state = END_OF_GAME;
+                    break;
+                    //default:
+                    //  break;
+
+            }
+        }
+        std::cout << "END OF GAME WAS HERE" << std::endl;
+
+    }
+
+    State state;
+    Application app;
+    std::queue<EventMessage> *event;
+    std::queue<BaseMessage> *request;
+};
+
+
 int main()
 {
-    try
-    {
-        boost::asio::io_context io_context;
+    game game;
 
-        Client c(io_context, "0.0.0.0", "5000");
-        c.run(&io_context);
-    }
-    catch (std::exception& e)
-    {
-        std::cout << "Exception: " << e.what() << "\n";
-    }
-
+    game.Iteration();
     return 0;
 }

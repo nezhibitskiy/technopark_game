@@ -11,6 +11,3 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 #add_library(lib ${LIB_HEADERS} ${LIB_SOURCES})
 #target_include_directories(lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(server connection.cpp server.cpp connection.h request.h response.h server.h message.h) # router.h)
-
-add_executable(client client.cpp)
-target_link_libraries(client ${Boost_LIBRARIES})

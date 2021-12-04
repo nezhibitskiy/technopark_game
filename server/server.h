@@ -24,7 +24,8 @@ namespace gameServer {
 
         void init();
         /// Run the server's io_context loop.
-        BaseMessage **run(EventMessage tmpEventMsg, unsigned int *reqMsgCount);
+        void run(EventMessage tmpEventMsg);
+        BaseMessage **checkRequests(unsigned int *reqMsgCount);
         void joinThreads();
 
     private:
