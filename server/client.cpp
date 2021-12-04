@@ -72,7 +72,6 @@ public:
 
         outputQueue->push(BaseMessage(0, 3,0,0));
         outputQueue->push(BaseMessage(0, 2,0,0));
-//        outputQueue->push(BaseMessage(0, 1,1,2));
 
 
         // Wait for all threads in the pool to exit.
@@ -106,8 +105,6 @@ private:
                                     boost::bind(&Client::handle_read, this,
                                                 boost::asio::placeholders::error));
 
-            // std::string buffer = "This is message from client"; // = Request2String(request_);
-//            std::cin >> buffer;
             while(outputQueue->empty() && (socket_.is_open())) {}
 
             if (socket_.is_open()) {

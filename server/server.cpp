@@ -46,22 +46,28 @@ namespace gameServer {
 
     BaseMessage **server::run(EventMessage tmpEventMsg, unsigned int *reqMsgCount)
     {
-//        while (clientConnectedCount < 1) {
-//
-//        }
         // QUEUE HERE
+        std::vector<BaseMessage> returnVector;
         for (unsigned int i = 0; i < clientConnectedCount; i++) {
             outputQueue[i]->push(tmpEventMsg);
-            // *reqMsgCount++;
+
+            if (!inputQueue[i]->empty()) {
+                while (!inputQueue[i]->empty()) {
+                    returnVector.push_back(inputQueue[i]->front());
+                    inputQueue[i]->pop();
+                }
+            }
         }
-//        BaseMessage **returnMessages = new BaseMessage*[*reqMsgCount];
-//        for (unsigned int i = 0; i < *reqMsgCount; i++) {
-//            returnMessages[i] = new BaseMessage(inputQueue[0]->front().getType(),
-//                                                1, inputQueue[0]->front().getX(),
-//                                                inputQueue[0]->front().getY());
-//            inputQueue[0]->pop();
-        //}
-        return nullptr;
+
+        *reqMsgCount = returnVector.size();
+        BaseMessage **returnMessages = new BaseMessage*[*reqMsgCount];
+        for (unsigned int i = 0; i < *reqMsgCount; i++) {
+            returnMessages[i] = new BaseMessage(returnVector[i].getType(),
+                                                returnVector[i].getID(),
+                                                returnVector[i].getX(),
+                                                returnVector[i].getY());
+        }
+        return returnMessages;
     }
     void server::joinThreads() {
         // Wait for all threads in the pool to exit.
