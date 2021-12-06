@@ -6,7 +6,7 @@
 
 
 Application::Application()
-        : mWindow(sf::VideoMode(640, 640), "BLOCK WARS", sf::Style::Close), mPlayer(mWindow),
+        : mWindow(sf::VideoMode(600,650), "BLOCK WARS", sf::Style::Close), mPlayer(mWindow),
           mStateStack(DrawState::State::Context(mWindow, mPlayer, "../resources/PEPSI_pl.ttf")) {
     mWindow.setKeyRepeatEnabled(false);
     registerStates();

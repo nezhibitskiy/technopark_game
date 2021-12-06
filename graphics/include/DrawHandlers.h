@@ -80,7 +80,7 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetBlocks(10, event->getX(), event->getY());
+            map->SetBlocks(1 , event->getX(), event->getY());
         }
 
 
@@ -99,7 +99,7 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetHp(0, event->getData());
+            map->SetHp(event->getID(), event->getData());
         }
 
 

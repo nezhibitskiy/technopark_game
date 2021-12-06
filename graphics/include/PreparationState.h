@@ -12,14 +12,20 @@
 #include "State.h"
 #include "InputPlayer.h"
 #include "message.h"
+#include "Text.h"
+
 class PreparationState : public DrawState::State {
 public:
     PreparationState(StateStack &stack, Context context);
+    ~PreparationState(){
+        for(auto text : textbuf)
+            delete text;
+    }
     void draw(std::queue<EventMessage>* eventQueue) override;
     bool handleEvent(const sf::Event &event,std::queue<BaseMessage>* request) override;
     void ChangeState() override;
 private:
-    std::vector<sf::Text> textbuf;
+    std::vector<Text*> textbuf;
     sf::Font font;
 
 

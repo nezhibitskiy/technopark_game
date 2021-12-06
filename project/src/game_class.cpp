@@ -7,8 +7,8 @@ Game::Game() {
     factory = new Factory();
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
-    unsigned int width = 16;
-    unsigned int height = 16;
+    unsigned int width = 20;
+    unsigned int height = 20;
 
     EventMessage message(EventMessage::CREATE_MAP, 0, width, height,4);
     event.push(message);
