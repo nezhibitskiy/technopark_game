@@ -18,7 +18,7 @@ namespace gameServer {
         inputQueue = new std::queue<BaseMessage>*[thread_pool_size];
         outputQueue = new std::queue<EventMessage>*[thread_pool_size];
 
-        // Register to handle the signals that indicate when the server should exit.
+        // Register to handle the signals that indicate when the hostPlayer should exit.
         signals_.add(SIGINT);   // остановка процесса с терминала
         signals_.add(SIGTERM);  // сигнал от kill
         signals_.async_wait(boost::bind(&server::handle_stop, this));

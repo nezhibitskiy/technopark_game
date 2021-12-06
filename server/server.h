@@ -23,7 +23,7 @@ namespace gameServer {
                         std::size_t thread_pool_size);
 
         void init();
-        /// Run the server's io_context loop.
+        /// Run the hostPlayer's io_context loop.
         void run(EventMessage tmpEventMsg);
         BaseMessage **checkRequests(unsigned int *reqMsgCount);
         void joinThreads();
@@ -35,7 +35,7 @@ namespace gameServer {
         /// Handle completion of an asynchronous accept operation.
         void handle_accept(const boost::system::error_code& e);
 
-        /// Handle a request to stop the server.
+        /// Handle a request to stop the hostPlayer.
         void handle_stop();
 
         /// The number of threads that will call io_context::run().

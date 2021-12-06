@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lsfml-graphics -lsfml-window -lsfml-sys
 
 
 
-
+include_directories(../project/hostPlayer/include)
 include_directories(../project/include)
 
 set(SFML_STATIC_LIBRARIES TRUE)

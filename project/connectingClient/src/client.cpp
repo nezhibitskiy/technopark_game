@@ -59,7 +59,7 @@ public:
         *rInputQueue = inputQueue;
         *rOutputQueue = outputQueue;
 
-        // Start an asynchronous resolve to translate the server and service names
+        // Start an asynchronous resolve to translate the hostPlayer and service names
         // into a list of endpoints.
         resolver_.async_resolve(server, port,
                                 boost::bind(&Client::handle_resolve, this,

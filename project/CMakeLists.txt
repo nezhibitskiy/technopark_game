@@ -1,0 +1,4 @@
+include_directories(include)
+
+add_subdirectory(hostPlayer)
+add_subdirectory(connectingClient)

@@ -2,7 +2,7 @@
 #define CHAINOFRESPONSABILITY_PLAYERHANDLERS_H
 
 #include "handler.h"
-#include "message.h"
+#include "../../include/message.h"
 #include <unordered_map>
 
 class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, std::unordered_multimap<unsigned int, Object*>> {};
