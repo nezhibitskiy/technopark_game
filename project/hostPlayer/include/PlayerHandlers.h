@@ -2,7 +2,7 @@
 #define CHAINOFRESPONSABILITY_PLAYERHANDLERS_H
 
 #include "handler.h"
-#include "message.h"
+#include "../../include/message.h"
 #include <unordered_map>
 
 class AbstractRequestHandler : public AbstractHandler<BaseMessage, EventMessage, std::unordered_multimap<unsigned int, Object*>> {};
@@ -124,6 +124,7 @@ public:
 
         if (objectNode != hashTable->end()) {
             Object *object = objectNode->second;
+            if (playerNode->first == objectNode->first) return nullptr;
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
@@ -206,10 +207,7 @@ public:
         }
 
 
-        auto obj = factory->createObject(defaultBlockObject);
-        std::pair<unsigned int, DefaultBlock*> block;
-        block.first = obj.first;
-        block.second = dynamic_cast<DefaultBlock *>(obj.second);
+        auto block = factory->createObject(defaultBlockObject);
 
         map->addObject(block.first, x, y);
         hashTable->insert(block);

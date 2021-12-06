@@ -7,6 +7,7 @@
 #include "player_class.h"
 #include "map_class.h"
 #include "PlayerHandlers.h"
+#include "server.h"
 
 #include "Application.h"
 
@@ -54,6 +55,8 @@ public:
 
 
 private:
+    gameServer::server gameServer;
+
     State state;
     Map *map;
 

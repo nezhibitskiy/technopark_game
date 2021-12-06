@@ -7,10 +7,10 @@ GameState::GameState(StateStack &stack, Context context) : State(stack, context)
 
 void GameState::draw(std::queue<EventMessage>* eventQueue) {
 
-    while(!eventQueue->empty()){
+
         eventManager.EventHandle(&eventQueue->front(),&map);
-        eventQueue->pop();
-    }
+
+
 
     map.DrawBack();
     map.Draw();

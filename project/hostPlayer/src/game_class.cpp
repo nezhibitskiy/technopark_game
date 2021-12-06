@@ -10,7 +10,7 @@
 #define GAME_TIME 30
 
 
-Game::Game() {
+Game::Game() : gameServer("0.0.0.0", "5000", 4) {
     state = INIT;
     factory = new Factory();
 
@@ -84,6 +84,8 @@ Game::Game() {
     attackHandler = new AttackHandler;
     putBlockHandler = new PutBlockHandler;
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
+
+    gameServer.init();
 }
 
 Game::~Game() {
@@ -145,17 +147,48 @@ int Game::Iteration() {
 
                 break;
             case (STARTED):
+
+                while (!request.empty()) {
+                    unsigned int initMsgCount = 0;
+                    EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
+
+                    if (initEventMessages != nullptr) {
+                        for (unsigned int i = 0; i < initMsgCount; i++) {
+                            event.push(*(initEventMessages[i]));
+                        }
+                        delete initEventMessages;
+                        initEventMessages = nullptr;
+                    }
+                    request.pop();
+                }
+
+
                 while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME) {
                     map->out(&objects);
 
-                    app.render(&event);
-                    app.processInput(&request);
+                    unsigned int receivedMsgCount = 0;
+
+                    BaseMessage **receivedMsg = gameServer.checkRequests(&receivedMsgCount);
+                    if (receivedMsg != nullptr) {
+                        for (unsigned int i = 0; i < receivedMsgCount; i++) {
+                            request.push(*receivedMsg[i]);
+                        }
+                    }
+
+                    while(!event.empty()){
+                        gameServer.run(event.front());
+                        app.render(&event);
+                        event.pop();
+                    }
+
+                    if (app.processInput(&request)) {
+
+                    }
                     start_game();
                 }
                 app.changeState();
                 state = GAME_OVER;
                 break;
-
             case (GAME_OVER):
                 int res = getWinTeam();
                 EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
@@ -174,138 +207,8 @@ int Game::Iteration() {
 
 void Game::start_game() {
 
-
-//    BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
-//    request.push(moveUp1);
-//
-//    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
-//    request.push(moveUp2);
-//    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
-//    request.push(moveUp3);
-
-
-    while (!request.empty()) {
-        unsigned int initMsgCount = 0;
-        EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
-
-        if (initEventMessages != nullptr) {
-            for (unsigned int i = 0; i < initMsgCount; i++) {
-                event.push(*(initEventMessages[i]));
-            }
-            delete initEventMessages;
-            initEventMessages = nullptr;
-        }
-        request.pop();
-        map->out(&objects);
-    }
-
-
-
-
-    /* while (!event.empty()) {
-         std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
-                   "; X: " << event.front().getX() << "; Y: " << event.front().getY() << "; Data: " << event.front().getData() << ";\n";
-         event.pop();
-     }*/
-
     bool gameFlag = true;
 
-//    while(gameFlag) {
-//        char key;
-//        std::cin >> key;
-//        //проверка айдишников
-//        for (auto &el : objects) {
-//            std::cout << el.first << " ";
-//        }
-//        std::cout << std::endl;
-//        switch (key) {
-//            case('q'):
-//                gameFlag = false;
-//                break;
-//            case('w'): {
-//                BaseMessage moveUp(MoveHandler::MOVE_UP, 0);
-//                request.push(moveUp);
-//                break;
-//            }
-//            case('a'): {
-//                BaseMessage moveLeft(MoveHandler::MOVE_LEFT, 0);
-//                request.push(moveLeft);
-//                break;
-//            }
-//            case('s'): {
-//                BaseMessage moveDown(MoveHandler::MOVE_DOWN, 0);
-//                request.push(moveDown);
-//                break;
-//            }
-//            case('d'): {
-//                BaseMessage moveRight(MoveHandler::MOVE_RIGHT, 0);
-//                request.push(moveRight);
-//                break;
-//            }
-//
-//            case('t'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage attackUp(AttackHandler::ATTACK, 0, playerNode->second->getX(), playerNode->second->getY() - 1);
-//                request.push(attackUp);
-//                break;
-//            }
-//            case('f'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage attackLeft(AttackHandler::ATTACK, 0, playerNode->second->getX() - 1, playerNode->second->getY());
-//                request.push(attackLeft);
-//                break;
-//            }
-//            case('g'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage attackDown(AttackHandler::ATTACK, 0, playerNode->second->getX(), playerNode->second->getY() + 1);
-//                request.push(attackDown);
-//                break;
-//            }
-//            case('h'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage attackRight(AttackHandler::ATTACK, 0, playerNode->second->getX() + 1, playerNode->second->getY());
-//                request.push(attackRight);
-//                break;
-//            }
-//
-//
-//            case('i'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage putBlockUp(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX(), playerNode->second->getY() - 1);
-//                request.push(putBlockUp);
-//                break;
-//            }
-//            case('j'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage putBlockLeft(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX() - 1, playerNode->second->getY());
-//                request.push(putBlockLeft);
-//                break;
-//            }
-//            case('k'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage putBlockDown(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX(), playerNode->second->getY() + 1);
-//                request.push(putBlockDown);
-//                break;
-//            }
-//            case('l'): {
-//                auto playerNode = objects.find(0);
-//                if (playerNode == objects.end()) break;
-//                BaseMessage putBlockRight(PutBlockHandler::PUT_BLOCK, 0, playerNode->second->getX() + 1, playerNode->second->getY());
-//                request.push(putBlockRight);
-//                break;
-//            }
-//
-//            default: {
-//                break;
-//            }
-//        }
 
     if (!request.empty()) {
 
@@ -320,17 +223,10 @@ void Game::start_game() {
             newEventMessages = nullptr;
         }
 
-        /*while (!event.empty()) {
-            std::cout << "New Event Message: type: " << event.front().getType() << "; ID: " << event.front().getID() <<
-            "; X: " << event.front().getX() << "; Y: " << event.front().getY() << "; Data: " << event.front().getData() << ";\n";
-            event.pop();
-        }*/
-
         request.pop();
         map->out(&objects);
     }
 
-//    }
 }
 
 bool Game::move(unsigned int x, unsigned int y) {

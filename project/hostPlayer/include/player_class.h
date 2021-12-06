@@ -2,7 +2,7 @@
 #define PROJECT_PLAYER_CLASS_H
 
 #include <iostream>
-#include "message.h"
+#include "../../include/message.h"
 #include "Object.h"
 
 #define DEFAULT_HEALTH_VALUE 5
