@@ -9,7 +9,7 @@
 
 class Player: public AbstractObject {
 public:
-    Player() : health(DEFAULT_HEALTH_VALUE) { };
+    Player() : health(DEFAULT_HEALTH_VALUE), kills(0) { };
 
     bool Damagable() const override { return true; };
 
@@ -50,12 +50,29 @@ public:
         team = rTeam;
     }
 
+    char getTeam() const override {
+        return team;
+    }
+
+    void addKill() override {
+        kills += 1;
+    }
+
+    unsigned int getKills() const override {
+        return kills;
+    }
+
+    bool isItCover () override {
+        return false;
+    }
+
     ~Player() = default;
 
 private:
     char id;
     char health;
     char team;
+    unsigned int kills;
     std::pair<unsigned int, unsigned int> spawnpoint;
 };
 

@@ -35,11 +35,13 @@ class EventMessage : public BaseMessage {
 public:
     enum {
         CREATE_MAP = 0,
-        CREATE_PLAYER = 1,
-        CREATE_OBJECT = 2,
-        SET_HEALTH = 3,
-        MOVE = 4,
-        DELETE = 5
+        CREATE_ZONE = 1,
+        CREATE_PLAYER = 2,
+        CREATE_OBJECT = 3,
+        SET_HEALTH = 4,
+        MOVE = 5,
+        DELETE = 6,
+        WIN_TEAM = 7
     };
     EventMessage(unsigned short Type, unsigned short ID,
                  unsigned int X, unsigned int Y, unsigned short Data = 0) :

@@ -16,6 +16,10 @@ public:
     virtual unsigned int getX() = 0;
     virtual unsigned int getY() = 0;
     virtual void setXY(unsigned int x, unsigned int y) = 0;
+    virtual void addKill() = 0;
+    virtual unsigned int getKills() const = 0;
+    virtual bool isItCover() { return false; }
+    virtual char getTeam() const = 0;
     virtual std::pair<unsigned int, unsigned int> getSpawnpoint() const = 0;
 };
 
@@ -35,6 +39,11 @@ public:
 
     unsigned int getX() override { return x; }
     unsigned int getY() override { return y; }
+    void addKill() override {}
+    unsigned int getKills() const override { return 0; }
+    virtual char getTeam() const { return 0; }
+    virtual bool isItCover() { return false; }
+
     void setXY(unsigned int rX, unsigned int rY) override {
         x = rX;
         y = rY;
