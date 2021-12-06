@@ -13,7 +13,8 @@ namespace States
         None,
         Menu,
         Preparation,
-        Game
+        Game,
+        End
 
     };
 }

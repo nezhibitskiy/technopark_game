@@ -15,8 +15,10 @@ Game::Game() : gameServer("0.0.0.0", "5000", 4) {
     factory = new Factory();
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
+
     unsigned int width = 20;
     unsigned int height = 20;
+
 
     EventMessage message(EventMessage::CREATE_MAP, 0, width, height, 4);
     event.push(message);
@@ -24,7 +26,7 @@ Game::Game() : gameServer("0.0.0.0", "5000", 4) {
     map = new Map(width, height);
 
     zone = new Zone();
-    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 8);
+    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 3);
     EventMessage createZone(EventMessage::CREATE_ZONE, 0, zone->getX(), zone->getY(), zone->getRad());
     event.push(createZone);
 
@@ -184,6 +186,7 @@ int Game::Iteration() {
                     }
                     start_game();
                 }
+                app.changeState();
                 state = GAME_OVER;
                 break;
             case (GAME_OVER):
@@ -191,11 +194,9 @@ int Game::Iteration() {
                 EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
                 std::cout << "WIN: " << res << "    END OF GAME WAS HERE" << std::endl;
-
-                app.render(&event);
-                if (app.processInput(&request)) {
+                   // app.render(&event);
+                  //  app.changeState();
                     state = END_OF_GAME;
-                }
                 break;
         }
     }

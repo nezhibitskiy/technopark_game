@@ -18,24 +18,33 @@ namespace Draw {
 
             moveHandler = new MoveHandler;
             mapHandler = new MapHandler;
+            zoneHandler = new ZoneHandler;
             objectHandler = new ObjectHandler;
             healthHandler = new HealthHandler;
             deleteHandler = new DeleteHandler;
             playerHandler = new PlayerHandler;
+            winHandler = new WinHandler;
             Register(moveHandler);
             Register(mapHandler);
+            Register(zoneHandler);
             Register(objectHandler);
             Register(healthHandler);
             Register(deleteHandler);
             Register(playerHandler);
+            Register(winHandler);
         }
 
         ~EventManager(){
             delete moveHandler;
             delete mapHandler;
+            delete zoneHandler;
             delete objectHandler;
             delete deleteHandler;
             delete healthHandler;
+            delete winHandler;
+            delete playerHandler;
+
+
 
         }
         void EventHandle(EventMessage *event, DrawMap *map) {
@@ -53,9 +62,11 @@ namespace Draw {
     private:
         MoveHandler *moveHandler;
         MapHandler *mapHandler;
+        ZoneHandler *zoneHandler;
         HealthHandler *healthHandler;
         ObjectHandler *objectHandler;
         DeleteHandler *deleteHandler;
+        WinHandler *winHandler;
         PlayerHandler *playerHandler;
         std::vector<EventHandler *> mHandlers;
     };

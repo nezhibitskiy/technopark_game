@@ -1,16 +1,21 @@
 #include <iostream>
 #include "Map.h"
 
+
 #define SIZE_PIXELS 30
 
 DrawMap::DrawMap(sf::RenderWindow &mWindow) : mWindow(mWindow) {
 
 }
-
+DrawMap::~DrawMap(){
+    for(int i = 0; i < width; ++i)
+        delete[] mBlocks[i];
+    delete[] mBlocks;
+}
 
 void DrawMap::DrawBack() {
 
-    mWindow.clear(sf::Color::White);
+    mWindow.clear(sf::Color::Black);
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 
@@ -26,15 +31,25 @@ void DrawMap::DrawBack() {
 
 }
 
-void DrawMap::SetHp(unsigned short id, int hpVal) {
+void DrawMap::SetZone(unsigned int x, unsigned int y, unsigned int rad) {
 
 
-    hp.resize(hpVal);
-    for (int i = 0; i < hp.size(); ++i) {
-
-        hp[i] = new Heart;
+    for (int i = x - rad; i < rad + x; ++i) {
+        for (int j = y - rad; j < rad + y; ++j) {
+            mBlocks[i][j].setID(5);
+            mBlocks[i][j].SetWinZone();
+        }
     }
+}
 
+void DrawMap::SetHp(unsigned short id, int hpVal) {
+    if( id == 0) {
+        hp.resize(hpVal);
+        for (int i = 0; i < hp.size(); ++i) {
+
+            hp[i] = new Heart;
+        }
+    }
 }
 
 
@@ -46,7 +61,9 @@ void DrawMap::SetUnits(unsigned short id, unsigned int x, unsigned int y) {
 
 void DrawMap::SetBlocks(unsigned short id, unsigned int x, unsigned int y) {
 
-    mBlocks[x][y].setID(id);
+    if (mBlocks[x][y].IsWinZone() && id != 1) {
+        mBlocks[x][y].setID(5);
+    } else mBlocks[x][y].setID(id);
 
 }
 
@@ -68,7 +85,6 @@ void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned in
     mObjects.resize(width * height, nullptr);
 
 
-
     mBlocks = new Block *[width];
     for (int i = 0; i < width; ++i)
         mBlocks[i] = new Block[height];
@@ -86,12 +102,9 @@ void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, 
 
     mUnits[id]->setPos(x * SIZE_PIXELS + SIZE_PIXELS / 2, y * SIZE_PIXELS + SIZE_PIXELS / 2);
     if (id == 0) {
-        mUnits[id]->setID(10);
+        mUnits[id]->setID(0);
     } else mUnits[id]->setID(team);
 
 }
-
-
-
 
 

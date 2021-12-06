@@ -7,11 +7,13 @@
 
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <map>
 #include "Unit.h"
 #include "Block.h"
 #include "Heart.h"
 #include "Object.h"
+#include "Text.h"
 
 class Object;
 
@@ -19,15 +21,19 @@ class DrawMap {
 public:
 
     explicit DrawMap( sf::RenderWindow &mWindow);
+    ~DrawMap();
     void DrawMapInit(unsigned int _width,unsigned int _height,unsigned int countUnits);
     void DrawPlayerInit(unsigned short id,unsigned int x,unsigned int y,unsigned int team);
-    ~DrawMap() = default;
+
     void DrawBack();
     void SetHp(unsigned short id,int hpVal);
     void SetUnits(unsigned short id, unsigned int x, unsigned int y );
     void SetBlocks(unsigned short id, unsigned int x, unsigned int y);
+    void SetZone(unsigned int x, unsigned int y,unsigned int rad);
+
     void Draw();
 private:
+
     unsigned int width;
     unsigned int height;
     sf::RenderWindow &mWindow;
