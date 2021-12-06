@@ -13,7 +13,7 @@ namespace Draw {
     class MoveHandler : public EventHandler {
     public:
         enum MoveType {
-            MOVE = 4
+            MOVE = 5
         };
 
         bool CanHandle(EventMessage *event) override {

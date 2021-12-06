@@ -7,8 +7,9 @@ Game::Game() {
     factory = new Factory();
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
-    unsigned int width = 20;
-    unsigned int height = 20;
+    unsigned int width = 15;
+    unsigned int height = 10;
+
 
     EventMessage message(EventMessage::CREATE_MAP, 0, width, height,4);
     event.push(message);
@@ -56,44 +57,19 @@ Game::Game() {
         event.push(message);
     }
 
-    for (unsigned int i = 0; i < 2 * height; i += 2) {
-        auto obj = factory->createObject(endBlockObject);
-        std::pair<unsigned int, EndBlock*> block;
-        block.first = obj.first;
-        block.second = dynamic_cast<EndBlock *>(obj.second);
-        objects.insert(block);
-        map->addObject(block.first, i / 2, 0);
-        EventMessage message1(EventMessage::CREATE_OBJECT, block.first, i / 2, 0);
-        event.push(message1);
-
-        obj = factory->createObject(endBlockObject);
-        block.first = obj.first;
-        block.second = dynamic_cast<EndBlock *>(obj.second);
-        objects.insert(block);
-        map->addObject(block.first, i / 2, width - 1);
-        EventMessage message2(EventMessage::CREATE_OBJECT, block.first, i / 2, width - 1);
-        event.push(message2);
-    }
-
-    for (unsigned int j = 2; j < 2 * (width - 1); j += 2) {
-        auto obj = factory->createObject(endBlockObject);
-        std::pair<unsigned int, EndBlock*> block;
-        block.first = obj.first;
-        block.second = dynamic_cast<EndBlock *>(obj.second);
-        objects.insert(block);
-        map->addObject(block.first, 0, j / 2);
-        EventMessage message1(EventMessage::CREATE_OBJECT, block.first, 0, j / 2);
-        event.push(message1);
-
-        obj = factory->createObject(endBlockObject);
-        block.first = obj.first;
-        block.second = dynamic_cast<EndBlock *>(obj.second);
-        objects.insert(block);
-        map->addObject(block.first, height - 1, j / 2);
-        EventMessage message2(EventMessage::CREATE_OBJECT, block.first, height - 1, j / 2);
-        event.push(message2);
-
-
+    for (unsigned int i = 0; i < width; ++i) {
+        for (unsigned int j = 0; j < height; ++j) {
+            if (i == 0 || j == 0 || (i == width - 1) || (j == height - 1)) {
+                auto obj = factory->createObject(endBlockObject);
+                std::pair<unsigned int, EndBlock*> block;
+                block.first = obj.first;
+                block.second = dynamic_cast<EndBlock *>(obj.second);
+                objects.insert(block);
+                map->addObject(block.first, i, j);
+                EventMessage message1(EventMessage::CREATE_OBJECT, block.first, i, j);
+                event.push(message1);
+            }
+        }
     }
 
 
