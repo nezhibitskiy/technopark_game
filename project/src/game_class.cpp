@@ -49,17 +49,20 @@ Game::Game() {
     for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
         auto players = factory->createPlayer();
         playerIds[i] = players.first;
-        players.second = dynamic_cast<Player *>(players.second);
         players.second->setTeam((char) (i / playersInTeamCount));
         players.second->saveSpawnpoint(spawnpoints[i]);
         players.second->setXY(players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
+
         objects.insert(players);
         map->addObject(players.first, players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
-        EventMessage message(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
+        EventMessage createPlayer(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
                              players.second->getSpawnpoint().second, (i / playersInTeamCount));
-        event.push(message);
+
+        event.push(createPlayer);
+        EventMessage setHealth(EventMessage::SET_HEALTH, players.first, 0, 0, DEFAULT_HEALTH_VALUE);
+        event.push(setHealth);
     }
 
     for (unsigned int i = 0; i < width; ++i) {

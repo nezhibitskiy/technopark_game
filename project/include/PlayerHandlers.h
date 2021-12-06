@@ -141,6 +141,8 @@ public:
                         player->addKill();
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
+                        // проверить, есть ли в этой клетке что-то
+
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
 
                         *returnMsgCount = 2;
