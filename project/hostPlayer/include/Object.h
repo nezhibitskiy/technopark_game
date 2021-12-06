@@ -21,6 +21,7 @@ public:
     virtual bool isItCover() { return false; }
     virtual char getTeam() const = 0;
     virtual std::pair<unsigned int, unsigned int> getSpawnpoint() const = 0;
+    virtual ~Object() = default;
 };
 
 class AbstractObject : public Object {
@@ -51,7 +52,7 @@ public:
     std::pair<unsigned int, unsigned int> getSpawnpoint() const override {
         return std::pair<unsigned int, unsigned int>(x, y);
     }
-    ~AbstractObject() = default;
+    ~AbstractObject() override = default;
 
 private:
     unsigned int x;
