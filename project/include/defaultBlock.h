@@ -24,8 +24,13 @@ class DefaultBlock : public AbstractObject {
         return '4';
     }
     ~DefaultBlock() = default;
-private:
+
     unsigned char health = 1;
+
+public:
+    enum {
+        ID = 1
+    };
 };
 
 #endif //CHAINOFRESPONSABILITY_DEFAULTBLOCK_H

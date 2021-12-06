@@ -18,15 +18,15 @@ Game::Game() {
     unsigned int width = 16;
     unsigned int height = 16;
 
-    zone = new Zone();
-    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 8);
-
     EventMessage message(EventMessage::CREATE_MAP, 0, width, height, 4);
     event.push(message);
 
     map = new Map(width, height);
 
-    //unsigned int id = 0;
+    zone = new Zone();
+    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 8);
+    EventMessage createZone(EventMessage::CREATE_ZONE, 0, zone->getX(), zone->getY(), zone->getRad());
+    event.push(createZone);
 
     teamCount = 2;
     playersInTeamCount = 2;
@@ -46,16 +46,10 @@ Game::Game() {
         }
     }
 
-    //EndBlock *endBlocks = new EndBlock[2 * height];
-
-    //Player *players = new Player[playersInTeamCount * teamCount];
-
     for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
-        auto obj = factory->createObject(ObjectClass::playerObject);
-        std::pair<unsigned int, Player *> players;
-        players.first = obj.first;
+        auto players = factory->createPlayer();
         playerIds[i] = players.first;
-        players.second = dynamic_cast<Player *>(obj.second);
+        players.second = dynamic_cast<Player *>(players.second);
         players.second->setTeam((char) (i / playersInTeamCount));
         players.second->saveSpawnpoint(spawnpoints[i]);
         players.second->setXY(players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
@@ -72,12 +66,9 @@ Game::Game() {
         for (unsigned int j = 0; j < height; ++j) {
             if (i == 0 || j == 0 || (i == width - 1) || (j == height - 1)) {
                 auto obj = factory->createObject(endBlockObject);
-                std::pair<unsigned int, EndBlock *> block;
-                block.first = obj.first;
-                block.second = dynamic_cast<EndBlock *>(obj.second);
-                objects.insert(block);
-                map->addObject(block.first, i, j);
-                EventMessage message1(EventMessage::CREATE_OBJECT, block.first, i, j);
+                objects.insert(obj);
+                map->addObject(obj.first, i, j);
+                EventMessage message1(EventMessage::CREATE_OBJECT, EndBlock::ID, i, j);
                 event.push(message1);
             }
         }
@@ -157,22 +148,24 @@ int Game::Iteration() {
 
                     }
                     start_game();
-
-
-
-                    // ыход из цикла
                 }
-                state = END_OF_GAME;
-
-
-                break;
-            default:
+                state = GAME_OVER;
                 break;
 
+            case (GAME_OVER):
+                int res = getWinTeam();
+                EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
+                event.push(winTeam);
+                std::cout << "WIN: " << res << "    END OF GAME WAS HERE" << std::endl;
+
+                app.render(&event);
+                if (app.processInput(&request)) {
+                    state = END_OF_GAME;
+                }
+                break;
         }
     }
-    int res = getWinTeam();
-    std::cout << "WIN: " << res << "    END OF GAME WAS HERE" << std::endl;
+
 
     return EXIT_SUCCESS;
 }
@@ -338,31 +331,6 @@ void Game::start_game() {
 //    }
 }
 
-/*
-somefunc() {
-    добавляю
-    в
-    очередь
-    нынешнюю точку
-    while (очередь не пуста) {
-        достаю
-        из
-        очереди точку
-        if (был в этой
-        точке) {
-            скипаю
-        } else {
-            добавляю
-            её
-            соседей
-            в очередь
-            проверяю
-            саму точку
-        }
-    }
-}*/
-
-
 bool Game::move(unsigned int x, unsigned int y) {
     std::queue<std::pair<unsigned int, unsigned int>> q;
     q.push(std::make_pair(x, y));
@@ -480,7 +448,6 @@ int Game::getWinTeam() {
                 }
             }
         }
-
     }
     // выяснить, какая тима имеет больше застроившихся игроков
     std::vector<int> res;
@@ -542,8 +509,8 @@ int Game::getWinTeam() {
         std::vector<std::pair<unsigned int, int>> killsTeam;
         for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
             auto it = objects.find(playerIds[i]);
-            for (int j = 0; j < res.size(); ++j) {
-                if (it->second->getTeam() == res.at(j)) {
+            for (int re : res) {
+                if (it->second->getTeam() == re) {
                     for (int k = 0; k < killsTeam.size(); ++k) {  // ?????????????????????
                         if (killsTeam.at(k).second == it->second->getTeam()) {
                             killsTeam.at(k).first += it->second->getKills();

@@ -8,6 +8,7 @@
 #include "Object.h"
 
 class EndBlock : public AbstractObject {
+
     bool Damagable() const override {
         return false;
     }
@@ -26,6 +27,10 @@ class EndBlock : public AbstractObject {
 public:
     EndBlock() = default;
     ~EndBlock() = default;
+
+    enum {
+        ID = 0
+    };
 };
 
 #endif //CHAINOFRESPONSABILITY_ENDBLOCK_H

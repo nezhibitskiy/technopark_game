@@ -9,7 +9,6 @@
 #include "endBlock.h"
 
 
-
 enum ObjectClass {
     playerObject = 0,
     defaultBlockObject = 1,
@@ -19,13 +18,10 @@ enum ObjectClass {
 class Factory {
 public:
     Factory() : id_count(0) {}
+
     //template <typename classObject>
-    std::pair<unsigned int, Object*> createObject(unsigned short val) {
+    std::pair<unsigned int, Object *> createObject(unsigned short val) {
         switch (val) {
-            case playerObject: {
-                auto player = new Player();
-                return std::make_pair(id_count++, player);
-            }
             case defaultBlockObject: {
                 auto block = new DefaultBlock();
                 return std::make_pair(id_count++, block);
@@ -40,7 +36,13 @@ public:
         }
     }
 
+    std::pair<unsigned int, Player *> createPlayer() {
+        auto player = new Player();
+        return std::make_pair(id_count++, player);
+    }
+
 private:
     unsigned int id_count;
 };
+
 #endif //PROJECT_TP_FACTORY_H
