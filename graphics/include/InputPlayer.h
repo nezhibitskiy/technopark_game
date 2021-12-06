@@ -22,18 +22,20 @@ public:
         MoveRight,
         MoveUp,
         MoveDown,
-        Hit
+        Hit,
+        Build
     };
+
 
     InputPlayer(sf::RenderWindow &mWindow);
 
-    void handleEvent(const sf::Event &event,std::queue<BaseMessage> &request); /* + Элемент очереди message*/
+    void handleEvent(const sf::Event &event, std::queue<BaseMessage> &request); /* + Элемент очереди message*/
 
 
 private:
     sf::RenderWindow &mWindow;
     std::map<sf::Keyboard::Key, Action> mKeysMap;
-
+    std::map<sf::Mouse::Button, Action> mMouseMap;
 };
 
 

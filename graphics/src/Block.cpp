@@ -1,12 +1,14 @@
 
 #include "Block.h"
-
-Block::Block(unsigned int _id, const std::string& filename): id(0){
+#define SCALE 1
+Block::Block(unsigned int _id, const std::string& filename): id(_id){
 
     if(!texBlock.loadFromFile(filename)){
         throw std::runtime_error("Failed to load " + filename);
     }
+    texBlock.setSmooth(true);
     mBlock.setTexture(texBlock);
+    mBlock.setScale(SCALE,SCALE);
 
 
 }
@@ -16,6 +18,7 @@ void Block::setPos(unsigned int x, unsigned int y) {
 }
 
 void Block::draw(sf::RenderWindow &l_window) {
+    setID(id);
     l_window.draw(mBlock);
 }
 
@@ -25,11 +28,13 @@ int Block::getX() {
 void Block::setID(unsigned short _id) {
     id =_id;
     switch(id){
-        case 10:
-            mBlock.setColor(sf::Color(220, 220, 0, 255));
-            break;
+
         case 0:
-            mBlock.setColor(sf::Color(255, 255, 255, 255));
+            mBlock.setColor(sf::Color(255, 255, 255, 200));
+            break;
+        default:
+            mBlock.setColor(sf::Color(255, 255, 0, 255));
+
     }
 
 }

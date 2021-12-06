@@ -1,15 +1,15 @@
 #include "Unit.h"
-
+#define SCALE 0.75
 Unit::Unit(unsigned int _id, const std::string& filename): id(_id){
 
     if(!texUnit.loadFromFile(filename)){
         throw std::runtime_error("Failed to load texture" + filename);
     }
-
+    texUnit.setSmooth(1);
     mUnit.setOrigin(texUnit.getSize().x * 0.5 ,
                     texUnit.getSize().y * 0.5);
     mUnit.setTexture(texUnit);
-
+    mUnit.setScale(SCALE,SCALE);
 
 }
 

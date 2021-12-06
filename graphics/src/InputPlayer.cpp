@@ -1,7 +1,6 @@
-#include <iostream>
+
 #include "InputPlayer.h"
-
-
+#define SIZE_PIXELS 30
 
 InputPlayer::InputPlayer(sf::RenderWindow &_mWindow) : mWindow(_mWindow) {
 
@@ -11,10 +10,12 @@ InputPlayer::InputPlayer(sf::RenderWindow &_mWindow) : mWindow(_mWindow) {
     mKeysMap[sf::Keyboard::W] = MoveUp;
     mKeysMap[sf::Keyboard::S] = MoveDown;
 
+    mMouseMap[sf::Mouse::Left] = Hit;
+    mMouseMap[sf::Mouse::Right] = Build;
 
 }
 
-void InputPlayer::handleEvent(const sf::Event &event,std::queue<BaseMessage> &request) /* + Элемент очереди message*/
+void InputPlayer::handleEvent(const sf::Event &event, std::queue<BaseMessage> &request)
 {
 
     if (event.type == sf::Event::KeyReleased) {
@@ -52,15 +53,17 @@ void InputPlayer::handleEvent(const sf::Event &event,std::queue<BaseMessage> &re
 
     }
     if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.key.code == sf::Mouse::Left) {
 
-            BaseMessage putBlock(PutBlockHandler::PUT_BLOCK, 0, sf::Mouse::getPosition(mWindow).x/40,
-                                      sf::Mouse::getPosition(mWindow).y/ 40);
+        auto found = mMouseMap.find(event.mouseButton.button);
+        if (found->second == Build) {
+
+            BaseMessage putBlock(PutBlockHandler::PUT_BLOCK, 0, sf::Mouse::getPosition(mWindow).x / SIZE_PIXELS,
+                                 sf::Mouse::getPosition(mWindow).y / SIZE_PIXELS);
             request.push(putBlock);
         }
-        if (event.key.code == sf::Mouse::Right) {
-            BaseMessage attack(AttackHandler::ATTACK, 0,sf::Mouse::getPosition(mWindow).x/40,
-                                    sf::Mouse::getPosition(mWindow).y/ 40);
+        if (found->second == Hit) {
+            BaseMessage attack(AttackHandler::ATTACK, 0, sf::Mouse::getPosition(mWindow).x / SIZE_PIXELS,
+                               sf::Mouse::getPosition(mWindow).y / SIZE_PIXELS);
             request.push(attack);
 
         }

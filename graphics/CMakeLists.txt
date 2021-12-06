@@ -33,7 +33,7 @@ endif()
 set(LIB_SOURCES
         src/State.cpp  src/InputPlayer.cpp src/StateStack.cpp
         src/Application.cpp src/MenuState.cpp src/GameState.cpp
-        src/PreparationState.cpp src/Map.cpp src/Block.cpp src/Unit.cpp include/Heart.cpp include/Heart.h include/EventManager.cpp include/EventManager.h)
+        src/PreparationState.cpp src/Map.cpp src/Block.cpp src/Unit.cpp src/Heart.cpp include/Heart.h include/EventManager.cpp include/EventManager.h src/Text.cpp include/Text.h)
 
 set(LIB_HEADERS
         include/State.h
@@ -45,7 +45,7 @@ set(LIB_HEADERS
         include/PreparationState.h
         include/Map.h
         include/Block.h
-        include/Unit.h include/DrawHandlers.cpp include/DrawHandlers.h include/Heart.cpp include/Heart.h include/Handler.h include/EventManager.cpp include/EventManager.h)
+        include/Unit.h src/DrawHandlers.cpp include/DrawHandlers.h src/Heart.cpp include/Heart.h include/Handler.h include/EventManager.cpp include/EventManager.h src/Text.cpp include/Text.h)
 
 add_library(lib ${LIB_HEADERS} ${LIB_SOURCES})
 target_include_directories(lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

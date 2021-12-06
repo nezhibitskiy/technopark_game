@@ -10,21 +10,27 @@
 class DefaultBlock : public AbstractObject {
     bool Damagable() const override {
         return true;
-    };
+    }
     unsigned char Damage(const unsigned char damageValue) override {
         if (damageValue > health)
             return 0; // Если умер - возвращает true
         else return (health - damageValue);
-    };
+    }
     bool CanBeStandOn() const override {
         return false;
-    };
+    }
+    bool isItCover() override { return true; }
     char getObjectSymbol() override {
         return '4';
     }
     ~DefaultBlock() = default;
-private:
+
     unsigned char health = 1;
+
+public:
+    enum {
+        ID = 1
+    };
 };
 
 #endif //CHAINOFRESPONSABILITY_DEFAULTBLOCK_H

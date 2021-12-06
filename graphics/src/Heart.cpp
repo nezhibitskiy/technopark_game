@@ -26,3 +26,7 @@ void Heart::draw(sf::RenderWindow &l_window) {
     l_window.draw(mHeart);
 }
 
+void Heart::setID(unsigned short _id) {
+        id = _id;
+}
+

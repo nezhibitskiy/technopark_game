@@ -10,16 +10,25 @@
 #include <SFML/Graphics/Text.hpp>
 #include "State.h"
 #include "message.h"
+#include "Text.h"
+
 class MenuState : public DrawState::State {
 public:
     MenuState(StateStack &stack, State::Context context);
+    ~MenuState(){
+        for(auto text : textbuf)
+            delete text;
+    }
+    void draw(std::queue<EventMessage> *eventQueue) override;
 
-    void draw(std::queue<EventMessage>* eventQueue) override;
     void updateActiveText();
-    bool handleEvent(const sf::Event &event,std::queue<BaseMessage>* request) override;
+
+    bool handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) override;
+
     void ChangeState() override;
+
 private:
-    std::vector<sf::Text> textbuf;
+    std::vector<Text*> textbuf;
     sf::Font font;
 };
 

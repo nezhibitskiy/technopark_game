@@ -8,18 +8,29 @@
 #include "Object.h"
 
 class EndBlock : public AbstractObject {
+
     bool Damagable() const override {
         return false;
-    };
+    }
+
     bool CanBeStandOn() const override {
         return false;
-    };
+    }
+
     char getObjectSymbol() override {
         return '#';
+    }
+
+    bool isItCover() override {
+        return true;
     }
 public:
     EndBlock() = default;
     ~EndBlock() = default;
+
+    enum {
+        ID = 0
+    };
 };
 
 #endif //CHAINOFRESPONSABILITY_ENDBLOCK_H

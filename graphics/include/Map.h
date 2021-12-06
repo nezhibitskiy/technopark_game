@@ -11,6 +11,9 @@
 #include "Unit.h"
 #include "Block.h"
 #include "Heart.h"
+#include "Object.h"
+
+class Object;
 
 class DrawMap {
 public:
@@ -29,7 +32,8 @@ private:
     unsigned int height;
     sf::RenderWindow &mWindow;
     std::vector<Unit*> mUnits;
-    Block **mBlocks;
+    std::vector<Object*> mObjects;
+    Block** mBlocks;
     std::vector<Heart*> hp;
 
 };

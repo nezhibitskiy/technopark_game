@@ -7,14 +7,16 @@
 #include <SFML/Graphics/Texture.hpp>
 #include "Object.h"
 
-class Heart : public DrawObject{
+class Heart : public Draw::Object{
 public:
     Heart(const std::string& filename = "../resources/heart.png");
     void setPos(unsigned int x, unsigned int y) override;
     int getX() override;
     int getY() override;
+    void setID(unsigned short _id) override;
     void draw(sf::RenderWindow & l_window) override;
 private:
+    unsigned short id;
     sf::Sprite mHeart;
     sf::Texture texHeart;
 };
