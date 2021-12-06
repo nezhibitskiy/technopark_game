@@ -127,6 +127,7 @@ public:
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
+                    std::cout << "KILLS   " << player->getKills() << std::endl;
                     if (!object->Respawn()) {
                         //Удалить объект
 
@@ -137,8 +138,11 @@ public:
                         hashTable->erase(objectNode);
                         return returnMessages;
                     } else {
+                        player->addKill();
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
+                        // проверить, есть ли в этой клетке что-то
+
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
 
                         *returnMsgCount = 2;
@@ -207,10 +211,6 @@ public:
         block.first = obj.first;
         block.second = dynamic_cast<DefaultBlock *>(obj.second);
 
-        // Данный костыль необходимо исправить
-        // Первые 80 значений отладочно были созданы в конструкторе карты
-        // Необходимо создать уникальный класс фабрику, которая будет во всей игре создавать ID, включая
-        // процесс инициализации и дальнейшую игру (сделать объект видимым и там, и там)
         map->addObject(block.first, x, y);
         hashTable->insert(block);
 
@@ -218,12 +218,12 @@ public:
             *returnMsgCount = 2;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
             returnMessages[0] = deleteMessage;
-            returnMessages[1] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            returnMessages[1] = new EventMessage(EventMessage::CREATE_OBJECT, DefaultBlock::ID, x, y);
             return returnMessages;
         } else {
             *returnMsgCount = 1;
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, request.getID(), x, y);
+            returnMessages[0] = new EventMessage(EventMessage::CREATE_OBJECT, DefaultBlock::ID, x, y);
             return returnMessages;
         }
     }

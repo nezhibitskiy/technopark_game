@@ -3,6 +3,7 @@
 #include "MenuState.h"
 #include "GameState.h"
 #include "PreparationState.h"
+#include "EndState.h"
 
 
 Application::Application()
@@ -65,6 +66,7 @@ void Application::registerStates() {
     mStateStack.registerState<MenuState>(States::Menu);
     mStateStack.registerState<PreparationState>(States::Preparation);
     mStateStack.registerState<GameState>(States::Game);
+    mStateStack.registerState<EndState>(States::End);
 
 
 }

@@ -5,7 +5,7 @@ Unit::Unit(unsigned int _id, const std::string& filename): id(_id){
     if(!texUnit.loadFromFile(filename)){
         throw std::runtime_error("Failed to load texture" + filename);
     }
-    texUnit.setSmooth(1);
+    texUnit.setSmooth(true);
     mUnit.setOrigin(texUnit.getSize().x * 0.5 ,
                     texUnit.getSize().y * 0.5);
     mUnit.setTexture(texUnit);
@@ -36,13 +36,13 @@ void Unit::setID(unsigned short _id) {
     id = _id;
     switch (id) {
         case 0:
-            mUnit.setColor(sf::Color(80, 210, 120, 255));
+            mUnit.setColor(sf::Color(70, 70, 250, 255));
             break;
         case 1:
             mUnit.setColor(sf::Color(250, 70, 70, 255));
             break;
         case 10:
-            mUnit.setColor(sf::Color(60, 255, 30, 255));
+            mUnit.setColor(sf::Color(80, 80, 100, 255));
             break;
     }
 }

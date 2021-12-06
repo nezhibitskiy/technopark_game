@@ -48,10 +48,29 @@ namespace Draw {
 
     };
 
+    class ZoneHandler : public EventHandler {
+    public:
+        enum Type {
+            CREATE_ZONE = 1
+        };
+
+        bool CanHandle(EventMessage *event) override {
+            if (event->getType() == ZoneHandler::CREATE_ZONE) {
+                return true;
+            } else return false;
+        }
+
+        void Handler(EventMessage *event, DrawMap *map) override {
+            map->SetZone(event->getX(),event->getY(),event->getData());
+        }
+
+
+    };
+
     class PlayerHandler : public EventHandler {
     public:
         enum Type {
-            CREATE_PLAYER = 1
+            CREATE_PLAYER = 2
         };
 
         bool CanHandle(EventMessage *event) override {
@@ -70,7 +89,7 @@ namespace Draw {
     class ObjectHandler : public EventHandler {
     public:
         enum Type {
-            CREATE_OBJECT = 2
+            CREATE_OBJECT = 3
         };
 
         bool CanHandle(EventMessage *event) override {
@@ -80,7 +99,7 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetBlocks(1 , event->getX(), event->getY());
+            map->SetBlocks(event->getID() , event->getX(), event->getY());
         }
 
 
@@ -89,7 +108,7 @@ namespace Draw {
     class HealthHandler : public EventHandler {
     public:
         enum Type {
-            SET_HEALTH = 3
+            SET_HEALTH = 4
         };
 
         bool CanHandle(EventMessage *event) override {
@@ -108,7 +127,7 @@ namespace Draw {
     class DeleteHandler : public EventHandler {
     public:
         enum Type {
-            DELETE = 5
+            DELETE = 6
         };
 
         bool CanHandle(EventMessage *event) override {
@@ -118,7 +137,25 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetBlocks(0, event->getX(), event->getY());
+            map->SetBlocks(event->getID(), event->getX(), event->getY());
+        }
+
+
+    };
+    class WinHandler : public EventHandler {
+    public:
+        enum Type {
+            WIN_TEAM = 7
+        };
+
+        bool CanHandle(EventMessage *event) override {
+            if (event->getType() == WinHandler::WIN_TEAM) {
+                return true;
+            } else return false;
+        }
+
+        void Handler(EventMessage *event, DrawMap *map) override {
+
         }
 
 

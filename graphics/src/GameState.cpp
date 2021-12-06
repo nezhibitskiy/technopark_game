@@ -32,5 +32,5 @@ bool GameState::handleEvent(const sf::Event &event,std::queue<BaseMessage>* requ
 
 void GameState::ChangeState() {
     requestStackPop();
-    requestStateClear();
+    requestStackPush(States::Game);
 }

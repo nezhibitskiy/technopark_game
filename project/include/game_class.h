@@ -10,17 +10,46 @@
 
 #include "Application.h"
 
+class Zone {
+public:
+    void setXY(unsigned int x_, unsigned int y_, unsigned int rad_) {
+        x = x_;
+        y = y_;
+        rad = rad_;
+    }
+
+    unsigned int getX() const {
+        return x;
+    }
+
+    unsigned int getY() const {
+        return y;
+    }
+
+    unsigned int getRad() const {
+        return rad;
+    }
+
+private:
+    unsigned int x;
+    unsigned int y;
+    unsigned int rad;
+};
+
 class Game {
 public:
     enum State {
         INIT = 0,
         WAITING_FOR_GAME = 1,
         STARTED = 2,
-        END_OF_GAME = 3
+        GAME_OVER = 3,
+        END_OF_GAME = 4
     };
     Game();
     int Iteration();
     void start_game();
+    bool move(unsigned int x, unsigned y);
+    int getWinTeam();
     ~Game();
 
 
@@ -33,6 +62,8 @@ private:
     char playersInTeamCount;
 
     std::unordered_multimap<unsigned int, Object*> objects;
+    unsigned int* playerIds;
+    Zone* zone;
     Factory* factory;
     MoveHandler *moveHandler;
     AttackHandler *attackHandler;

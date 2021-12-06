@@ -9,17 +9,19 @@
 
 class Block : public Draw::Object {
 public:
-    explicit Block(unsigned int _id = 0, const std::string& filename = "../resources/bricks.png");
+    explicit Block(unsigned int _id = 10, const std::string& filename = "../resources/bricks.png");
     void setPos(unsigned int x, unsigned int y) override;
     void setID(unsigned short _id) override;
     int getX() override;
     int getY() override;
+    bool IsWinZone();
+    void SetWinZone();
     void draw(sf::RenderWindow & l_window) override;
 
     ~Block() = default;
 
 private:
-
+    bool winZone;
     unsigned short id;
     sf::Sprite mBlock;
     sf::Texture texBlock;
