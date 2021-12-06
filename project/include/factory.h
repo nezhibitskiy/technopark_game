@@ -43,7 +43,4 @@ public:
 private:
     unsigned int id_count;
 };
-
-
-
 #endif //PROJECT_TP_FACTORY_H

@@ -127,6 +127,7 @@ public:
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
+                    std::cout << "KILLS   " << player->getKills() << std::endl;
                     if (!object->Respawn()) {
                         //Удалить объект
 
@@ -137,6 +138,7 @@ public:
                         hashTable->erase(objectNode);
                         return returnMessages;
                     } else {
+                        player->addKill();
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
