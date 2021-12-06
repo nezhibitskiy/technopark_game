@@ -7,7 +7,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 30
+#define GAME_TIME 60
 
 
 Game::Game() : gameServer("0.0.0.0", "5000", 4) {
@@ -164,7 +164,7 @@ int Game::Iteration() {
 
 
                 while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME) {
-                    map->out(&objects);
+                   // map->out(&objects);
 
                     unsigned int receivedMsgCount = 0;
 
@@ -224,7 +224,7 @@ void Game::start_game() {
         }
 
         request.pop();
-        map->out(&objects);
+        // map->out(&objects);
     }
 
 }
