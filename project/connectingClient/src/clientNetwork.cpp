@@ -44,7 +44,7 @@ Client::Client(const std::string& server, const std::string& port,
     // Register to handle the signals that indicate when the hostPlayer should exit.
     signals_.add(SIGINT);   // остановка процесса с терминала
     signals_.add(SIGTERM);  // сигнал от kill
-    signals_.async_wait(boost::bind(&Client::endServ, this));
+    signals_.async_wait(boost::bind(&Client::endServer, this));
 
     inputQueue = new std::queue<EventMessage>;
     outputQueue = new std::queue<BaseMessage>;
@@ -72,7 +72,7 @@ void Client::run() {
     }
 
 }
-void Client::endServ() {
+void Client::endServer() {
     // Wait for all threads in the pool to exit.
     io_context.stop();
     for (std::size_t i = 0; i < threads.size(); ++i)
@@ -93,6 +93,7 @@ void Client::handle_resolve(const boost::system::error_code& err,
     else
     {
         std::cout << "Error 1: " << err.message() << "\n";
+        endServer();
     }
 }
 void Client::handle_connect(const boost::system::error_code& err)
@@ -118,7 +119,7 @@ void Client::handle_connect(const boost::system::error_code& err)
     else
     {
         std::cout << "Error 2: " << err.message() << "\n";
-
+        endServer();
 
         // MAKE TIMER AND ATTEMPT COUNT FOR RECONNECTION
 //            resolver_.async_resolve(request_.host, request_.port,
@@ -153,7 +154,7 @@ void Client::handle_write_request(const boost::system::error_code& err)
         std::cout << "Error 3: " << err.message() << "\n";
         EventMessage inputMessage(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
         inputQueue->push(inputMessage);
-        io_context.stop();
+        endServer();
     }
 }
 
@@ -183,6 +184,6 @@ void Client::handle_read(const boost::system::error_code& err)
         std::cout << "Error 6: " << err << "\n";
         EventMessage inputMessage(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
         inputQueue->push(inputMessage);
-        io_context.stop();
+        endServer();
     }
 }

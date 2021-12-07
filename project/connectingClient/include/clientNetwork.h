@@ -24,15 +24,13 @@ public:
            std::queue<BaseMessage> **rOutputQueue);
 
     void run();
-    void endServ();
+    void endServer();
 
 private:
     void handle_resolve(const boost::system::error_code& err,
                         const tcp::resolver::results_type& endpoints);
 
     void handle_connect(const boost::system::error_code& err);
-
-    void handle_stop();
 
     void handle_write_request(const boost::system::error_code& err);
 

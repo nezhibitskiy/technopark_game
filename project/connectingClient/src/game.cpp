@@ -50,7 +50,6 @@ void Game::Iteration() {
 
                     }
                 }
-
                 state = END_OF_GAME;
                 break;
                 //default:
