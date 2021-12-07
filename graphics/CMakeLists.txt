@@ -13,7 +13,7 @@ set(SFML_STATIC_LIBRARIES TRUE)
 if(SFML_STATIC_LIBRARIES)
     add_definitions(-DSFML_STATIC)
 endif()
-find_package(SFML 2 COMPONENTS audio graphics window system network)
+#find_package(SFML 2 COMPONENTS audio graphics window system network)
 
 set(CMAKE_CXX_STANDARD 14)
 set(SFML_INCLUDE_DIR "/home/rewieer/Libraries/SFML-2.5.1/include")

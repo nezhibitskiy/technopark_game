@@ -7,7 +7,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 120
+#define GAME_TIME 30
 
 
 Game::Game() : gameServer("0.0.0.0", "5000", 4) {
@@ -172,8 +172,11 @@ int Game::Iteration() {
                 EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
                 std::cout << "WIN: " << res << "    END OF GAME WAS HERE" << std::endl;
-                   // app.render(&event);
-                  //  app.changeState();
+                   app.render(&event);
+                if (app.processInput(&request)) {
+                    app.changeState();
+                }
+
                     state = END_OF_GAME;
                 break;
         }

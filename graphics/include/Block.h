@@ -18,8 +18,6 @@ public:
     void SetWinZone();
     void draw(sf::RenderWindow & l_window) override;
 
-    ~Block() = default;
-
 private:
     bool winZone;
     unsigned short id;

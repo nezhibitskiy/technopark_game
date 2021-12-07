@@ -68,5 +68,4 @@ void Application::registerStates() {
     mStateStack.registerState<GameState>(States::Game);
     mStateStack.registerState<EndState>(States::End);
 
-
 }

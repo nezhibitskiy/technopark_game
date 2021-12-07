@@ -1,3 +1,4 @@
+#include <iostream>
 #include "EndState.h"
 
 EndState::EndState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
@@ -24,7 +25,11 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
 }
 
 bool EndState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
-    return true;
+    if (event.key.code == sf::Keyboard::Escape && event.type == sf::Event::KeyReleased) {
+        std::cout << "CLOSE window \n";
+        return true;
+
+    } else return false;
 }
 
 void EndState::ChangeState() {
