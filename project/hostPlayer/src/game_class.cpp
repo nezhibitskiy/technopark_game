@@ -7,7 +7,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 60
+#define GAME_TIME 120
 
 
 Game::Game() : gameServer("0.0.0.0", "5000", 4) {
@@ -93,11 +93,6 @@ Game::~Game() {
     delete attackHandler;
     delete putBlockHandler;
     // Добавить очистку объектов хэш таблицы
-    /*auto it = objects.begin();
-    while (it != objects.end()) {
-        delete it->second;
-        it++;
-    }*/
     for (auto &elem: objects) {
         delete elem.second;
     }
@@ -112,24 +107,13 @@ int Game::Iteration() {
     while (state != END_OF_GAME) {
         switch (state) {
             case (INIT):
-                // std::cout << "INIT STATE WAS HERE" << std::endl;
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
                     state = WAITING_FOR_GAME;
                 }
-
-
-                // Вписываются все функции частей игры и условия перехода
-                // if (window.init()) {
-                // state = SERVER_STARTED
-                // state = CLIENT_CONNECT_TO_SERVER
-                // window.find_serv()
-                //}
                 break;
             case (WAITING_FOR_GAME):
-
-                // std::cout << "WAITING FOR GAME WAS HERE" << std::endl;
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
@@ -141,10 +125,7 @@ int Game::Iteration() {
                     BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
                     request.push(moveUp3);
                     state = STARTED;
-
                 }
-
-
                 break;
             case (STARTED):
 
@@ -162,10 +143,7 @@ int Game::Iteration() {
                     request.pop();
                 }
 
-
                 while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME) {
-                   // map->out(&objects);
-
                     unsigned int receivedMsgCount = 0;
 
                     BaseMessage **receivedMsg = gameServer.checkRequests(&receivedMsgCount);
@@ -201,14 +179,10 @@ int Game::Iteration() {
         }
     }
 
-
     return EXIT_SUCCESS;
 }
 
 void Game::start_game() {
-
-    bool gameFlag = true;
-
 
     if (!request.empty()) {
 
@@ -224,7 +198,6 @@ void Game::start_game() {
         }
 
         request.pop();
-        // map->out(&objects);
     }
 
 }

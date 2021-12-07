@@ -1,5 +1,4 @@
 #include <iostream>
-#include <istream>
 #include <ostream>
 #include <string>
 #include <boost/asio.hpp>
@@ -78,9 +77,6 @@ public:
 
             threads.push_back(thread);
         }
-
-//        outputQueue->push(BaseMessage(0, 3,0,0));
-//        outputQueue->push(BaseMessage(0, 2,0,0));
 
     }
     void endServ() {
@@ -178,11 +174,11 @@ private:
             std::cout << inputBuffer_.data() << std::endl;
 
             EventMessage inputMessage = parse(inputBuffer_);
-            std::cout << "Input message type: " << inputMessage.getType();
-            std::cout << "; Input message ID: " << inputMessage.getID();
-            std::cout << "; Input message X: " << inputMessage.getX();
-            std::cout << "; Input message Y: " << inputMessage.getY();
-            std::cout << "; Input message Data: " << inputMessage.getData() << ";" << std::endl;
+//            std::cout << "Input message type: " << inputMessage.getType();
+//            std::cout << "; Input message ID: " << inputMessage.getID();
+//            std::cout << "; Input message X: " << inputMessage.getX();
+//            std::cout << "; Input message Y: " << inputMessage.getY();
+//            std::cout << "; Input message Data: " << inputMessage.getData() << ";" << std::endl;
 
             inputQueue->push(inputMessage);
 
@@ -225,31 +221,26 @@ public:
 
     boost::asio::io_context io_context;
     game() {
-        c = new Client(io_context, "0.0.0.0", "5000", &event, &request);
+        client = new Client(io_context, "0.0.0.0", "5000", &event, &request);
     }
     ~game() {
-        delete c;
+        delete client;
     }
-    Client *c;//(io_context, "0.0.0.0", "5000", &event, &request);
+    Client *client;
 
     void Iteration() {
         while (state != END_OF_GAME) {
             switch(state) {
                 case (INIT):
-
-
-
-                    // std::cout << "INIT STATE WAS HERE" << std::endl;
                     app.render(event);
                     if(app.processInput(request)){
                         app.changeState();
                         state = WAITING_FOR_GAME;
 
-
                         try
                         {
 
-                            c->run(&io_context);
+                            client->run(&io_context);
                         }
                         catch (std::exception& e)
                         {
@@ -261,7 +252,6 @@ public:
                     break;
                 case (WAITING_FOR_GAME):
 
-                    // std::cout << "WAITING FOR GAME WAS HERE" << std::endl;
                     app.render(event);
                     if(app.processInput(request)){
                         app.changeState();
@@ -270,11 +260,9 @@ public:
                         state = STARTED;
 
                     }
-
-
                     break;
+
                 case (STARTED):
-                    unsigned int receivedMsgCount = 0;
 
                     while (true) {
                         while(!event->empty()){
@@ -285,7 +273,6 @@ public:
                         if(app.processInput(request)){
 
                         }
-
                     }
 
                     state = END_OF_GAME;
