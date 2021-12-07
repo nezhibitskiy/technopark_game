@@ -45,13 +45,18 @@ boost::array<unsigned char, 12> pack(const BaseMessage &data) {
 class Client
 {
 public:
-    Client(boost::asio::io_context& io_context,
-           const std::string& server, const std::string& port,
+    Client(const std::string& server, const std::string& port,
            std::queue<EventMessage> **rInputQueue,
            std::queue<BaseMessage> **rOutputQueue)
             : resolver_(io_context),
+              signals_(io_context),
               socket_(io_context)
     {
+        // Register to handle the signals that indicate when the hostPlayer should exit.
+        signals_.add(SIGINT);   // остановка процесса с терминала
+        signals_.add(SIGTERM);  // сигнал от kill
+        signals_.async_wait(boost::bind(&Client::handle_stop, this));
+
         inputQueue = new std::queue<EventMessage>;
         outputQueue = new std::queue<BaseMessage>;
 
@@ -69,11 +74,11 @@ public:
     std::vector<boost::shared_ptr<std::thread> > threads;
 
 
-    void run(boost::asio::io_context *io_context) {
+    void run() {
         for (std::size_t i = 0; i < 2; ++i)
         {
             boost::shared_ptr<std::thread> thread(new std::thread(
-                    boost::bind(&boost::asio::io_context::run, io_context)));
+                    boost::bind(&boost::asio::io_context::run, &io_context)));
 
             threads.push_back(thread);
         }
@@ -101,7 +106,15 @@ private:
             std::cout << "Error 1: " << err.message() << "\n";
         }
     }
+    void handle_stop()
+    {
+        io_context.stop();
+        std::cout << "STOP COMMAND" << std::endl;
 
+        // Wait for all threads in the pool to exit.
+        for (auto & thread : threads)
+            thread->join();
+    }
     void handle_connect(const boost::system::error_code& err)
     {
         if (!err)
@@ -158,6 +171,9 @@ private:
         else
         {
             std::cout << "Error 3: " << err.message() << "\n";
+            EventMessage inputMessage(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
+            inputQueue->push(inputMessage);
+            io_context.stop();
         }
     }
 
@@ -166,12 +182,7 @@ private:
         if (!err)
         {
 
-//            std::istream response_stream(&response_buf_);
-//            response_.body = std::string(std::istreambuf_iterator<char>(response_stream), std::istreambuf_iterator<char>());
-//            std::cout << response_.body << std::endl;
-            // Continue reading remaining data until EOF.
-
-            std::cout << inputBuffer_.data() << std::endl;
+            // std::cout << inputBuffer_.data() << std::endl;
 
             EventMessage inputMessage = parse(inputBuffer_);
 //            std::cout << "Input message type: " << inputMessage.getType();
@@ -190,14 +201,19 @@ private:
         else
         {
             std::cout << "Error 6: " << err << "\n";
+            EventMessage inputMessage(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
+            inputQueue->push(inputMessage);
+            io_context.stop();
         }
     }
 
 
 private:
+
+    boost::asio::io_context io_context;
     tcp::resolver resolver_;
     tcp::socket socket_;
-
+    boost::asio::signal_set signals_;
     boost::asio::streambuf response_buf_;
 
 
@@ -219,9 +235,8 @@ public:
         END_OF_GAME = 3
     };
 
-    boost::asio::io_context io_context;
     game() {
-        client = new Client(io_context, "0.0.0.0", "5000", &event, &request);
+        client = new Client("0.0.0.0", "5000", &event, &request);
     }
     ~game() {
         delete client;
@@ -240,7 +255,7 @@ public:
                         try
                         {
 
-                            client->run(&io_context);
+                            client->run();
                         }
                         catch (std::exception& e)
                         {
@@ -264,7 +279,7 @@ public:
 
                 case (STARTED):
 
-                    while (true) {
+                    while (event->front().getType() != EventMessage::CLOSE_GAME) {
                         while(!event->empty()){
 
                             app.render(event);

@@ -39,7 +39,8 @@ public:
         CREATE_OBJECT = 2,
         SET_HEALTH = 3,
         MOVE = 4,
-        DELETE = 5
+        DELETE = 5,
+        CLOSE_GAME = 10
     };
     EventMessage(unsigned short Type, unsigned short ID,
                  unsigned int X, unsigned int Y, unsigned short Data = 0) :

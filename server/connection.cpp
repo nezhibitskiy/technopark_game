@@ -77,10 +77,10 @@ namespace gameServer {
             std::cout << inputBuffer_.data() << std::endl;
 
             BaseMessage inputMessage = parse(inputBuffer_);
-            std::cout << "Input message type: " << inputMessage.getType();
-            std::cout << "; Input message ID: " << inputMessage.getID();
-            std::cout << "; Input message X: " << inputMessage.getX();
-            std::cout << "; Input message Y: " << inputMessage.getY() << ";" << std::endl;
+//            std::cout << "Input message type: " << inputMessage.getType();
+//            std::cout << "; Input message ID: " << inputMessage.getID();
+//            std::cout << "; Input message X: " << inputMessage.getX();
+//            std::cout << "; Input message Y: " << inputMessage.getY() << ";" << std::endl;
 
             inputQueue->push(inputMessage);
 
