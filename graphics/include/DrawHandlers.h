@@ -142,24 +142,7 @@ namespace Draw {
 
 
     };
-    class WinHandler : public EventHandler {
-    public:
-        enum Type {
-            WIN_TEAM = 7
-        };
 
-        bool CanHandle(EventMessage *event) override {
-            if (event->getType() == WinHandler::WIN_TEAM) {
-                return true;
-            } else return false;
-        }
-
-        void Handler(EventMessage *event, DrawMap *map) override {
-
-        }
-
-
-    };
 }
 
 #endif //TEST_DRAWHANDLERS_H

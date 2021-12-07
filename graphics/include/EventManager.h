@@ -23,7 +23,7 @@ namespace Draw {
             healthHandler = new HealthHandler;
             deleteHandler = new DeleteHandler;
             playerHandler = new PlayerHandler;
-            winHandler = new WinHandler;
+
             Register(moveHandler);
             Register(mapHandler);
             Register(zoneHandler);
@@ -31,7 +31,7 @@ namespace Draw {
             Register(healthHandler);
             Register(deleteHandler);
             Register(playerHandler);
-            Register(winHandler);
+
         }
 
         ~EventManager(){
@@ -41,7 +41,7 @@ namespace Draw {
             delete objectHandler;
             delete deleteHandler;
             delete healthHandler;
-            delete winHandler;
+
             delete playerHandler;
 
 
@@ -55,6 +55,8 @@ namespace Draw {
             }
         }
 
+
+
         void Register(EventHandler *handler) {
             mHandlers.push_back(handler);
         }
@@ -66,7 +68,7 @@ namespace Draw {
         HealthHandler *healthHandler;
         ObjectHandler *objectHandler;
         DeleteHandler *deleteHandler;
-        WinHandler *winHandler;
+
         PlayerHandler *playerHandler;
         std::vector<EventHandler *> mHandlers;
     };

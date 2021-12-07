@@ -18,7 +18,7 @@ public:
 
     void setID(unsigned short _id) override {};
 
-    void setColor();
+    void setColor(const sf::Color color);
 
     void draw(sf::RenderWindow &l_window) override;
 

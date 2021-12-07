@@ -7,7 +7,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 30
+#define GAME_TIME 60
 
 
 Game::Game() : gameServer("0.0.0.0", "5000", 4) {
@@ -175,9 +175,10 @@ int Game::Iteration() {
                    app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
+                    state = END_OF_GAME;
                 }
 
-                    state = END_OF_GAME;
+
                 break;
         }
     }

@@ -53,7 +53,7 @@ void MenuState::ChangeState() {
 void MenuState::updateActiveText() {
 
     for (auto  text: textbuf)
-        text->setColor();
+        text->setColor(sf::Color::White);
 
 }
 

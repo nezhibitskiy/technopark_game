@@ -19,7 +19,8 @@ private:
         INIT = 0,
         WAITING_FOR_GAME = 1,
         STARTED = 2,
-        END_OF_GAME = 3
+        GAME_OVER = 3,
+        END_OF_GAME = 4
     };
 
     Client *client;

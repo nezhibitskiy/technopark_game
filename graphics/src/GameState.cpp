@@ -8,9 +8,7 @@ GameState::GameState(StateStack &stack, Context context) : State(stack, context)
 void GameState::draw(std::queue<EventMessage>* eventQueue) {
 
 
-        eventManager.EventHandle(&eventQueue->front(),&map);
-
-
+    eventManager.EventHandle(&eventQueue->front(),&map);
 
     map.DrawBack();
     map.Draw();

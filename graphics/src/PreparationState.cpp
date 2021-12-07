@@ -21,7 +21,7 @@ void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
     window.clear(sf::Color::Black);
 
     for (auto text: textbuf) {
-        text->setColor();
+        text->setColor(sf::Color::Red);
         text->draw(*getContext().window);
     }
 }

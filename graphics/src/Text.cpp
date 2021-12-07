@@ -15,7 +15,8 @@ void Text::draw(sf::RenderWindow &l_window) {
     l_window.draw(mText);
 }
 
-void Text::setColor() {
-    mText.setColor(sf::Color::White);
+void Text::setColor(const sf::Color color) {
+  mText.setFillColor(color);
 }
+
 
