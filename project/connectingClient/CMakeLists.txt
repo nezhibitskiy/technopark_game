@@ -1,2 +1,4 @@
-add_executable(client_tp src/client.cpp)
+
+include_directories(include)
+add_executable(client_tp src/client.cpp src/clientNetwork.cpp)
 target_link_libraries(client_tp game player map server lib sfml-graphics sfml-window sfml-system sfml-audio ${Boost_LIBRARIES} -lpthread)
