@@ -41,26 +41,22 @@ Client::Client(const std::string& server, const std::string& port,
           signals_(io_context),
           socket_(io_context)
 {
-    // Register to handle the signals that indicate when the hostPlayer should exit.
-    signals_.add(SIGINT);   // остановка процесса с терминала
-    signals_.add(SIGTERM);  // сигнал от kill
-    signals_.async_wait(boost::bind(&Client::endServer, this));
-
     inputQueue = new std::queue<EventMessage>;
     outputQueue = new std::queue<BaseMessage>;
 
     *rInputQueue = inputQueue;
     *rOutputQueue = outputQueue;
 
-    // Start an asynchronous resolve to translate the hostPlayer and service names
-    // into a list of endpoints.
+    // Register to handle the signals that indicate when the hostPlayer should exit.
+    signals_.add(SIGINT);   // остановка процесса с терминала
+    signals_.add(SIGTERM);  // сигнал от kill
+    signals_.async_wait(boost::bind(&Client::endServer, this));
+
     resolver_.async_resolve(server, port,
                             boost::bind(&Client::handle_resolve, this,
                                         boost::asio::placeholders::error,
                                         boost::asio::placeholders::results));
 }
-
-
 
 void Client::run() {
     for (std::size_t i = 0; i < 2; ++i)
@@ -70,7 +66,6 @@ void Client::run() {
 
         threads.push_back(thread);
     }
-
 }
 void Client::endServer() {
     if (io_context.stopped()) return;
@@ -81,10 +76,8 @@ void Client::endServer() {
 
     // Wait for all threads in the pool to exit.
     io_context.stop();
-    for (std::size_t i = threads.size() - 1; i >= 0; --i) {
+    for (std::size_t i = 0; i < threads.size(); ++i)
         threads[i]->join();
-        threads.pop_back();
-    }
 }
 
 void Client::handle_resolve(const boost::system::error_code& err,
