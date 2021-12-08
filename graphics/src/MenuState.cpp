@@ -33,7 +33,7 @@ void MenuState::draw(std::queue<EventMessage> *eventQueue) {
 
 }
 
-bool MenuState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
+bool MenuState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request = nullptr) {
 
     if (event.key.code == sf::Keyboard::Space) {
         std::cout << "SPACE\n";

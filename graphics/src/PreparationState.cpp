@@ -26,7 +26,7 @@ void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
     }
 }
 
-bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
+bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request = nullptr) {
 
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {

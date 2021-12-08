@@ -52,17 +52,17 @@ void Game::Iteration() {
 
                     }
                 }
+
                 event->pop();
                 state = GAME_OVER;
+                app.changeState();
                 break;
             case(GAME_OVER):
                 while (event->front().getType() != EventMessage::WIN_TEAM) {
+                }
 
-                }
-                while(!event->empty()) {
-                    app.render(event);
-                    event->pop();
-                }
+                app.render(event);
+
                 if (app.processInput(request)) {
                     app.changeState();
                     client->endServer();

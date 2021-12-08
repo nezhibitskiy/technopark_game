@@ -75,7 +75,7 @@ void Client::run() {
 void Client::endServer() {
     // Wait for all threads in the pool to exit.
     io_context.stop();
-    for (std::size_t i = 0; i < threads.size(); ++i)
+   for (std::size_t i = 0; i < threads.size(); ++i)
         threads[i]->join();
 }
 

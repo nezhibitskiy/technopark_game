@@ -12,7 +12,8 @@ EndState::EndState(StateStack &stack, DrawState::State::Context context) : State
 
 void EndState::draw(std::queue<EventMessage> *eventQueue) {
 
-    EventMessage endMessage = eventQueue->back();
+
+    EventMessage endMessage = eventQueue->front();
     sf::RenderWindow &window = *getContext().window;
     int idWinTeam = endMessage.getID();
 
@@ -26,7 +27,7 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     }
 }
 
-bool EndState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
+bool EndState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request = nullptr) {
     if (event.key.code == sf::Keyboard::Escape && event.type == sf::Event::KeyReleased) {
         std::cout << "CLOSE window \n";
         return true;
@@ -37,4 +38,5 @@ bool EndState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *requ
 void EndState::ChangeState() {
     requestStackPop();
     requestStateClear();
+
 }

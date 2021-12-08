@@ -143,6 +143,27 @@ namespace Draw {
 
     };
 
+   /* class EndHandler : public BaseEventHandler<EventMessage, Text> {
+    };
+    class WinHandler : public EndHandler {
+    public:
+        enum Type {
+            WIN_TEAM = 7
+        };
+
+        bool CanHandle(EventMessage *event) override {
+            if (event->getType() == DeleteHandler::DELETE) {
+                return true;
+            } else return false;
+        }
+
+        void Handler(EventMessage *event, DrawMap *map) override {
+            map->SetBlocks(event->getID(), event->getX(), event->getY());
+        }
+
+
+    };
+*/
 }
 
 #endif //TEST_DRAWHANDLERS_H
