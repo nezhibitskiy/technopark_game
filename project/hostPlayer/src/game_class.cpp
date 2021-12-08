@@ -10,7 +10,7 @@
 #define GAME_TIME 60
 
 
-Game::Game() : gameServer("0.0.0.0", "5000", 4) {
+Game::Game() : gameServer("0.0.0.0", "5000", 7) {
     state = INIT;
     factory = new Factory();
 
@@ -157,9 +157,11 @@ int Game::Iteration() {
                     start_game();
                 }
                 app.changeState();
+
                 EventMessage closeGame(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
                 event.push(closeGame);
                 state = GAME_OVER;
+
                 int res = getWinTeam();
                 EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
@@ -173,6 +175,7 @@ int Game::Iteration() {
                     app.render(&event);
                     event.pop();
                 }
+
                 if (app.processInput(&request)) {
                     app.changeState();
                     gameServer.closeServer();

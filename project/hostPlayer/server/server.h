@@ -50,6 +50,7 @@ namespace gameServer {
 
         /// The next connection to be accepted.
         boost::shared_ptr<Connection> new_connection_;
+        std::vector<boost::shared_ptr<Connection>> connectionVector;
 
         std::queue<BaseMessage> **inputQueue;
         std::queue<EventMessage> **outputQueue;

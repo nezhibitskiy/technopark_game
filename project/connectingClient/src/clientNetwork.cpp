@@ -73,10 +73,18 @@ void Client::run() {
 
 }
 void Client::endServer() {
+    if (io_context.stopped()) return;
+
+    boost::system::error_code ignored_ec;
+    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+    socket_.close();
+
     // Wait for all threads in the pool to exit.
     io_context.stop();
-    for (std::size_t i = 0; i < threads.size(); ++i)
+    for (std::size_t i = threads.size() - 1; i >= 0; --i) {
         threads[i]->join();
+        threads.pop_back();
+    }
 }
 
 void Client::handle_resolve(const boost::system::error_code& err,
