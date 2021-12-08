@@ -59,14 +59,14 @@ namespace gameServer {
                                 boost::asio::transfer_at_least(1),
                                 boost::bind(&Connection::handle_read, shared_from_this(),
                                             boost::asio::placeholders::error));
-        while(outputQueue->empty() && (socket_.is_open())) {}
-        if (socket_.is_open()) {
-            outputBuffer_ = pack(outputQueue->front());
+//        while(outputQueue->empty() && (socket_.is_open())) {}
+//        if (socket_.is_open()) {
+//            outputBuffer_ = pack(outputQueue->front());
 
             boost::asio::async_write(socket_, boost::asio::buffer(outputBuffer_.data(), outputBuffer_.size()),
                                      boost::bind(&Connection::handle_write, shared_from_this(),
                                                  boost::asio::placeholders::error));
-        }
+//        }
 
     }
 
@@ -102,13 +102,14 @@ namespace gameServer {
     {
         if (!e)
         {
-            outputQueue->pop();
             while (outputQueue->empty() && (socket_.is_open())) {
 
             }
 
             if (socket_.is_open()) {
                 outputBuffer_ = pack(outputQueue->front());
+
+                outputQueue->pop();
 
                 boost::asio::async_write(socket_, boost::asio::buffer(outputBuffer_.data(), outputBuffer_.size()),
                                          boost::bind(&Connection::handle_write, shared_from_this(),
