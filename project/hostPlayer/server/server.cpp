@@ -11,8 +11,7 @@ namespace gameServer {
                    std::size_t thread_pool_size)
             : thread_pool_size_(thread_pool_size),
               signals_(io_context_),
-              acceptor_(io_context_),
-              new_connection_()
+              acceptor_(io_context_)
     {
         clientConnectedCount = 0;
         inputQueue = new std::queue<BaseMessage>*[thread_pool_size];
@@ -47,38 +46,59 @@ namespace gameServer {
     void server::run(EventMessage tmpEventMsg)
     {
         // QUEUE HERE
-        for (unsigned int i = 0; i < clientConnectedCount; i++) {
-            outputQueue[i]->push(tmpEventMsg);
+        for (unsigned int i = 0; i < connectionVector.size(); i++) {
+            if (connectionVector[i]->is_open()) {
+                if (tmpEventMsg.getID() - 1 == i &&
+                tmpEventMsg.getType() != EventMessage::CREATE_OBJECT &&
+                tmpEventMsg.getType() != EventMessage::WIN_TEAM) {
+                    EventMessage msgForCurrentPlayer(tmpEventMsg.getType(),
+                                                     0,
+                                                     tmpEventMsg.getX(),
+                                                     tmpEventMsg.getY(),
+                                                     tmpEventMsg.getData());
+                    outputQueue[i]->push(msgForCurrentPlayer);
+                } else if (tmpEventMsg.getID() == 0 &&
+                tmpEventMsg.getType() != EventMessage::CREATE_OBJECT &&
+                tmpEventMsg.getType() != EventMessage::WIN_TEAM) {
+                    EventMessage msgForCurrentPlayer(tmpEventMsg.getType(),
+                                                     i + 1,
+                                                     tmpEventMsg.getX(),
+                                                     tmpEventMsg.getY(),
+                                                     tmpEventMsg.getData());
+                    outputQueue[i]->push(msgForCurrentPlayer);
+                } else
+                    outputQueue[i]->push(tmpEventMsg);
+            }
         }
     }
     BaseMessage **server::checkRequests(unsigned int *reqMsgCount)
     {
-        std::vector<BaseMessage> returnVector;
+        std::vector<std::pair<unsigned short, BaseMessage>> returnVector;
 
-        for (unsigned int i = 0; i < clientConnectedCount; i++) {
+        for (unsigned short i = 0; i < connectionVector.size(); i++) {
             if (!inputQueue[i]->empty()) {
                 while (!inputQueue[i]->empty()) {
-                    returnVector.push_back(inputQueue[i]->front());
+                    returnVector.emplace_back(i, inputQueue[i]->front());
                     inputQueue[i]->pop();
                 }
             }
         }
 
-        if (returnVector.size() == 0) return nullptr;
+        if (returnVector.empty()) return nullptr;
         *reqMsgCount = returnVector.size();
         BaseMessage **returnMessages = new BaseMessage*[*reqMsgCount];
         for (unsigned int i = 0; i < *reqMsgCount; i++) {
-            returnMessages[i] = new BaseMessage(returnVector[i].getType(),
-                                                i + 1,
-                                                returnVector[i].getX(),
-                                                returnVector[i].getY());
+            returnMessages[i] = new BaseMessage(returnVector[i].second.getType(),
+                                                returnVector[i].first + 1,
+                                                returnVector[i].second.getX(),
+                                                returnVector[i].second.getY());
         }
         return returnMessages;
     }
 
     void server::closeServer() {
         if (io_context_.stopped()) return;
-        for (std::size_t i = 0; i < clientConnectedCount; ++i) {
+        for (std::size_t i = 0; i < connectionVector.size(); ++i) {
             connectionVector[i]->stop();
         }
         io_context_.stop();
@@ -89,11 +109,11 @@ namespace gameServer {
 
     void server::start_accept()
     {
-        new_connection_.reset(new Connection(io_context_,
-                &(outputQueue[clientConnectedCount]),
-                &(inputQueue[clientConnectedCount])));
+        connectionVector.push_back(boost::shared_ptr<Connection>(new Connection(io_context_,
+                                                                 &(outputQueue[connectionVector.size()]),
+                                                                 &(inputQueue[connectionVector.size()]))));
 
-        acceptor_.async_accept(new_connection_->socket(),
+        acceptor_.async_accept(connectionVector[connectionVector.size() - 1]->socket(),
                                boost::bind(&server::handle_accept, this,
                                            boost::asio::placeholders::error));
     }
@@ -102,9 +122,7 @@ namespace gameServer {
     {
         if (!e)
         {
-            connectionVector.push_back(new_connection_);
-            clientConnectedCount++;
-            new_connection_->start();
+            connectionVector[connectionVector.size() - 1]->start();
         }
 
         start_accept();

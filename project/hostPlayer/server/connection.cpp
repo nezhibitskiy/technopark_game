@@ -71,6 +71,7 @@ namespace gameServer {
     }
 
     void Connection::stop() {
+        if (!socket_.is_open()) return;
         boost::system::error_code ignored_ec;
         socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
         socket_.close();
@@ -90,7 +91,10 @@ namespace gameServer {
                                                 boost::asio::placeholders::error));
         }
         else {
-            std::cout << "readHandler error" << std::endl;
+            // std::cout << "readHandler error" << std::endl;
+            boost::system::error_code ignored_ec;
+            socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+            socket_.close();
         }
     }
 
@@ -113,7 +117,12 @@ namespace gameServer {
                 // Initiate graceful connection closure.
                 boost::system::error_code ignored_ec;
                 socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+                socket_.close();
             }
         }
+    }
+
+    bool Connection::is_open() {
+        return socket_.is_open();
     }
 }

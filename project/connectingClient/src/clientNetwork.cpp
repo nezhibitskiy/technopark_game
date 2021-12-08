@@ -70,9 +70,11 @@ void Client::run() {
 void Client::endServer() {
     if (io_context.stopped()) return;
 
-    boost::system::error_code ignored_ec;
-    socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
-    socket_.close();
+    if (socket_.is_open()) {
+        boost::system::error_code ignored_ec;
+        socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_ec);
+        socket_.close();
+    }
 
     // Wait for all threads in the pool to exit.
     io_context.stop();
@@ -104,7 +106,7 @@ void Client::handle_connect(const boost::system::error_code& err)
         boost::asio::async_read(socket_, boost::asio::buffer(inputBuffer_),
                                 boost::asio::transfer_at_least(1),
                                 boost::bind(&Client::handle_read, this,
-                                            boost::asio::placeholders::error));
+                                 boost::asio::placeholders::error));
 
         while(outputQueue->empty() && (socket_.is_open())) {}
 
@@ -114,7 +116,7 @@ void Client::handle_connect(const boost::system::error_code& err)
             // The connection was successful. Send the request.
             boost::asio::async_write(socket_, boost::asio::buffer(outputBuffer_.data(), outputBuffer_.size()),
                                      boost::bind(&Client::handle_write_request, this,
-                                                 boost::asio::placeholders::error));
+                                      boost::asio::placeholders::error));
         }
     }
     else
@@ -163,28 +165,22 @@ void Client::handle_read(const boost::system::error_code& err)
 {
     if (!err)
     {
-
-        // std::cout << inputBuffer_.data() << std::endl;
-
         EventMessage inputMessage = parse(inputBuffer_);
-//            std::cout << "Input message type: " << inputMessage.getType();
-//            std::cout << "; Input message ID: " << inputMessage.getID();
-//            std::cout << "; Input message X: " << inputMessage.getX();
-//            std::cout << "; Input message Y: " << inputMessage.getY();
-//            std::cout << "; Input message Data: " << inputMessage.getData() << ";" << std::endl;
 
         inputQueue->push(inputMessage);
 
         boost::asio::async_read(socket_, boost::asio::buffer(inputBuffer_),
                                 boost::asio::transfer_at_least(1),
                                 boost::bind(&Client::handle_read, this,
-                                            boost::asio::placeholders::error));
+                                 boost::asio::placeholders::error));
     }
     else
     {
         std::cout << "Error 6: " << err << "\n";
-        EventMessage inputMessage(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
-        inputQueue->push(inputMessage);
+        EventMessage closeGame(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
+        inputQueue->push(closeGame);
+        EventMessage winTeam(EventMessage::WIN_TEAM, 0, 0, 0, 0);
+        inputQueue->push(winTeam);
         endServer();
     }
 }
