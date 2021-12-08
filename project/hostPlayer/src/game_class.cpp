@@ -92,7 +92,7 @@ Game::~Game() {
     delete moveHandler;
     delete attackHandler;
     delete putBlockHandler;
-    // Добавить очистку объектов хэш таблицы
+
     for (auto &elem: objects) {
         delete elem.second;
     }
@@ -117,18 +117,10 @@ int Game::Iteration() {
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
-                    BaseMessage moveUp1(MoveHandler::MOVE_DOWN, 1);
-                    request.push(moveUp1);
-
-                    BaseMessage moveUp2(MoveHandler::MOVE_UP, 2);
-                    request.push(moveUp2);
-                    BaseMessage moveUp3(MoveHandler::MOVE_UP, 3);
-                    request.push(moveUp3);
                     state = STARTED;
                 }
                 break;
-            case (STARTED):
-
+            case (STARTED): {
                 while (!request.empty()) {
                     unsigned int initMsgCount = 0;
                     EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
@@ -165,20 +157,30 @@ int Game::Iteration() {
                     start_game();
                 }
                 app.changeState();
+                EventMessage closeGame(EventMessage::CLOSE_GAME, 0, 0, 0, 0);
+                event.push(closeGame);
                 state = GAME_OVER;
-                break;
-            case (GAME_OVER):
                 int res = getWinTeam();
                 EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
-                std::cout << "WIN: " << res << "    END OF GAME WAS HERE" << std::endl;
-                   app.render(&event);
+                std::cout << "WIN: " << res << std::endl;
+                break;
+            }
+
+            case (GAME_OVER): {
+                while(!event.empty()){
+                    gameServer.run(event.front());
+                    app.render(&event);
+                    event.pop();
+                }
                 if (app.processInput(&request)) {
                     app.changeState();
+                    gameServer.closeServer();
                     state = END_OF_GAME;
                 }
-
-
+                break;
+            }
+            case (END_OF_GAME):
                 break;
         }
     }

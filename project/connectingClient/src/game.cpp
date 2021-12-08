@@ -2,10 +2,12 @@
 // Created by ilyas on 07.12.2021.
 //
 
+#include "message.h"
 #include "game.h"
 
 Game::Game() {
     client = new Client("0.0.0.0", "5000", &event, &request);
+    state = INIT;
 }
 Game::~Game() {
     delete client;
@@ -41,7 +43,7 @@ void Game::Iteration() {
 
             case (STARTED):
                 while (event->front().getType() != EventMessage::CLOSE_GAME) {
-                    while(!event->empty()){
+                    while(!event->empty() && event->front().getType() != EventMessage::CLOSE_GAME){
 
                         app.render(event);
                         event->pop();
@@ -50,7 +52,22 @@ void Game::Iteration() {
 
                     }
                 }
-                state = END_OF_GAME;
+                event->pop();
+                state = GAME_OVER;
+                break;
+            case(GAME_OVER):
+                while (event->front().getType() != EventMessage::WIN_TEAM) {
+
+                }
+                while(!event->empty()) {
+                    app.render(event);
+                    event->pop();
+                }
+                if (app.processInput(request)) {
+                    app.changeState();
+                    client->endServer();
+                    state = END_OF_GAME;
+                }
                 break;
                 //default:
                 //  break;

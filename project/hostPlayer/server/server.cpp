@@ -21,7 +21,7 @@ namespace gameServer {
         // Register to handle the signals that indicate when the hostPlayer should exit.
         signals_.add(SIGINT);   // остановка процесса с терминала
         signals_.add(SIGTERM);  // сигнал от kill
-        signals_.async_wait(boost::bind(&server::handle_stop, this));
+        signals_.async_wait(boost::bind(&server::closeServer, this));
 
         // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
         boost::asio::ip::tcp::resolver resolver(io_context_);
@@ -76,7 +76,8 @@ namespace gameServer {
         return returnMessages;
     }
 
-    void server::joinThreads() {
+    void server::closeServer() {
+        io_context_.stop();
         // Wait for all threads in the pool to exit.
         for (std::size_t i = 0; i < threads.size(); ++i)
             threads[i]->join();
@@ -102,16 +103,6 @@ namespace gameServer {
         }
 
         start_accept();
-    }
-
-    void server::handle_stop()
-    {
-        io_context_.stop();
-        std::cout << "STOP COMMAND" << std::endl;
-
-        // Wait for all threads in the pool to exit.
-        for (auto & thread : threads)
-            thread->join();
     }
 
 } // namespace gameServer

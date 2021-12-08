@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(graphics)
 include_directories(graphics/include)
-add_subdirectory(server)
-include_directories(server)
 
 add_subdirectory(project)
 
