@@ -28,6 +28,7 @@ namespace gameServer {
         boost::asio::ip::tcp::socket& socket();
         void start();
         void stop();
+        bool is_open();
 
     private:
         void handle_read(const boost::system::error_code& e);
