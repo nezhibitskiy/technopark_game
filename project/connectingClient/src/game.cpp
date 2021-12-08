@@ -56,9 +56,16 @@ void Game::Iteration() {
                 event->pop();
                 state = GAME_OVER;
                 app.changeState();
+                while (event->front().getType() != EventMessage::WIN_TEAM) {
+
+                }
                 break;
             case(GAME_OVER):
-                while (event->front().getType() != EventMessage::WIN_TEAM) {
+
+                while(!event->empty()) {
+                    app.render(event);
+                    event->pop();
+
                 }
 
                 app.render(event);

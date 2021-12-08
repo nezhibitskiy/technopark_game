@@ -77,6 +77,10 @@ namespace gameServer {
     }
 
     void server::closeServer() {
+        if (io_context_.stopped()) return;
+        for (std::size_t i = 0; i < clientConnectedCount; ++i) {
+            connectionVector[i]->stop();
+        }
         io_context_.stop();
         // Wait for all threads in the pool to exit.
         for (std::size_t i = 0; i < threads.size(); ++i)
@@ -98,6 +102,7 @@ namespace gameServer {
     {
         if (!e)
         {
+            connectionVector.push_back(new_connection_);
             clientConnectedCount++;
             new_connection_->start();
         }
