@@ -401,20 +401,27 @@ int Game::getWinTeam() {
                 }
             }
         }
-        biggest = killsTeam.at(0).first;
-        finalTeams.emplace_back(killsTeam.at(0).second);
-        for (int i = 1; i < killsTeam.size(); ++i) {
-            if (killsTeam.at(i).first > biggest) {
-                biggest = killsTeam.at(i).first;
-                finalTeams.clear();
-                finalTeams.emplace_back(killsTeam.at(i).second);
-            } else if (killsTeam.at(i).first == biggest) {
-                return DRAW;
-            } else {
-                continue;
+        if (!killsTeam.empty()) {
+
+            biggest = killsTeam.at(0).first;
+            finalTeams.emplace_back(killsTeam.at(0).second);
+            for (int i = 1; i < killsTeam.size(); ++i) {
+                if (killsTeam.at(i).first > biggest) {
+                    biggest = killsTeam.at(i).first;
+                    finalTeams.clear();
+                    finalTeams.emplace_back(killsTeam.at(i).second);
+                } else if (killsTeam.at(i).first == biggest) {
+                    return DRAW;
+                } else {
+                    continue;
+                }
             }
         }
+        if (finalTeams.empty())
+            return 0;
+
         return finalTeams.at(0);
+
     }
 }
 
