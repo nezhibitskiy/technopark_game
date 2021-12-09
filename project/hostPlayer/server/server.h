@@ -54,7 +54,6 @@ namespace gameServer {
         std::queue<BaseMessage> **inputQueue;
         std::queue<EventMessage> **outputQueue;
 
-        unsigned short clientConnectedCount;
         std::vector<boost::shared_ptr<std::thread>> threads;
 
         /// The handler for all incoming requests.

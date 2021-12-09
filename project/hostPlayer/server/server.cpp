@@ -11,9 +11,8 @@ namespace gameServer {
                    std::size_t thread_pool_size)
             : thread_pool_size_(thread_pool_size),
               signals_(io_context_),
-              acceptor_(io_context_)
+              acceptor_(io_context_), connectionVector(0)
     {
-        clientConnectedCount = 0;
         inputQueue = new std::queue<BaseMessage>*[thread_pool_size];
         outputQueue = new std::queue<EventMessage>*[thread_pool_size];
 

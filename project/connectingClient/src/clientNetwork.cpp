@@ -165,9 +165,11 @@ void Client::handle_read(const boost::system::error_code& err)
 {
     if (!err)
     {
-        EventMessage inputMessage = parse(inputBuffer_);
+        if (inputBuffer_.size() > 10) {
+            EventMessage inputMessage = parse(inputBuffer_);
 
-        inputQueue->push(inputMessage);
+            inputQueue->push(inputMessage);
+        }
 
         boost::asio::async_read(socket_, boost::asio::buffer(inputBuffer_),
                                 boost::asio::transfer_at_least(1),
