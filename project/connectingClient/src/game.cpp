@@ -68,7 +68,7 @@ void Game::Iteration() {
 
                 }
 
-                app.render(event);
+
 
                 if (app.processInput(request)) {
                     app.changeState();

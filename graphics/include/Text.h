@@ -17,6 +17,7 @@ public:
     int getY() override {};
 
     void setID(unsigned short _id) override {};
+    size_t getSize() override {};
 
     void setColor(const sf::Color color);
 

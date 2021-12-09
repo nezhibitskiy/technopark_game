@@ -3,20 +3,20 @@
 
 #define SCALE 1
 
-Block::Block(unsigned int _id, const std::string &filename) : id(_id), winZone(false) {
+Block::Block(unsigned int _id, const std::string &filename,size_t _sizePx) : id(_id), winZone(false),sizePx(_sizePx) {
 
     if (!texBlock.loadFromFile(filename)) {
         throw std::runtime_error("Failed to load " + filename);
     }
     texBlock.setSmooth(true);
     mBlock.setTexture(texBlock);
-    mBlock.setScale(SCALE, SCALE);
+    mBlock.setScale(sizePx / texBlock.getSize().x, sizePx / texBlock.getSize().y);
 
 
 }
 
 void Block::setPos(unsigned int x, unsigned int y) {
-    mBlock.setPosition(x, y);
+    mBlock.setPosition(x*getSize(), y*getSize());
 }
 
 void Block::draw(sf::RenderWindow &l_window) {
@@ -33,7 +33,7 @@ void Block::setID(unsigned short _id) {
     switch (id) {
 
         default: // back
-            mBlock.setColor(sf::Color(255, 255, 255, 200));
+            mBlock.setColor(sf::Color(200, 200, 200, 200));
             break;
         case 1: // block player
             mBlock.setColor(sf::Color(255, 255, 0, 255));
@@ -57,4 +57,8 @@ bool Block::IsWinZone() {
 }
 void Block::SetWinZone() {
     winZone = true;
+}
+
+size_t Block::getSize() {
+    return sizePx;
 }

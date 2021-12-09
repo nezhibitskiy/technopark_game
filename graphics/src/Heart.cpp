@@ -1,8 +1,8 @@
 #include "Heart.h"
 
 
-Heart::Heart(const std::string &filename) {
-    if(!texHeart.loadFromFile(filename)){
+Heart::Heart(const std::string &filename, size_t _sizePx) : sizePx(_sizePx) {
+    if (!texHeart.loadFromFile(filename)) {
         throw std::runtime_error("Failed to load " + filename);
     }
     mHeart.setTexture(texHeart);
@@ -10,8 +10,8 @@ Heart::Heart(const std::string &filename) {
 }
 
 void Heart::setPos(unsigned int x, unsigned int y) {
-    mHeart.setOrigin(texHeart.getSize().x * 0.5 ,texHeart.getSize().y * 0.5);
-    mHeart.setPosition(x,y);
+    mHeart.setOrigin(texHeart.getSize().x * 0.5, texHeart.getSize().y * 0.5);
+    mHeart.setPosition(x * getSize(), y - getSize());
 }
 
 int Heart::getX() {
@@ -27,6 +27,10 @@ void Heart::draw(sf::RenderWindow &l_window) {
 }
 
 void Heart::setID(unsigned short _id) {
-        id = _id;
+    id = _id;
+}
+
+size_t Heart::getSize() {
+    return sizePx;
 }
 

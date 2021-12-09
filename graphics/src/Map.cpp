@@ -1,14 +1,12 @@
 #include <iostream>
 #include "Map.h"
 
-
-#define SIZE_PIXELS 30
-
 DrawMap::DrawMap(sf::RenderWindow &mWindow) : mWindow(mWindow) {
 
 }
-DrawMap::~DrawMap(){
-    for(int i = 0; i < width; ++i)
+
+DrawMap::~DrawMap() {
+    for (int i = 0; i < width; ++i)
         delete[] mBlocks[i];
     delete[] mBlocks;
 }
@@ -19,12 +17,12 @@ void DrawMap::DrawBack() {
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 
-            mBlocks[i][j].setPos(i * SIZE_PIXELS, j * SIZE_PIXELS);
+            mBlocks[i][j].setPos(i, j);
             mBlocks[i][j].draw(mWindow);
         }
     }
     for (int i = 0; i < hp.size(); ++i) {
-        hp[i]->setPos((i + 1) * SIZE_PIXELS, mWindow.getSize().y - SIZE_PIXELS);
+        hp[i]->setPos((i + 1), mWindow.getSize().y);
         hp[i]->draw(mWindow);
     }
 
@@ -43,10 +41,9 @@ void DrawMap::SetZone(unsigned int x, unsigned int y, unsigned int rad) {
 }
 
 void DrawMap::SetHp(unsigned short id, int hpVal) {
-    if( id == 0) {
+    if (id == 0) {
         hp.resize(hpVal);
         for (int i = 0; i < hp.size(); ++i) {
-
             hp[i] = new Heart;
         }
     }
@@ -55,7 +52,8 @@ void DrawMap::SetHp(unsigned short id, int hpVal) {
 
 void DrawMap::SetUnits(unsigned short id, unsigned int x, unsigned int y) {
 
-    mUnits[id]->setPos(x * SIZE_PIXELS + SIZE_PIXELS / 2, y * SIZE_PIXELS + SIZE_PIXELS / 2);
+    mUnits[id]->setPos(x,y);
+
 
 }
 
@@ -100,10 +98,10 @@ void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned in
 
 void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, unsigned int team) {
 
-    mUnits[id]->setPos(x * SIZE_PIXELS + SIZE_PIXELS / 2, y * SIZE_PIXELS + SIZE_PIXELS / 2);
+    mUnits[id]->setPos(x, y);
     if (id == 0) {
         mUnits[id]->setID(0);
-    } else mUnits[id]->setID(team);
+    } else mUnits[id]->setID(team+1);
 
 }
 
