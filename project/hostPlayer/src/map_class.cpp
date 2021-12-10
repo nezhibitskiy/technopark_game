@@ -26,14 +26,16 @@ Map::~Map() {
 void Map::out(std::unordered_multimap<unsigned int, Object*> *hashTable) {
     for (unsigned int i = 0; i < height; ++i) {
         for (unsigned int j = 0; j < width; ++j) {
-            auto objectNode = hashTable->find(map[i][j]);
+            /*auto objectNode = hashTable->find(map[i][j]);
             if (objectNode != hashTable->end()) {
                 std::cout << objectNode->second->getObjectSymbol() << " ";
             } else {
                 std::cout << ". ";
-            }
+            }*/
+            std::cout << map[i][j] << " ";
         }
         std::cout << std::endl;
     }
     std::cout << std::endl;
 }
+

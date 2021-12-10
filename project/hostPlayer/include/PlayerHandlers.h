@@ -131,7 +131,6 @@ public:
                     std::cout << "KILLS   " << player->getKills() << std::endl;
                     if (!object->Respawn()) {
                         //Удалить объект
-
                         *returnMsgCount = 1;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
                         returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);

@@ -34,7 +34,7 @@ Game::Game() : gameServer("0.0.0.0", "5000", 7) {
     playersInTeamCount = 2;
     playerIds = new unsigned int[teamCount * playersInTeamCount];
 
-    objects.reserve(100);
+    objects.reserve(10);
 
     spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
 
@@ -219,7 +219,14 @@ bool Game::move(unsigned int x, unsigned int y) {
         std::pair<unsigned int, unsigned int> point = q.front();
         q.pop();
         unsigned int key = map->getObject(point.first, point.second);
-        if (key == 400000U) {
+        std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
+        std::cout << "KEY: " << key << std::endl;
+        for (auto& elem : objects) {
+            std::cout << "OBJECTS X: " << elem.second->getX() << " Y: " << elem.second->getY() << std::endl;
+        }
+        map->out(&objects);
+        auto it = objects.find(key);
+        if (it == objects.end()) {
             bool flag = false;
             for (auto &i: passed) {
                 if (i.first == point.first && i.second == point.second) {
@@ -260,7 +267,6 @@ bool Game::move(unsigned int x, unsigned int y) {
             }
         } else {
             bool flag = false;
-            auto it = objects.find(key);
             for (auto &i: passed) {
                 if (i.first == point.first && i.second == point.second) {
                     flag = true;
