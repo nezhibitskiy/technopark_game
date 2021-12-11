@@ -10,7 +10,7 @@
 #define GAME_TIME 60
 
 
-Game::Game() : gameServer("0.0.0.0", "5000", 7) {
+Game::Game() {
     state = INIT;
     factory = new Factory();
 
@@ -85,7 +85,6 @@ Game::Game() : gameServer("0.0.0.0", "5000", 7) {
     putBlockHandler = new PutBlockHandler;
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
 
-    gameServer.init();
 }
 
 Game::~Game() {
@@ -111,6 +110,8 @@ int Game::Iteration() {
                 if (app.processInput(&request)) {
                     app.changeState();
                     state = WAITING_FOR_GAME;
+                    gameServer = new gameServer::server("0.0.0.0", "5000", 4);
+                    gameServer->init();
                 }
                 break;
             case (WAITING_FOR_GAME):
@@ -138,7 +139,7 @@ int Game::Iteration() {
                 while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME) {
                     unsigned int receivedMsgCount = 0;
 
-                    BaseMessage **receivedMsg = gameServer.checkRequests(&receivedMsgCount);
+                    BaseMessage **receivedMsg = gameServer->checkRequests(&receivedMsgCount);
                     if (receivedMsg != nullptr) {
                         for (unsigned int i = 0; i < receivedMsgCount; i++) {
                             request.push(*receivedMsg[i]);
@@ -146,7 +147,7 @@ int Game::Iteration() {
                     }
 
                     while(!event.empty()){
-                        gameServer.run(event.front());
+                        gameServer->run(event.front());
                         app.render(&event);
                         event.pop();
                     }
@@ -171,14 +172,14 @@ int Game::Iteration() {
 
             case (GAME_OVER): {
                 while(!event.empty()){
-                    gameServer.run(event.front());
+                    gameServer->run(event.front());
                     app.render(&event);
                     event.pop();
                 }
 
                 if (app.processInput(&request)) {
                     app.changeState();
-                    gameServer.closeServer();
+                    gameServer->closeServer();
                     state = END_OF_GAME;
                 }
                 break;

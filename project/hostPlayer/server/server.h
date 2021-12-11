@@ -20,7 +20,7 @@ namespace gameServer {
     {
     public:
         explicit server(const std::string& address, const std::string& port,
-                        std::size_t thread_pool_size);
+                        std::size_t rClientCount);
 
         void init();
         /// Run the hostPlayer's io_context loop.
@@ -38,6 +38,8 @@ namespace gameServer {
 
         /// The number of threads that will call io_context::run().
         std::size_t thread_pool_size_;
+
+        std::size_t clientCount;
 
         /// The io_context used to perform asynchronous operations.
         boost::asio::io_context io_context_;

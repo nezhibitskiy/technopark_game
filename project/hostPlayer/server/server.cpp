@@ -8,30 +8,34 @@
 
 namespace gameServer {
     server::server(const std::string& address, const std::string& port,
-                   std::size_t thread_pool_size)
-            : thread_pool_size_(thread_pool_size),
+                   std::size_t rClientCount)
+            : clientCount(rClientCount),
+              thread_pool_size_(rClientCount * 2),
               signals_(io_context_),
               acceptor_(io_context_), connectionVector(0)
     {
-        inputQueue = new std::queue<BaseMessage>*[thread_pool_size];
-        outputQueue = new std::queue<EventMessage>*[thread_pool_size];
+        inputQueue = new std::queue<BaseMessage>*[clientCount];
+        outputQueue = new std::queue<EventMessage>*[clientCount];
 
         // Register to handle the signals that indicate when the hostPlayer should exit.
         signals_.add(SIGINT);   // остановка процесса с терминала
         signals_.add(SIGTERM);  // сигнал от kill
         signals_.async_wait(boost::bind(&server::closeServer, this));
 
-        // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
-        boost::asio::ip::tcp::resolver resolver(io_context_);
-        boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(address, port).begin();
-        acceptor_.open(endpoint.protocol());
-        acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
-        acceptor_.bind(endpoint);
-        acceptor_.listen();
+        try {
+            // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
+            boost::asio::ip::tcp::resolver resolver(io_context_);
+            boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(address, port).begin();
+            acceptor_.open(endpoint.protocol());
+            acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
+            acceptor_.bind(endpoint);
+            acceptor_.listen();
+        }
+        catch (boost::system::system_error err) {
+            std::cout << err.what() << std::endl;
+            return;
+        }
 
-        start_accept();
-    }
-    void server::init() {
         // Create a pool of threads to run all of the io_contexts.
         for (std::size_t i = 0; i < thread_pool_size_; ++i)
         {
@@ -40,6 +44,11 @@ namespace gameServer {
 
             threads.push_back(thread);
         }
+
+        start_accept();
+    }
+    void server::init() {
+
     }
 
     void server::run(EventMessage tmpEventMsg)
@@ -108,6 +117,8 @@ namespace gameServer {
 
     void server::start_accept()
     {
+        if (connectionVector.size() >= clientCount) return;
+
         connectionVector.push_back(boost::shared_ptr<Connection>(new Connection(io_context_,
                                                                  &(outputQueue[connectionVector.size()]),
                                                                  &(inputQueue[connectionVector.size()]))));
@@ -128,16 +139,3 @@ namespace gameServer {
     }
 
 } // namespace gameServer
-
-#include <iostream>
-#include <string>
-#include <boost/asio.hpp>
-#include <boost/bind/bind.hpp>
-#include <boost/lexical_cast.hpp>
-
-//int main()
-//{
-//
-//
-//    return 0;
-//}

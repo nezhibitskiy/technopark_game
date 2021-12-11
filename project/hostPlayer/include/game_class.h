@@ -55,7 +55,7 @@ public:
 
 
 private:
-    gameServer::server gameServer;
+    gameServer::server *gameServer;
 
     State state;
     Map *map;
