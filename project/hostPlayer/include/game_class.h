@@ -47,6 +47,7 @@ public:
         END_OF_GAME = 4
     };
     Game();
+    void CreateMap();
     int Iteration();
     void start_game();
     bool move(unsigned int x, unsigned y);
@@ -55,7 +56,7 @@ public:
 
 
 private:
-    gameServer::server *gameServer;
+    gameServer::server gameServer;
 
     State state;
     Map *map;
