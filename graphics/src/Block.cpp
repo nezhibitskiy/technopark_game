@@ -33,13 +33,13 @@ void Block::setID(unsigned short _id) {
     switch (id) {
 
         default: // back
-            mBlock.setColor(sf::Color(200, 200, 200, 200));
+            mBlock.setColor(sf::Color(200, 200, 200, 255));
             break;
         case 1: // block player
             mBlock.setColor(sf::Color(255, 255, 0, 255));
             break;
         case 0: // border
-            mBlock.setColor(sf::Color(255, 0, 0, 255));
+            mBlock.setColor(sf::Color(100, 100, 100, 255));
             break;
         case 5: // winzone
             mBlock.setColor(sf::Color(0, 255, 0, 255));

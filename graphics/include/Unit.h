@@ -8,7 +8,7 @@
 
 class Unit : public Draw::Object{
 public:
-    explicit Unit(unsigned int _id = 1, const std::string& filename = "../resources/Unit.png",size_t _sizePx = 30);
+    explicit Unit(unsigned int _id = 1, const std::string& filename = "../resources/ninja1.png",size_t _sizePx = 30);
     void  setPos(unsigned int x, unsigned int y) override;
     int getX() override;
     int getY() override;

@@ -1,22 +1,21 @@
+//
+// Created by ivan_lemon on 12/14/21.
+//
+
 #include <iostream>
-#include "PreparationState.h"
+#include "ClientConnectState.h"
 
+ClientConnectState::ClientConnectState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
+    Text *Join = new Text(*getContext().font, "Join the game", 50);
+    Join->setPos(getContext().window->getSize().x / 2.0f, 0);
+    textbuf.push_back(Join);
 
-PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context) {
-
-
-    Text *Wait = new Text(*getContext().font, "Waiting room", 50);
-    Wait->setPos(getContext().window->getSize().x / 2.0f, 0);
-    textbuf.push_back(Wait);
-    Text *Tips = new Text(*getContext().font, "press enter", 30);
+    Text *Tips = new Text(*getContext().font, "enter your IP", 30);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 2.0f);
     textbuf.push_back(Tips);
-
-
 }
 
-void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
-
+void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
 
@@ -28,19 +27,11 @@ void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
         text->setColor(sf::Color::Red);
         text->draw(*getContext().window);
     }
-
-
-
 }
 
-bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
-
-
+bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
-        std::cout << "change state to Game \n";
-
-        BaseMessage moveLeft(-1, 0,std::stoi( ipPlayer ));
-        request->push(moveLeft);
+        std::cout << "change state to waiting room \n";
         return true;
 
     }
@@ -57,15 +48,13 @@ bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessag
         }
     }
     return false;
-
 }
 
-void PreparationState::ChangeState() {
+void ClientConnectState::ChangeState() {
     requestStackPop();
-    requestStackPush(States::Game);
+    requestStackPush(States::Preparation);
 }
 
-std::string &PreparationState::getIP() {
+std::string &ClientConnectState::getIP() {
     return ipPlayer;
 }
-

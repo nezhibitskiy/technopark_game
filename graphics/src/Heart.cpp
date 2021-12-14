@@ -30,10 +30,10 @@ void Heart::setID(unsigned short _id) {
     id = _id;
     switch (id) {
         case 0:
-            mHeart.setColor(sf::Color(255, 255, 255, 255));
+            mHeart.setColor(sf::Color(80, 80, 80, 255));
             break;
         case 1:
-            mHeart.setColor(sf::Color(10, 10, 255, 255));
+            mHeart.setColor(sf::Color(255, 255, 255, 255));
             break;
     }
 }

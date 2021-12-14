@@ -13,6 +13,7 @@
 #include "InputPlayer.h"
 #include "message.h"
 #include "Text.h"
+#include "TextField.h"
 
 class PreparationState : public DrawState::State {
 public:
@@ -24,10 +25,12 @@ public:
     void draw(std::queue<EventMessage>* eventQueue) override;
     bool handleEvent(const sf::Event &event,std::queue<BaseMessage>* request) override;
     void ChangeState() override;
+    std::string& getIP();
+
 private:
     std::vector<Text*> textbuf;
     sf::Font font;
-
+    std::string ipPlayer;
 
 };
 

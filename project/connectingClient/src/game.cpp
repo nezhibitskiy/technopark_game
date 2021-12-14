@@ -22,6 +22,7 @@ void Game::Iteration() {
                     app.changeState();
                     try
                     {
+
                         client = new Client("0.0.0.0", "5000", &event, &request);
 
                         client->run();

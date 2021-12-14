@@ -12,6 +12,7 @@ namespace States
     {
         None,
         Menu,
+        Join,
         Preparation,
         Game,
         End

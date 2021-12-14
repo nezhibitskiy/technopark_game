@@ -34,8 +34,11 @@ int Unit::getY() {
 void Unit::setID(unsigned short _id) {
     id = _id;
     switch (id) {
-        case 0:
-            mUnit.setColor(sf::Color(255, 255, 255, 255));
+        case 10:
+            mUnit.setColor(sf::Color(150, 150, 255, 255));
+            break;
+        case 20:
+            mUnit.setColor(sf::Color(255, 150, 150, 255));
             break;
         case 2:
             mUnit.setColor(sf::Color(255, 70, 70, 255));

@@ -26,10 +26,17 @@ public:
     bool handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) override;
 
     void ChangeState() override;
-
+    void ChangeStateJoin();
 private:
+    enum OptionNames
+    {
+        Create,
+        Join,
+    };
     std::vector<Text*> textbuf;
+    std::vector<Text*> activeTextbuf;
     sf::Font font;
+    std::size_t				mOptionIndex;
 };
 
 

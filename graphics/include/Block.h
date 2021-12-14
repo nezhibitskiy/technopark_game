@@ -9,7 +9,7 @@
 
 class Block : public Draw::Object {
 public:
-    explicit Block(unsigned int _id = 10, const std::string& filename = "../resources/bricks.png",size_t _sizePx = 30);
+    explicit Block(unsigned int _id = 10, const std::string& filename = "../resources/wall.png",size_t _sizePx = 30);
     void setPos(unsigned int x, unsigned int y) override;
     void setID(unsigned short _id) override;
     int getX() override;
