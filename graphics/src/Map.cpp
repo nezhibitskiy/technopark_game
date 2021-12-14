@@ -41,18 +41,31 @@ void DrawMap::SetZone(unsigned int x, unsigned int y, unsigned int rad) {
 }
 
 void DrawMap::SetHp(unsigned short id, int hpVal) {
-    if (id == 0) {
-        hp.resize(hpVal);
-        for (int i = 0; i < hp.size(); ++i) {
-            hp[i] = new Heart;
+
+
+    if(hp.size() > hpVal) {
+        for (int i = 0; i < hpVal; ++i) {
+            hp[i]->setID(1);
+        }
+        for( int i = hpVal; i < hp.size(); ++i){
+            hp[i]->setID(0);
         }
     }
+
+    hp.resize(hpVal);
+    for (auto &i: hp) {
+        i = new Heart;
+        i->setID(1);
+    }
+
+
+
 }
 
 
 void DrawMap::SetUnits(unsigned short id, unsigned int x, unsigned int y) {
 
-    mUnits[id]->setPos(x,y);
+    mUnits[id]->setPos(x, y);
 
 
 }
@@ -101,7 +114,7 @@ void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, 
     mUnits[id]->setPos(x, y);
     if (id == 0) {
         mUnits[id]->setID(0);
-    } else mUnits[id]->setID(team+1);
+    } else mUnits[id]->setID(team + 1);
 
 }
 

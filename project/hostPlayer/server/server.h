@@ -19,25 +19,28 @@ namespace gameServer {
             : private boost::noncopyable
     {
     public:
-        explicit server(const std::string& address, const std::string& port,
-                        std::size_t thread_pool_size);
+        explicit server(std::size_t rClientCount);
 
-        void init();
+        bool init(const std::string& address, const std::string& port);
         /// Run the hostPlayer's io_context loop.
-        void run(EventMessage tmpEventMsg);
-        BaseMessage **checkRequests(unsigned int *reqMsgCount);
+        void Run(EventMessage tmpEventMsg);
+        BaseMessage **CheckRequests(unsigned int *reqMsgCount);
         /// Handle a request to stop the hostPlayer.
-        void closeServer();
+        void CloseServer();
+
+        bool closeGameReq;
 
     private:
         /// Initiate an asynchronous accept operation.
-        void start_accept();
+        void StartAccept();
 
         /// Handle completion of an asynchronous accept operation.
-        void handle_accept(const boost::system::error_code& e);
+        void HandleAccept(const boost::system::error_code& e);
 
         /// The number of threads that will call io_context::run().
         std::size_t thread_pool_size_;
+
+        std::size_t clientCount;
 
         /// The io_context used to perform asynchronous operations.
         boost::asio::io_context io_context_;

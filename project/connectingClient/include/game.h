@@ -18,9 +18,10 @@ private:
     enum State {
         INIT = 0,
         WAITING_FOR_GAME = 1,
-        STARTED = 2,
-        GAME_OVER = 3,
-        END_OF_GAME = 4
+        WAITING_FOR_SERVER_START = 2,
+        STARTED = 3,
+        GAME_OVER = 4,
+        END_OF_GAME = 5
     };
 
     Client *client;

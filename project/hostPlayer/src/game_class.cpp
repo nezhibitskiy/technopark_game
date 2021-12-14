@@ -10,15 +10,32 @@
 #define GAME_TIME 30
 
 
-Game::Game() : gameServer("0.0.0.0", "5000", 7) {
+Game::Game() :gameServer(4)
+{
     state = INIT;
+
+}
+
+Game::~Game() {
+    delete moveHandler;
+    delete attackHandler;
+    delete putBlockHandler;
+
+    for (auto &elem: objects) {
+        delete elem.second;
+    }
+    objects.clear();
+    delete factory;
+    delete zone;
+}
+
+void Game::CreateMap() {
     factory = new Factory();
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
 
     unsigned int width = 20;
     unsigned int height = 20;
-
 
     EventMessage message(EventMessage::CREATE_MAP, 0, width, height, 4);
     event.push(message);
@@ -60,7 +77,7 @@ Game::Game() : gameServer("0.0.0.0", "5000", 7) {
         map->addObject(players.first, players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
         EventMessage createPlayer(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
-                             players.second->getSpawnpoint().second, (i / playersInTeamCount));
+                                  players.second->getSpawnpoint().second, (i / playersInTeamCount));
 
         event.push(createPlayer);
         EventMessage setHealth(EventMessage::SET_HEALTH, players.first, 0, 0, DEFAULT_HEALTH_VALUE);
@@ -73,8 +90,8 @@ Game::Game() : gameServer("0.0.0.0", "5000", 7) {
                 auto obj = factory->createObject(endBlockObject);
                 objects.insert(obj);
                 map->addObject(obj.first, i, j);
-                EventMessage message1(EventMessage::CREATE_OBJECT, EndBlock::ID, i, j);
-                event.push(message1);
+                EventMessage createEndBlock(EventMessage::CREATE_OBJECT, EndBlock::ID, i, j);
+                event.push(createEndBlock);
             }
         }
     }
@@ -84,21 +101,6 @@ Game::Game() : gameServer("0.0.0.0", "5000", 7) {
     attackHandler = new AttackHandler;
     putBlockHandler = new PutBlockHandler;
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
-
-    gameServer.init();
-}
-
-Game::~Game() {
-    delete moveHandler;
-    delete attackHandler;
-    delete putBlockHandler;
-
-    for (auto &elem: objects) {
-        delete elem.second;
-    }
-    objects.clear();
-    delete factory;
-    delete zone;
 }
 
 
@@ -109,8 +111,15 @@ int Game::Iteration() {
             case (INIT):
                 app.render(&event);
                 if (app.processInput(&request)) {
-                    app.changeState();
-                    state = WAITING_FOR_GAME;
+
+                    /// Place for address output and port input
+                    if (gameServer.init("0.0.0.0", "5000")) {
+                        app.changeState();
+                        state = WAITING_FOR_GAME;
+                    } else {
+                        /// ADD "TRY AGAIN" MESSAGE
+                        std::cout << "Error during server start" << std::endl;
+                    }
                 }
                 break;
             case (WAITING_FOR_GAME):
@@ -118,6 +127,7 @@ int Game::Iteration() {
                 if (app.processInput(&request)) {
                     app.changeState();
                     state = STARTED;
+                    CreateMap();
                 }
                 break;
             case (STARTED): {
@@ -135,10 +145,10 @@ int Game::Iteration() {
                     request.pop();
                 }
 
-                while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME) {
+                while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME && !gameServer.closeGameReq) {
                     unsigned int receivedMsgCount = 0;
 
-                    BaseMessage **receivedMsg = gameServer.checkRequests(&receivedMsgCount);
+                    BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);
                     if (receivedMsg != nullptr) {
                         for (unsigned int i = 0; i < receivedMsgCount; i++) {
                             request.push(*receivedMsg[i]);
@@ -146,7 +156,7 @@ int Game::Iteration() {
                     }
 
                     while(!event.empty()){
-                        gameServer.run(event.front());
+                        gameServer.Run(event.front());
                         app.render(&event);
                         event.pop();
                     }
@@ -171,14 +181,16 @@ int Game::Iteration() {
 
             case (GAME_OVER): {
                 while(!event.empty()){
-                    gameServer.run(event.front());
+                    gameServer.Run(event.front());
                     app.render(&event);
                     event.pop();
                 }
 
                 if (app.processInput(&request)) {
-                   // app.changeState();
-                    gameServer.closeServer();
+
+                    app.changeState();
+                    gameServer.CloseServer();
+
                     state = END_OF_GAME;
                 }
                 break;

@@ -5,9 +5,9 @@
 #include "message.h"
 #include "game.h"
 
-Game::Game() {
-    client = new Client("0.0.0.0", "5000", &event, &request);
+Game::Game() : event() {
     state = INIT;
+    std::cout << "Event queue size: " << event->size() << std::endl;
 }
 Game::~Game() {
     delete client;
@@ -20,24 +20,33 @@ void Game::Iteration() {
                 app.render(event);
                 if(app.processInput(request)){
                     app.changeState();
-                    state = WAITING_FOR_GAME;
                     try
                     {
+                        client = new Client("0.0.0.0", "5000", &event, &request);
+
                         client->run();
                     }
                     catch (std::exception& e)
                     {
                         std::cout << "Exception: " << e.what() << "\n";
                     }
+                    state = WAITING_FOR_GAME;
                 }
                 break;
             case (WAITING_FOR_GAME):
-
                 app.render(event);
                 if(app.processInput(request)){
                     app.changeState();
 
-                    state = STARTED;
+                    state = WAITING_FOR_SERVER_START;
+                }
+                break;
+            case (WAITING_FOR_SERVER_START):
+                if(!event->empty()){
+                    if (event->front().getType() == EventMessage::CREATE_MAP)
+                        state = STARTED;
+                    else
+                        event->pop();
                 }
                 break;
 
