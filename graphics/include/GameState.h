@@ -24,7 +24,7 @@ private:
     InputPlayer mPlayer;
     DrawMap map;
     std::queue<BaseMessage> request;
-   // EventMessage event;
+    std::vector<Text*> textbuf;
     Draw::EventManager eventManager;
 };
 

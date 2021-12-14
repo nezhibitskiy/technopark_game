@@ -7,12 +7,12 @@
 
 
 
-template<typename Message, typename Map>
+template<typename Message, typename T>
 class BaseEventHandler {
 public:
     //virtual EventHandler *SetNext(EventHandler *handler) = 0;
     virtual bool CanHandle(Message *event) = 0;
-    virtual void Handler(Message *event,Map *map) = 0;
+    virtual void Handler(Message *event,T *t) = 0;
 };
 
 /*

@@ -12,15 +12,17 @@ EndState::EndState(StateStack &stack, DrawState::State::Context context) : State
 
 void EndState::draw(std::queue<EventMessage> *eventQueue) {
 
+    sf::RenderWindow& window = *getContext().window;
+    sf::RectangleShape backgroundShape;
+    backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
+    backgroundShape.setSize(window.getView().getSize());
+    window.draw(backgroundShape);
 
-
-    EventMessage endMessage = eventQueue->front();
     Text *IdTeam;
-    if (endMessage.getType() == EventMessage::WIN_TEAM) {
-        IdTeam = new Text(*getContext().font, std::to_string(endMessage.getID()), 40);
-        IdTeam->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 1.8f);
-        IdTeam->draw(*getContext().window);
-    }
+    EventMessage endMessage = eventQueue->front();
+    IdTeam = new Text(*getContext().font, std::to_string(endMessage.getID()), 40);
+    IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 1.8f);
+    IdTeam->draw(window);
 
 
     for (auto text: textbuf) {

@@ -9,9 +9,12 @@ void GameState::draw(std::queue<EventMessage>* eventQueue) {
 
 
     eventManager.EventHandle(&eventQueue->front(),&map);
-
     map.DrawBack();
     map.Draw();
+
+
+
+
 
 }
 
@@ -20,6 +23,7 @@ bool GameState::handleEvent(const sf::Event &event,std::queue<BaseMessage>* requ
     mPlayer.handleEvent(event, *request);
 
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+
         std::cout << "change state to Menu \n";
         return true;
 
@@ -29,6 +33,5 @@ bool GameState::handleEvent(const sf::Event &event,std::queue<BaseMessage>* requ
 }
 
 void GameState::ChangeState() {
-    requestStackPop();
     requestStackPush(States::End);
 }
