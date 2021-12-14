@@ -7,7 +7,7 @@
 
 Game::Game() : event() {
     state = INIT;
-    std::cout << "Event queue size: " << event->size() << std::endl;
+//    std::cout << "Event queue size: " << event->size() << std::endl;
 }
 Game::~Game() {
     delete client;
