@@ -79,13 +79,11 @@ bool MenuState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *req
 
 void MenuState::ChangeState() {
     requestStackPop();
-    requestStackPush(States::Preparation);
+    requestStackPush(States::Join);
+
 }
 
-void MenuState::ChangeStateJoin() {
-    requestStackPop();
-    requestStackPush(States::Join);
-}
+
 
 
 void MenuState::updateActiveText() {

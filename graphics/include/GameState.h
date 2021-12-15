@@ -21,6 +21,8 @@ public:
     void ChangeState() override;
 
 private:
+    //Text time;
+    sf::Clock clock;
     InputPlayer mPlayer;
     DrawMap map;
     std::queue<BaseMessage> request;

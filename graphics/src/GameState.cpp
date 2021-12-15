@@ -2,15 +2,21 @@
 
 GameState::GameState(StateStack &stack, Context context) : State(stack, context), mPlayer(*context.player),map(*context.window) {
 
+
 }
 
 
 void GameState::draw(std::queue<EventMessage>* eventQueue) {
 
 
+
     eventManager.EventHandle(&eventQueue->front(),&map);
     map.DrawBack();
     map.Draw();
+    Text* time = new Text(*getContext().font, std::to_string(clock.getElapsedTime( ).asSeconds( )),40);
+    time->setPos(getContext().window->getSize().x/2,getContext().window->getSize().y-time->getSize());
+    time->draw(*getContext().window);
+
 
 
 
@@ -19,6 +25,8 @@ void GameState::draw(std::queue<EventMessage>* eventQueue) {
 }
 
 bool GameState::handleEvent(const sf::Event &event,std::queue<BaseMessage>* request) {
+
+
 
     mPlayer.handleEvent(event, *request);
 
@@ -33,5 +41,6 @@ bool GameState::handleEvent(const sf::Event &event,std::queue<BaseMessage>* requ
 }
 
 void GameState::ChangeState() {
+
     requestStackPush(States::End);
 }

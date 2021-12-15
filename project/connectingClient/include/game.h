@@ -16,6 +16,7 @@ public:
 
 private:
     enum State {
+        PREINIT = -1,
         INIT = 0,
         WAITING_FOR_GAME = 1,
         WAITING_FOR_SERVER_START = 2,

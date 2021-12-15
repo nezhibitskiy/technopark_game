@@ -12,6 +12,7 @@ public:
     explicit Block(unsigned int _id = 10, const std::string& filename = "../resources/wall.png",size_t _sizePx = 30);
     void setPos(unsigned int x, unsigned int y) override;
     void setID(unsigned short _id) override;
+    void setSize(size_t size) override;
     int getX() override;
     int getY() override;
     size_t getSize() override;

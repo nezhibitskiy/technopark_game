@@ -10,7 +10,7 @@ Block::Block(unsigned int _id, const std::string &filename,size_t _sizePx) : id(
     }
     texBlock.setSmooth(true);
     mBlock.setTexture(texBlock);
-    mBlock.setScale(sizePx / texBlock.getSize().x, sizePx / texBlock.getSize().y);
+
 
 
 }
@@ -61,4 +61,9 @@ void Block::SetWinZone() {
 
 size_t Block::getSize() {
     return sizePx;
+}
+
+void Block::setSize(size_t size) {
+    sizePx = size;
+    mBlock.setScale(sizePx / texBlock.getSize().x, sizePx / texBlock.getSize().y);
 }

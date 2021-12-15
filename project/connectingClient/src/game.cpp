@@ -6,7 +6,7 @@
 #include "game.h"
 
 Game::Game() : event() {
-    state = INIT;
+    state = PREINIT;
 //    std::cout << "Event queue size: " << event->size() << std::endl;
 }
 Game::~Game() {
@@ -16,6 +16,14 @@ Game::~Game() {
 void Game::Iteration() {
     while (state != END_OF_GAME) {
         switch(state) {
+            case (PREINIT):
+                app.render(event);
+                if (app.processInput(request)) {
+
+                    app.changeState();
+                    state = INIT;
+                }
+                break;
             case (INIT):
                 app.render(event);
                 if(app.processInput(request)){

@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Map.h"
 
+#define DEFAULT_SIZE 30
+
 DrawMap::DrawMap(sf::RenderWindow &mWindow) : mWindow(mWindow) {
 
 }
@@ -13,7 +15,7 @@ DrawMap::~DrawMap() {
 
 void DrawMap::DrawBack() {
 
-    mWindow.clear(sf::Color::Black);
+   // mWindow.clear(sf::Color::Black);
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 
@@ -96,10 +98,12 @@ void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned in
 
     mObjects.resize(width * height, nullptr);
 
-
     mBlocks = new Block *[width];
-    for (int i = 0; i < width; ++i)
+    for (int i = 0; i < width; ++i) {
         mBlocks[i] = new Block[height];
+
+    }
+
 
 
     mUnits.resize(countUnits);

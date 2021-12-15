@@ -39,8 +39,7 @@ bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessag
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
         std::cout << "change state to Game \n";
 
-        BaseMessage moveLeft(-1, 0,std::stoi( ipPlayer ));
-        request->push(moveLeft);
+
         return true;
 
     }

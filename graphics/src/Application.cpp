@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "PreparationState.h"
 #include "EndState.h"
+#include "ClientConnectState.h"
 
 
 Application::Application()
@@ -64,7 +65,7 @@ void Application::render(std::queue<EventMessage> *eventQueue) {
 void Application::registerStates() {
 
     mStateStack.registerState<MenuState>(States::Menu);
-    mStateStack.registerState<MenuState>(States::Join);
+    mStateStack.registerState<ClientConnectState>(States::Join);
     mStateStack.registerState<PreparationState>(States::Preparation);
     mStateStack.registerState<GameState>(States::Game);
     mStateStack.registerState<EndState>(States::End);

@@ -1,7 +1,3 @@
-//
-// Created by ivan_lemon on 12/14/21.
-//
-
 #include <iostream>
 #include "ClientConnectState.h"
 
@@ -10,12 +6,16 @@ ClientConnectState::ClientConnectState(StateStack &stack, DrawState::State::Cont
     Join->setPos(getContext().window->getSize().x / 2.0f, 0);
     textbuf.push_back(Join);
 
-    Text *Tips = new Text(*getContext().font, "enter your IP", 30);
+    Text *Tips = new Text(*getContext().font, "write your IP", 30);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 2.0f);
     textbuf.push_back(Tips);
+    Text *TipsEnter = new Text(*getContext().font, "then click ENTER", 20);
+    TipsEnter->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 1.8f);
+    textbuf.push_back(TipsEnter);
 }
 
 void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
+
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
 
@@ -31,6 +31,7 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
+
         std::cout << "change state to waiting room \n";
         return true;
 

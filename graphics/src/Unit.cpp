@@ -1,6 +1,6 @@
 #include "Unit.h"
 
-Unit::Unit(unsigned int _id, const std::string &filename,size_t _sizePx) : id(_id), sizePx(_sizePx) {
+Unit::Unit(unsigned int _id, const std::string &filename, size_t _sizePx) : id(_id), sizePx(_sizePx) {
 
     if (!texUnit.loadFromFile(filename)) {
         throw std::runtime_error("Failed to load texture" + filename);
@@ -9,13 +9,13 @@ Unit::Unit(unsigned int _id, const std::string &filename,size_t _sizePx) : id(_i
     mUnit.setOrigin(texUnit.getSize().x * 0.5,
                     texUnit.getSize().y * 0.5);
     mUnit.setTexture(texUnit);
-    mUnit.setScale(sizePx / texUnit.getSize().x, sizePx / texUnit.getSize().y);
+
 
 }
 
 void Unit::setPos(unsigned int x, unsigned int y) {
 
-    mUnit.setPosition(x*getSize() + getSize()/ 2,y * getSize() + getSize()/ 2);
+    mUnit.setPosition(x * getSize() + getSize() / 2, y * getSize() + getSize() / 2);
 }
 
 
@@ -51,6 +51,11 @@ void Unit::setID(unsigned short _id) {
 
 size_t Unit::getSize() {
     return sizePx;
+}
+
+void Unit::setSize(size_t size) {
+    sizePx = size;
+    mUnit.setScale(sizePx / texUnit.getSize().x, sizePx / texUnit.getSize().y);
 }
 
 

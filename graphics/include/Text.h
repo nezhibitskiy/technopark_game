@@ -17,7 +17,10 @@ public:
     int getY() override {};
 
     void setID(unsigned short _id) override {};
-    size_t getSize() override {};
+    size_t getSize() override {
+        return mText.getCharacterSize();
+    };
+    void setSize(size_t size) override {};
 
     void setColor(const sf::Color color);
 

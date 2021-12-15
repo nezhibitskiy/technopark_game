@@ -26,7 +26,7 @@ public:
     bool handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) override;
 
     void ChangeState() override;
-    void ChangeStateJoin();
+
 private:
     enum OptionNames
     {

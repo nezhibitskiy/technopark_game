@@ -16,6 +16,7 @@ public:
     void setID(unsigned short _id) override;
     void draw(sf::RenderWindow & l_window) override;
     size_t getSize() override;
+    void setSize(size_t size) override {};
 private:
     float sizePx;
     unsigned short id;

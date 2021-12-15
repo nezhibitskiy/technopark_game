@@ -40,6 +40,7 @@ private:
 class Game {
 public:
     enum State {
+        PREINIT = -1,
         INIT = 0,
         WAITING_FOR_GAME = 1,
         STARTED = 2,

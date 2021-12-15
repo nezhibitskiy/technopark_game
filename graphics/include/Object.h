@@ -13,6 +13,8 @@ namespace Draw {
 
         virtual void setID(unsigned short _id) = 0;
 
+        virtual void setSize(size_t size) = 0;
+
         virtual void draw(sf::RenderWindow &l_window) = 0;
 
         virtual size_t getSize() = 0 ;
