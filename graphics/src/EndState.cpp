@@ -5,24 +5,31 @@ EndState::EndState(StateStack &stack, DrawState::State::Context context) : State
     Text *GameOver = new Text(*getContext().font, "GAME OVER", 50);
     GameOver->setPos(getContext().window->getSize().x / 2.0f, 0);
     textbuf.push_back(GameOver);
-    Text *Winner = new Text(*getContext().font, "winner team", 30);
-    Winner->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 2.0f);
-    textbuf.push_back(Winner);
+
 }
 
 void EndState::draw(std::queue<EventMessage> *eventQueue) {
 
-    sf::RenderWindow& window = *getContext().window;
+    sf::RenderWindow &window = *getContext().window;
     sf::RectangleShape backgroundShape;
     backgroundShape.setFillColor(sf::Color(0, 0, 0, 150));
     backgroundShape.setSize(window.getView().getSize());
     window.draw(backgroundShape);
 
-    Text *IdTeam;
+    Text *IdTeam = nullptr;
     EventMessage endMessage = eventQueue->front();
-    IdTeam = new Text(*getContext().font, std::to_string(endMessage.getID()), 40);
-    IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 1.8f);
-    IdTeam->draw(window);
+    if( endMessage.getType() == EventMessage::WIN_TEAM) {
+        if (endMessage.getID() == 65535) {
+            IdTeam = new Text(*getContext().font, " DRAW ", 40);
+        } else {
+            IdTeam = new Text(*getContext().font, "winner -  TEAM  "+std::to_string(endMessage.getID()), 40);
+
+        }
+        IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+        IdTeam->draw(window);
+    }
+
+
 
 
     for (auto text: textbuf) {
