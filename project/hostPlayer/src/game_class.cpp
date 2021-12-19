@@ -64,6 +64,8 @@ void Game::CreateMap() {
         }
     }
 
+    auto heal = factory->createObject(healPot);
+    map->addObject(heal.first, width / 2, height / 2);
     EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
     event.push(createHeal);
 
@@ -132,9 +134,7 @@ int Game::Iteration() {
                 }
                 break;
             case (WAITING_FOR_GAME):
-                for (size_t i = 0; i < teamCount * playersInTeamCount; ++i) {
-                    
-                }
+
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
