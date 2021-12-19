@@ -64,6 +64,9 @@ void Game::CreateMap() {
         }
     }
 
+    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
+    event.push(createHeal);
+
     for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
         auto players = factory->createPlayer();
         playerIds[i] = players.first;
@@ -104,7 +107,6 @@ void Game::CreateMap() {
 
 
 int Game::Iteration() {
-    long start = clock();
     while (state != END_OF_GAME) {
         switch (state) {
             case (PREINIT):
@@ -130,6 +132,9 @@ int Game::Iteration() {
                 }
                 break;
             case (WAITING_FOR_GAME):
+                for (size_t i = 0; i < teamCount * playersInTeamCount; ++i) {
+                    
+                }
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
@@ -152,7 +157,13 @@ int Game::Iteration() {
                     request.pop();
                 }
 
+                long start = clock();
+                long prev = 0;
                 while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME && !gameServer.closeGameReq) {
+                    if ((clock() - start) / CLOCKS_PER_SEC - prev > 10) {
+                        prev = (clock() - start) / CLOCKS_PER_SEC;
+                        EventMessage sendTime(EventMessage::SEND_TIME, prev, 0, 0, 0);
+                    }
                     unsigned int receivedMsgCount = 0;
 
                     BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);

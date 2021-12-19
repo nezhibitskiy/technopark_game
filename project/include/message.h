@@ -43,7 +43,8 @@ public:
         DELETE = 6,
         WIN_TEAM = 7,
         DRAW_GAME = 8,
-        CLOSE_GAME = 9
+        SEND_TIME = 9,
+        CLOSE_GAME = 10
     };
     EventMessage(unsigned short Type, unsigned short ID,
                  unsigned int X, unsigned int Y, unsigned short Data = 0) :
