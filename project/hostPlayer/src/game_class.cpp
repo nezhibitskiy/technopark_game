@@ -3,6 +3,7 @@
 #include <ctime>
 #include <queue>
 #include <unordered_map>
+#include <ctime>
 
 #include "game_class.h"
 
@@ -83,7 +84,7 @@ void Game::CreateMap() {
 
         EventMessage createPlayer(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
                                   players.second->getSpawnpoint().second, playerTeams.at(i).second);
-
+        std::cout << "PLAYER CREATED  ID:" << players.first << " X: " << players.second->getSpawnpoint().first << " Y:" << players.second->getSpawnpoint().second << " TEAM: " << playerTeams.at(i).second << std::endl;
         event.push(createPlayer);
         EventMessage setHealth(EventMessage::SET_HEALTH, players.first, 0, 0, DEFAULT_HEALTH_VALUE);
         event.push(setHealth);
@@ -160,11 +161,17 @@ int Game::Iteration() {
                     request.pop();
                 }
 
-                long start = clock();
+                struct timespec start, finish;
                 long prev = 0;
-                while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME && !gameServer.closeGameReq) {
-                    if ((clock() - start) / CLOCKS_PER_SEC - prev > 10) {
-                        prev = (clock() - start) / CLOCKS_PER_SEC;
+                clock_gettime(CLOCK_MONOTONIC, &start);
+                clock_gettime(CLOCK_MONOTONIC, &finish);
+                //finish = start;
+                std::cout << finish.tv_sec - start.tv_sec << std::endl;
+                std::cout << "START: " << start.tv_sec << " END: " << finish.tv_sec << std::endl;
+                //while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
+                while (finish.tv_sec - start.tv_sec < GAME_TIME) {
+                    if (finish.tv_sec - start.tv_sec - prev > 10) {
+                        prev = finish.tv_sec - start.tv_sec;
                         EventMessage sendTime(EventMessage::SEND_TIME, prev, 0, 0, 0);
                     }
                     unsigned int receivedMsgCount = 0;
@@ -186,6 +193,8 @@ int Game::Iteration() {
 
                     }
                     start_game();
+                    clock_gettime(CLOCK_MONOTONIC, &finish);
+                    //std::cout << finish.tv_sec - start.tv_sec << std::endl;
                 }
                 app.changeState();
 
