@@ -19,6 +19,11 @@ namespace gameServer {
             : private boost::noncopyable
     {
     public:
+        enum Type {
+            CONNECTING_CLIENT = 6,
+            ADD_CLIENT_TO_TEAM = 7
+        };
+
         explicit server(std::size_t rClientCount);
 
         bool init(const std::string& address, const std::string& port);

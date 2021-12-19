@@ -13,7 +13,11 @@
 Game::Game() :gameServer(4)
 {
     state = PREINIT;
-
+    playerIds = new unsigned int[4];
+    playersCount = 0;
+    maxTeams = 2;
+    maxPlayersInTeams = 2;
+    playersInTeamsCount = new unsigned int[maxTeams];
 }
 
 Game::~Game() {
@@ -30,7 +34,7 @@ Game::~Game() {
 }
 
 void Game::CreateMap() {
-    factory = new Factory();
+    factory = new Factory(playersCount);
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
 
@@ -46,21 +50,19 @@ void Game::CreateMap() {
     EventMessage createZone(EventMessage::CREATE_ZONE, 0, zone->getX(), zone->getY(), zone->getRad());
     event.push(createZone);
 
-    teamCount = 2;
-    playersInTeamCount = 2;
-    playerIds = new unsigned int[teamCount * playersInTeamCount];
+    //playerIds = new unsigned int[teamCount * playersInTeamCount];
 
     objects.reserve(10);
 
-    spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
+    spawnpoints = new std::pair<unsigned int, unsigned int>[playersCount];
 
-    for (unsigned short i = 0; i < teamCount * playersInTeamCount; i++) {
-        if (i < playersInTeamCount) {
+    for (unsigned int i = 0; i < playerTeams.size(); i++) {
+        if (i < maxPlayersInTeams) {
             spawnpoints[i].second = 1;
             spawnpoints[i].first = i + 1;
         } else {
             spawnpoints[i].second = height - 2;
-            spawnpoints[i].first = width - (i % playersInTeamCount) - 2;
+            spawnpoints[i].first = width - (i % maxPlayersInTeams) - 2;
         }
     }
 
@@ -69,10 +71,9 @@ void Game::CreateMap() {
     EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
     event.push(createHeal);
 
-    for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
-        auto players = factory->createPlayer();
-        playerIds[i] = players.first;
-        players.second->setTeam((char) (i / playersInTeamCount));
+    for (unsigned int i = 0; i < playerTeams.size(); i++) {
+        auto players = factory->createPlayer(playerTeams.at(i).first);
+        players.second->setTeam(playerTeams.at(i).second);
         players.second->saveSpawnpoint(spawnpoints[i]);
         players.second->setXY(players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
@@ -81,7 +82,7 @@ void Game::CreateMap() {
         map->addObject(players.first, players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
         EventMessage createPlayer(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
-                                  players.second->getSpawnpoint().second, (i / playersInTeamCount));
+                                  players.second->getSpawnpoint().second, playerTeams.at(i).second);
 
         event.push(createPlayer);
         EventMessage setHealth(EventMessage::SET_HEALTH, players.first, 0, 0, DEFAULT_HEALTH_VALUE);
@@ -134,12 +135,14 @@ int Game::Iteration() {
                 }
                 break;
             case (WAITING_FOR_GAME):
-
+                if (!request.empty()) {
+                    waitingForGame();
+                }
                 app.render(&event);
                 if (app.processInput(&request)) {
                     app.changeState();
-                    state = STARTED;
                     CreateMap();
+                    state = STARTED;
                 }
                 break;
             case (STARTED): {
@@ -219,6 +222,33 @@ int Game::Iteration() {
     }
 
     return EXIT_SUCCESS;
+}
+
+void Game::waitingForGame() {
+    if (!request.empty()) {
+        BaseMessage newMessage = request.front();
+        if (newMessage.getType() == gameServer::server::CONNECTING_CLIENT && playersCount < maxPlayersInTeams * maxTeams) {
+            playerIds[playersCount] = newMessage.getID();
+            playersCount++;
+            request.pop();
+            unsigned short teamAvailable = 0;
+            for (unsigned int i = 0; i < maxTeams; ++i) {
+                if (playersInTeamsCount[i] < maxPlayersInTeams) {
+                    teamAvailable |= 1 << i;
+                }
+            }
+            EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);
+            event.push(availableTeamsMsg);
+        } else if (newMessage.getType() == gameServer::server::ADD_CLIENT_TO_TEAM) {
+            if (newMessage.getX() < maxTeams && playersInTeamsCount[newMessage.getX()] < maxPlayersInTeams) {
+                playersInTeamsCount[newMessage.getX()]++;
+                playerTeams.emplace_back(std::make_pair(newMessage.getID(), newMessage.getX()));
+            }
+            request.pop();
+            EventMessage addPlayer(EventMessage::PLAYER_ADDED_TO_TEAM, newMessage.getID(), 0, 0, newMessage.getX());
+            event.push(addPlayer);
+        }
+    }
 }
 
 void Game::start_game() {
@@ -356,8 +386,8 @@ bool Game::move(unsigned int x, unsigned int y) {
 
 int Game::getWinTeam() {
     std::vector<std::pair<int, int>> teams;
-    for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-        auto it = objects.find(playerIds[i]);
+    for (int i = 0; i < playerTeams.size(); ++i) {
+        auto it = objects.find(playerTeams.at(i).first);   // playerIds[i]
         if ((it->second->getX() > zone->getX() - zone->getRad()) && (it->second->getX() < zone->getX() + zone->getRad())
             && (it->second->getY() > zone->getY() - zone->getRad()) &&
             (it->second->getY() < zone->getY() + zone->getRad())) {
@@ -402,23 +432,23 @@ int Game::getWinTeam() {
     // определяем киллы
     std::vector<int> finalTeams;
     if (res.empty()) {
-        auto killsTeam = new unsigned int[teamCount];
-        for (int i = 0; i < teamCount; ++i) {
+        auto killsTeam = new unsigned int[maxTeams]; //teamCount
+        for (int i = 0; i < maxTeams; ++i) {  // teamCount
             killsTeam[i] = 0;
         }
-        for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-            auto it = objects.find(playerIds[i]);
-            for (int j = 0; j < teamCount; ++j) {
+        for (int i = 0; i < playerTeams.size(); ++i) {
+            auto it = objects.find(playerTeams.at(i).first);  // playerIds[i]
+            for (int j = 0; j < maxTeams; ++j) {  //teamCount
                 if (it->second->getTeam() == j) {
                     killsTeam[j] += it->second->getKills();
                 }
             }
         }
-        for (int i = 0; i < teamCount; ++i) {
-        }
+        /*for (int i = 0; i < teamCount; ++i) {
+        }*/
         biggest = killsTeam[0];
         finalTeams.emplace_back(0);
-        for (int i = 1; i < teamCount; ++i) {
+        for (int i = 1; i < maxTeams; ++i) {   //teamCount
             if (killsTeam[i] > biggest) {
                 biggest = killsTeam[i];
                 finalTeams.clear();
@@ -434,8 +464,8 @@ int Game::getWinTeam() {
         return finalTeams.at(0);
     } else {
         std::vector<std::pair<unsigned int, int>> killsTeam;
-        for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-            auto it = objects.find(playerIds[i]);
+        for (int i = 0; i < playerTeams.size(); ++i) {
+            auto it = objects.find(playerTeams.at(i).first);  //playerIds[i]
             for (int re : res) {
                 if (it->second->getTeam() == re) {
                     for (int k = 0; k < killsTeam.size(); ++k) {  // ?????????????????????

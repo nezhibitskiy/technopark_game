@@ -53,6 +53,7 @@ public:
     };
     Game();
     void CreateMap();
+    void waitingForGame();
     int Iteration();
     void start_game();
     bool move(unsigned int x, unsigned y);
@@ -67,11 +68,16 @@ private:
     Map *map;
 
     std::pair<unsigned int, unsigned int> *spawnpoints;
-    char teamCount;
-    char playersInTeamCount;
+    //char teamCount;
+    //char playersInTeamCount;
+    char playersCount;
+    unsigned int* playersInTeamsCount;
+    char maxPlayersInTeams;
+    char maxTeams;
+    unsigned int* playerIds;
+    std::vector<std::pair<unsigned int, char>> playerTeams;
 
     std::unordered_multimap<unsigned int, Object*> objects;
-    unsigned int* playerIds;
     Zone* zone;
     Factory* factory;
     MoveHandler *moveHandler;

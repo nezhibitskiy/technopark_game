@@ -18,7 +18,7 @@ enum ObjectClass {
 
 class Factory {
 public:
-    Factory() : id_count(0) {}
+    explicit Factory(char players) : id_count(players) {}
 
     //template <typename classObject>
     std::pair<unsigned int, Object *> createObject(unsigned short val) {
@@ -41,9 +41,9 @@ public:
         }
     }
 
-    std::pair<unsigned int, Player *> createPlayer() {
+    std::pair<unsigned int, Player *> createPlayer(unsigned int id_) {
         auto player = new Player();
-        return std::make_pair(id_count++, player);
+        return std::make_pair(id_, player);
     }
 
 private:
