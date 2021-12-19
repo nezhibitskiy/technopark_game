@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <random>
 
 #include "player_class.h"
 #include "map_class.h"
@@ -13,10 +14,13 @@
 
 class Zone {
 public:
-    void setXY(unsigned int x_, unsigned int y_, unsigned int rad_) {
-        x = x_;
-        y = y_;
-        rad = rad_;
+    Zone(unsigned int rad_, unsigned int width, unsigned int height) : rad(rad_) {
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> distX(1 + rad, width - rad - 1);
+        x = distX(rng);
+        std::uniform_int_distribution<std::mt19937::result_type> distY(1 + rad, height - rad - 1);
+        y = distY(rng);
     }
 
     unsigned int getX() const {

@@ -42,7 +42,8 @@ public:
         MOVE = 5,
         DELETE = 6,
         WIN_TEAM = 7,
-        CLOSE_GAME = 8
+        DRAW_GAME = 8,
+        CLOSE_GAME = 9
     };
     EventMessage(unsigned short Type, unsigned short ID,
                  unsigned int X, unsigned int Y, unsigned short Data = 0) :

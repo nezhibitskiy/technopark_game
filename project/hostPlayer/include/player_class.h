@@ -66,6 +66,13 @@ public:
         return false;
     }
 
+    void addHealth(char healthCount) override {
+        health += healthCount;
+        if (health > DEFAULT_HEALTH_VALUE) {
+            health = DEFAULT_HEALTH_VALUE;
+        }
+    }
+
     ~Player() = default;
 
 private:

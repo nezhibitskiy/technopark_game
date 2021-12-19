@@ -42,8 +42,7 @@ void Game::CreateMap() {
 
     map = new Map(width, height);
 
-    zone = new Zone();
-    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 3);
+    zone = new Zone(3, width, height);
     EventMessage createZone(EventMessage::CREATE_ZONE, 0, zone->getX(), zone->getY(), zone->getRad());
     event.push(createZone);
 
@@ -181,7 +180,7 @@ int Game::Iteration() {
                 state = GAME_OVER;
 
                 int res = getWinTeam();
-                EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
+                EventMessage winTeam((res < 0) ? EventMessage::DRAW_GAME : EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
                 std::cout << "WIN: " << res << std::endl;
                 break;
@@ -239,11 +238,11 @@ bool Game::move(unsigned int x, unsigned int y) {
         std::pair<unsigned int, unsigned int> point = q.front();
         q.pop();
         unsigned int key = map->getObject(point.first, point.second);
-        std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
-        std::cout << "KEY: " << key << std::endl;
-        for (auto& elem : objects) {
+        //std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
+        //std::cout << "KEY: " << key << std::endl;
+        /*for (auto& elem : objects) {
             std::cout << "OBJECTS X: " << elem.second->getX() << " Y: " << elem.second->getY() << std::endl;
-        }
+        }*/
         map->out(&objects);
         auto it = objects.find(key);
         if (it == objects.end()) {
@@ -259,28 +258,32 @@ bool Game::move(unsigned int x, unsigned int y) {
             } else {
                 passed.emplace_back(std::make_pair(point.first, point.second));
 
-                if (point.first + 1 < map->getWidth() && point.first + 1 > 0  && point.second < map->getHeight() && point.second > 0) {
+                if (point.first + 1 <= zone->getX() + zone->getRad() && point.first + 1 >= zone->getX() - zone->getRad()
+                    && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first + 1, point.second));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE1" << std::endl;
                     return false;
                 }
-                if (point.first < map->getWidth() && point.first > 0 && point.second + 1 < map->getHeight() && point.second + 1 > 0) {
+                if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                    && point.second + 1 <= zone->getY() + zone->getRad() && point.second + 1 >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first, point.second + 1));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE2" << std::endl;
                     return false;
                 }
-                if (point.first < map->getWidth() && point.first > 0 && point.second - 1 < map->getHeight() && point.second - 1 > 0) {
+                if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                    && point.second - 1 <= zone->getY() + zone->getRad() && point.second - 1 >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first, point.second - 1));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE3" << std::endl;
                     return false;
                 }
-                if (point.first - 1 < map->getWidth() && point.first - 1 > 0 && point.second < map->getHeight() && point.second > 0) {
+                if (point.first - 1 <= zone->getX() + zone->getRad() && point.first - 1 >= zone->getX() - zone->getRad()
+                    && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first - 1, point.second));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE4" << std::endl;
                     return false;
                 }
 
@@ -296,33 +299,38 @@ bool Game::move(unsigned int x, unsigned int y) {
             if (flag) {
                 continue;
             } else {
+                std::cout << "HERE" << std::endl;
                 if (it->second->isItCover()) {
                     continue;
                 } else {
                     passed.emplace_back(std::make_pair(point.first, point.second));
 
-                    if (point.first + 1 < map->getWidth() && point.first + 1 > 0  && point.second < map->getHeight() && point.second > 0) {
+                    if (point.first + 1 <= zone->getX() + zone->getRad() && point.first + 1 >= zone->getX() - zone->getRad()
+                        && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first + 1, point.second));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE1" << std::endl;
                         return false;
                     }
-                    if (point.first < map->getWidth() && point.first > 0 && point.second + 1 < map->getHeight() && point.second + 1 > 0) {
+                    if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                        && point.second + 1 <= zone->getY() + zone->getRad() && point.second + 1 >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first, point.second + 1));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE2" << std::endl;
                         return false;
                     }
-                    if (point.first < map->getWidth() && point.first > 0 && point.second - 1 < map->getHeight() && point.second - 1 > 0) {
+                    if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                        && point.second - 1 <= zone->getY() + zone->getRad() && point.second - 1 >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first, point.second - 1));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE3" << std::endl;
                         return false;
                     }
-                    if (point.first - 1 < map->getWidth() && point.first - 1 > 0 && point.second < map->getHeight() && point.second > 0) {
+                    if (point.first - 1 <= zone->getX() + zone->getRad() && point.first - 1 >= zone->getX() - zone->getRad()
+                        && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first - 1, point.second));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE4" << std::endl;
                         return false;
                     }
                 }
@@ -339,18 +347,20 @@ int Game::getWinTeam() {
     std::vector<std::pair<int, int>> teams;
     for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
         auto it = objects.find(playerIds[i]);
-        /*if ((it->second->getX() > zone->getX() - zone->getRad()) && (it->second->getX() < zone->getX() + zone->getRad())
+        if ((it->second->getX() > zone->getX() - zone->getRad()) && (it->second->getX() < zone->getX() + zone->getRad())
             && (it->second->getY() > zone->getY() - zone->getRad()) &&
-            (it->second->getY() < zone->getY() + zone->getRad()))*/
-        if (move(it->second->getX(), it->second->getY())) {
-            if (teams.empty()) {
-                teams.emplace_back(std::make_pair(1, it->second->getTeam()));
-            }
-            for (int k = 0; k < teams.size(); ++k) {  // ?????????????????????
-                if (teams.at(k).second == it->second->getTeam()) {
-                    teams.at(k).first += 1;
-                } else {
+            (it->second->getY() < zone->getY() + zone->getRad())) {
+            if (move(it->second->getX(), it->second->getY())) {
+
+                if (teams.empty()) {
                     teams.emplace_back(std::make_pair(1, it->second->getTeam()));
+                }
+                for (int k = 0; k < teams.size(); ++k) {  // ?????????????????????
+                    if (teams.at(k).second == it->second->getTeam()) {
+                        teams.at(k).first += 1;
+                    } else {
+                        teams.emplace_back(std::make_pair(1, it->second->getTeam()));
+                    }
                 }
             }
         }

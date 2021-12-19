@@ -21,6 +21,7 @@ public:
     virtual bool isItCover() { return false; }
     virtual char getTeam() const = 0;
     virtual std::pair<unsigned int, unsigned int> getSpawnpoint() const = 0;
+    virtual void addHealth(char healthCount) {};
     virtual ~Object() = default;
 };
 
