@@ -7,13 +7,13 @@
 #include "player_class.h"
 #include "defaultBlock.h"
 #include "endBlock.h"
-#
+#include "healingPotion.h"
 
 
 enum ObjectClass {
     defaultBlockObject = 0,
     endBlockObject = 1,
-    heal = 2
+    healPot = 2
 };
 
 class Factory {
@@ -31,7 +31,10 @@ public:
                 auto block = new EndBlock();
                 return std::make_pair(id_count++, block);
             }
-            case
+            case healPot: {
+                auto heal = new healingPotion();
+                return std::make_pair(id_count++, heal);
+            }
             default: {
                 return std::make_pair(0, nullptr);
             }
