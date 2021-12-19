@@ -19,14 +19,16 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     Text *IdTeam = nullptr;
     EventMessage endMessage = eventQueue->front();
     if( endMessage.getType() == EventMessage::WIN_TEAM) {
+
         if (endMessage.getID() == 65535) {
             IdTeam = new Text(*getContext().font, " DRAW ", 40);
         } else {
-            IdTeam = new Text(*getContext().font, "winner -  TEAM  "+std::to_string(endMessage.getID()), 40);
+            IdTeam = new Text(*getContext().font, "winner -  TEAM "+std::to_string(endMessage.getID()), 40);
 
         }
         IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
         IdTeam->draw(window);
+
     }
 
 

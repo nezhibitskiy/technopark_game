@@ -15,7 +15,7 @@ DrawMap::~DrawMap() {
 
 void DrawMap::DrawBack() {
 
-   // mWindow.clear(sf::Color::Black);
+
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 

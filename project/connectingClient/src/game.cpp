@@ -9,13 +9,14 @@ Game::Game() : event() {
     state = PREINIT;
 //    std::cout << "Event queue size: " << event->size() << std::endl;
 }
+
 Game::~Game() {
     delete client;
 }
 
 void Game::Iteration() {
     while (state != END_OF_GAME) {
-        switch(state) {
+        switch (state) {
             case (PREINIT):
                 app.render(event);
                 if (app.processInput(request)) {
@@ -26,17 +27,15 @@ void Game::Iteration() {
                 break;
             case (INIT):
                 app.render(event);
-                if(app.processInput(request)){
+                if (app.processInput(request)) {
                     app.changeState();
-                    try
-                    {
+                    try {
 
                         client = new Client("0.0.0.0", "5000", &event, &request);
 
                         client->run();
                     }
-                    catch (std::exception& e)
-                    {
+                    catch (std::exception &e) {
                         std::cout << "Exception: " << e.what() << "\n";
                     }
                     state = WAITING_FOR_GAME;
@@ -44,14 +43,14 @@ void Game::Iteration() {
                 break;
             case (WAITING_FOR_GAME):
                 app.render(event);
-                if(app.processInput(request)){
+                if (app.processInput(request)) {
                     app.changeState();
 
                     state = WAITING_FOR_SERVER_START;
                 }
                 break;
             case (WAITING_FOR_SERVER_START):
-                if(!event->empty()){
+                if (!event->empty()) {
                     if (event->front().getType() == EventMessage::CREATE_MAP)
                         state = STARTED;
                     else
@@ -61,12 +60,14 @@ void Game::Iteration() {
 
             case (STARTED):
                 while (event->front().getType() != EventMessage::CLOSE_GAME) {
-                    while(!event->empty() && event->front().getType() != EventMessage::CLOSE_GAME){
+
+                    while (!event->empty() && event->front().getType() != EventMessage::CLOSE_GAME) {
 
                         app.render(event);
                         event->pop();
+
                     }
-                    if(app.processInput(request)){
+                    if (app.processInput(request)) {
 
                     }
                 }
@@ -78,14 +79,13 @@ void Game::Iteration() {
 
                 }
                 break;
-            case(GAME_OVER):
+            case (GAME_OVER):
 
-                while(!event->empty()) {
+                while (!event->empty()) {
                     app.render(event);
                     event->pop();
 
                 }
-
 
 
                 if (app.processInput(request)) {

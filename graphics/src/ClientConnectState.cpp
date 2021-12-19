@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "ClientConnectState.h"
 
 ClientConnectState::ClientConnectState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
@@ -30,9 +31,16 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 }
 
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
-    if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
 
-        std::cout << "change state to waiting room \n";
+    if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
+        int a,b,c,d;
+        char ch;
+        std::stringstream s(ipPlayer);
+        s >> a >> ch >> b >> ch >> c >> ch >> d;
+       // BaseMessage ip(a,b,c,d);
+       // request->push(ip);
+       // BaseMessage o(1,0);
+      //  request->push(o);
         return true;
 
     }
@@ -47,11 +55,13 @@ bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMess
         }else if(event.text.unicode == 8 ){
             ipPlayer.pop_back();
         }
+
     }
     return false;
 }
 
 void ClientConnectState::ChangeState() {
+
     requestStackPop();
     requestStackPush(States::Preparation);
 }

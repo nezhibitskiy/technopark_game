@@ -99,7 +99,7 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetBlocks(event->getID() , event->getX(), event->getY());
+            map->SetBlocks(event->getID() , event->getX(), event->getY()); // getID - > getData
         }
 
 
