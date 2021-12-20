@@ -124,12 +124,11 @@ int Game::Iteration() {
                 }
                 break;
             case (INIT):
-                app.render(&event);
-                if (app.processInput(&request)) {
+
 
                     /// Place for address output and port input
                     if (gameServer.init("0.0.0.0", "5000")) {
-                        app.changeState();
+                        //app.changeState();
                         state = WAITING_FOR_GAME;
 
                         BaseMessage connectedClient(gameServer::server::CONNECTING_CLIENT, 0);
@@ -142,7 +141,7 @@ int Game::Iteration() {
                         /// ADD "TRY AGAIN" MESSAGE
                         std::cout << "Error during server start" << std::endl;
                     }
-                }
+
                 break;
             case (WAITING_FOR_GAME): {
                 unsigned int receivedMsgCount = 0;
