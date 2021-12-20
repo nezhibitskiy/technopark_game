@@ -6,6 +6,10 @@ EndState::EndState(StateStack &stack, DrawState::State::Context context) : State
     GameOver->setPos(getContext().window->getSize().x / 2.0f, 0);
     textbuf.push_back(GameOver);
 
+    Text *Tips = new Text(*getContext().font, "click ESC for CLOSE", 20);
+    Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 1.5f);
+    textbuf.push_back(Tips);
+
 }
 
 void EndState::draw(std::queue<EventMessage> *eventQueue) {
@@ -19,14 +23,16 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     Text *IdTeam = nullptr;
     EventMessage endMessage = eventQueue->front();
     if( endMessage.getType() == EventMessage::WIN_TEAM) {
+
         if (endMessage.getID() == 65535) {
             IdTeam = new Text(*getContext().font, " DRAW ", 40);
         } else {
-            IdTeam = new Text(*getContext().font, "winner -  TEAM  "+std::to_string(endMessage.getID()), 40);
+            IdTeam = new Text(*getContext().font, "winner -  TEAM "+std::to_string(endMessage.getID()), 40);
 
         }
-        IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 2.0f);
+        IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 3.0f);
         IdTeam->draw(window);
+
     }
 
 

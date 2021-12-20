@@ -15,7 +15,7 @@ DrawMap::~DrawMap() {
 
 void DrawMap::DrawBack() {
 
-   // mWindow.clear(sf::Color::Black);
+
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 
@@ -82,6 +82,7 @@ void DrawMap::SetBlocks(unsigned short id, unsigned int x, unsigned int y) {
 }
 
 void DrawMap::Draw() {
+
     for (auto i: mUnits) {
         i->draw(mWindow);
     }

@@ -11,8 +11,7 @@
 #define GAME_TIME 30
 
 
-Game::Game() :gameServer(4)
-{
+Game::Game() : gameServer(4) {
     state = PREINIT;
     playerIds = new unsigned int[4];
     playersCount = 0;
@@ -119,8 +118,9 @@ int Game::Iteration() {
                 app.render(&event);
                 if (app.processInput(&request)) {
 
-                        app.changeState();
-                        state = INIT;
+                    app.changeState();
+                    app.changeState();
+                    state = INIT;
                 }
                 break;
             case (INIT):
@@ -158,6 +158,8 @@ int Game::Iteration() {
                 }
                 app.render(&event);
                 if (app.processInput(&request)) {
+                    /// Place for address output and port input
+
                     app.changeState();
                     CreateMap();
                     state = STARTED;
@@ -167,7 +169,8 @@ int Game::Iteration() {
             case (STARTED): {
                 while (!request.empty()) {
                     unsigned int initMsgCount = 0;
-                    EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects, &initMsgCount, factory);
+                    EventMessage **initEventMessages = moveHandler->Handle(request.front(), map, &objects,
+                                                                           &initMsgCount, factory);
 
                     if (initEventMessages != nullptr) {
                         for (unsigned int i = 0; i < initMsgCount; i++) {
@@ -201,14 +204,17 @@ int Game::Iteration() {
                         }
                     }
 
-                    while(!event.empty()){
+
+                    if (!event.empty()) {
                         gameServer.Run(event.front());
-                        app.render(&event);
-                        event.pop();
+
                     }
 
+                    app.render(&event); // check !event.empty())
+                    if (!event.empty()) {
+                        event.pop();
+                    }
                     if (app.processInput(&request)) {
-
                     }
                     start_game();
                     clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -228,7 +234,7 @@ int Game::Iteration() {
             }
 
             case (GAME_OVER): {
-                while(!event.empty()){
+                while (!event.empty()) {
                     gameServer.Run(event.front());
                     app.render(&event);
                     event.pop();
@@ -306,6 +312,7 @@ bool Game::move(unsigned int x, unsigned int y) {
         std::pair<unsigned int, unsigned int> point = q.front();
         q.pop();
         unsigned int key = map->getObject(point.first, point.second);
+      
         //std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
         //std::cout << "KEY: " << key << std::endl;
         /*for (auto& elem : objects) {
@@ -340,6 +347,7 @@ bool Game::move(unsigned int x, unsigned int y) {
                     std::cout << "FALSE2" << std::endl;
                     return false;
                 }
+
                 if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
                     && point.second - 1 <= zone->getY() + zone->getRad() && point.second - 1 >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first, point.second - 1));
@@ -382,6 +390,7 @@ bool Game::move(unsigned int x, unsigned int y) {
                     }
                     if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
                         && point.second + 1 <= zone->getY() + zone->getRad() && point.second + 1 >= zone->getY() - zone->getRad()) {
+
                         q.push(std::make_pair(point.first, point.second + 1));
                     } else {
                         std::cout << "FALSE2" << std::endl;
