@@ -21,7 +21,7 @@ public:
     void ChangeState() override;
 
     static std::pair<std::string,std::string> &convertIP(std::string &ip);
-
+    bool isValid();
 private:
     std::vector<Text *> textbuf;
     sf::Font font;
