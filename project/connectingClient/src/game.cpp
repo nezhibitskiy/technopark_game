@@ -27,7 +27,7 @@ void Game::Iteration() {
                     state = INIT;
                 }
                 break;
-            case (INIT):
+            case (INIT): // join write IP
                 app.render(event);
                 if (app.processInput(request)) {
                     app.changeState();

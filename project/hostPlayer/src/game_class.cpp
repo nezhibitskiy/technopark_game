@@ -143,6 +143,7 @@ int Game::Iteration() {
                     }
 
                 break;
+
             case (WAITING_FOR_GAME): {
                 unsigned int receivedMsgCount = 0;
                 BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);
@@ -188,7 +189,7 @@ int Game::Iteration() {
                 //finish = start;
                 std::cout << finish.tv_sec - start.tv_sec << std::endl;
                 std::cout << "START: " << start.tv_sec << " END: " << finish.tv_sec << std::endl;
-                //while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
+               // while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
                 while (finish.tv_sec - start.tv_sec < GAME_TIME) {
                     if (finish.tv_sec - start.tv_sec - prev > 10) {
                         prev = finish.tv_sec - start.tv_sec;

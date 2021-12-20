@@ -34,8 +34,8 @@ public:
     void Draw();
 private:
 
-    unsigned int width;
-    unsigned int height;
+    unsigned int width = 0;
+    unsigned int height = 0;
     sf::RenderWindow &mWindow;
     std::vector<Unit*> mUnits;
     std::vector<Object*> mObjects;
