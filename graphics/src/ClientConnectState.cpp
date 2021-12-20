@@ -33,14 +33,14 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
-        int a,b,c,d;
+       /* int a,b,c,d;
         char ch;
         std::stringstream s(ipPlayer);
         s >> a >> ch >> b >> ch >> c >> ch >> d;
        // BaseMessage ip(a,b,c,d);
-       // request->push(ip);
-       // BaseMessage o(1,0);
-      //  request->push(o);
+       // request->push(ip);*/
+        BaseMessage o(1,0);
+        request->push(o);
         return true;
 
     }

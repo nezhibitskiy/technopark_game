@@ -7,10 +7,25 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
 
     Text *Wait = new Text(*getContext().font, "Waiting room", 50);
     Wait->setPos(getContext().window->getSize().x / 2.0f, 0);
+    Wait->setColor(sf::Color::Red);
     textbuf.push_back(Wait);
-    Text *Tips = new Text(*getContext().font, "press enter", 30);
-    Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 2.0f);
+
+    Text *Tips = new Text(*getContext().font, "if you READY -> press enter", 20);
+    Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y * 0.8);
+    Tips->setColor(sf::Color::Red);
     textbuf.push_back(Tips);
+
+    Text *Controller = new Text(*getContext().font, "UP - W\nDOWN - S\nLEFT - A\nRIGHT - D", 20);
+    Controller->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y * 0.5);
+    Controller->setColor(sf::Color::Yellow);
+    textbuf.push_back(Controller);
+
+    Text *Mouse = new Text(*getContext().font, "MOUSE-LEFT  Attack\nMOUSE-RIGHT  Put block", 20);
+    Mouse->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y * 0.7);
+    Mouse->setColor(sf::Color::Cyan);
+    textbuf.push_back(Mouse);
+
+
 
 
 }
@@ -20,12 +35,17 @@ void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
 
+
+
+
+
+
     Text *ip = new Text(*getContext().font, ipPlayer, 30);
     ip->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 4.0f);
     ip->draw(*getContext().window);
 
     for (auto text: textbuf) {
-        text->setColor(sf::Color::Red);
+
         text->draw(*getContext().window);
     }
 
@@ -67,4 +87,9 @@ void PreparationState::ChangeState() {
 std::string &PreparationState::getIP() {
     return ipPlayer;
 }
+
+void PreparationState::DrawTeams() {
+
+}
+
 

@@ -82,6 +82,7 @@ void DrawMap::SetBlocks(unsigned short id, unsigned int x, unsigned int y) {
 }
 
 void DrawMap::Draw() {
+
     for (auto i: mUnits) {
         i->draw(mWindow);
     }
