@@ -5,8 +5,10 @@
 #include "message.h"
 #include "game.h"
 
-Game::Game() : event() {
+Game::Game() : event(), request() {
     state = PREINIT;
+    event = new std::queue<EventMessage>;
+    request = new std::queue<BaseMessage>;
 //    std::cout << "Event queue size: " << event->size() << std::endl;
 }
 Game::~Game() {
@@ -31,7 +33,7 @@ void Game::Iteration() {
                     try
                     {
 
-                        client = new Client("0.0.0.0", "5000", &event, &request);
+                        client = new Client("0.0.0.0", "5000", event, request);
 
                         client->run();
                     }

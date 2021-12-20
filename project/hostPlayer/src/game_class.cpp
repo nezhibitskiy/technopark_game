@@ -19,6 +19,8 @@ Game::Game() :gameServer(4)
     maxTeams = 2;
     maxPlayersInTeams = 2;
     playersInTeamsCount = new unsigned int[maxTeams];
+    for (char i = 0; i < maxTeams; i++)
+        playersInTeamsCount[i] = 0;
 }
 
 Game::~Game() {
@@ -129,13 +131,28 @@ int Game::Iteration() {
                     if (gameServer.init("0.0.0.0", "5000")) {
                         app.changeState();
                         state = WAITING_FOR_GAME;
+
+                        BaseMessage connectedClient(gameServer::server::CONNECTING_CLIENT, 0);
+                        request.push(connectedClient);
+
+                        BaseMessage clientChooseTeam(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 0);
+                        request.push(clientChooseTeam);
+
                     } else {
                         /// ADD "TRY AGAIN" MESSAGE
                         std::cout << "Error during server start" << std::endl;
                     }
                 }
                 break;
-            case (WAITING_FOR_GAME):
+            case (WAITING_FOR_GAME): {
+                unsigned int receivedMsgCount = 0;
+                BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);
+                if (receivedMsg != nullptr) {
+                    for (unsigned int i = 0; i < receivedMsgCount; i++) {
+                        request.push(*receivedMsg[i]);
+                    }
+                }
+
                 if (!request.empty()) {
                     waitingForGame();
                 }
@@ -146,6 +163,7 @@ int Game::Iteration() {
                     state = STARTED;
                 }
                 break;
+            }
             case (STARTED): {
                 while (!request.empty()) {
                     unsigned int initMsgCount = 0;
