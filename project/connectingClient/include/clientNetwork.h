@@ -20,8 +20,8 @@ class Client
 {
 public:
     Client(const std::string& server, const std::string& port,
-           std::queue<EventMessage> **rInputQueue,
-           std::queue<BaseMessage> **rOutputQueue);
+           std::queue<EventMessage> *rInputQueue,
+           std::queue<BaseMessage> *rOutputQueue);
 
     void run();
     void endServer();

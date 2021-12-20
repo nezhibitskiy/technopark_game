@@ -1,7 +1,7 @@
 
 add_library(player STATIC src/player_class.cpp)
 add_library(map STATIC src/map_class.cpp)
-add_library(game STATIC src/game_class.cpp include/factory.h)
+add_library(game STATIC src/game_class.cpp include/factory.h include/healingPotion.h)
 
 add_subdirectory(server)
 include_directories(server)

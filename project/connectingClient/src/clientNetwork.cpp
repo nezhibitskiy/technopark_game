@@ -35,17 +35,15 @@ boost::array<unsigned char, 12> pack(const BaseMessage &data) {
 }
 
 Client::Client(const std::string& server, const std::string& port,
-       std::queue<EventMessage> **rInputQueue,
-       std::queue<BaseMessage> **rOutputQueue)
+       std::queue<EventMessage> *rInputQueue,
+       std::queue<BaseMessage> *rOutputQueue)
         : resolver_(io_context),
           signals_(io_context),
           socket_(io_context)
 {
-    inputQueue = new std::queue<EventMessage>;
-    outputQueue = new std::queue<BaseMessage>;
 
-    *rInputQueue = inputQueue;
-    *rOutputQueue = outputQueue;
+    inputQueue = rInputQueue;
+    outputQueue = rOutputQueue;
 
     // Register to handle the signals that indicate when the hostPlayer should exit.
     signals_.add(SIGINT);   // остановка процесса с терминала

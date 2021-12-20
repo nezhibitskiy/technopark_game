@@ -3,6 +3,7 @@
 #include <ctime>
 #include <queue>
 #include <unordered_map>
+#include <ctime>
 
 #include "game_class.h"
 
@@ -12,7 +13,13 @@
 
 Game::Game() : gameServer(4) {
     state = PREINIT;
-
+    playerIds = new unsigned int[4];
+    playersCount = 0;
+    maxTeams = 2;
+    maxPlayersInTeams = 2;
+    playersInTeamsCount = new unsigned int[maxTeams];
+    for (char i = 0; i < maxTeams; i++)
+        playersInTeamsCount[i] = 0;
 }
 
 Game::~Game() {
@@ -29,7 +36,7 @@ Game::~Game() {
 }
 
 void Game::CreateMap() {
-    factory = new Factory();
+    factory = new Factory(playersCount);
 
     // Необходимо реализовать поля с общим размером, которые также будут передаваться в конструктор карты
 
@@ -41,33 +48,34 @@ void Game::CreateMap() {
 
     map = new Map(width, height);
 
-    zone = new Zone();
-    zone->setXY((0 + 8) + rand() % ((width - 8) - 8 + 1), (0 + 8) + rand() % ((height - 8) - 8 + 1), 3);
+    zone = new Zone(3, width, height);
     EventMessage createZone(EventMessage::CREATE_ZONE, 0, zone->getX(), zone->getY(), zone->getRad());
     event.push(createZone);
 
-    teamCount = 2;
-    playersInTeamCount = 2;
-    playerIds = new unsigned int[teamCount * playersInTeamCount];
+    //playerIds = new unsigned int[teamCount * playersInTeamCount];
 
     objects.reserve(10);
 
-    spawnpoints = new std::pair<unsigned int, unsigned int>[teamCount * playersInTeamCount];
+    spawnpoints = new std::pair<unsigned int, unsigned int>[playersCount];
 
-    for (unsigned short i = 0; i < teamCount * playersInTeamCount; i++) {
-        if (i < playersInTeamCount) {
+    for (unsigned int i = 0; i < playerTeams.size(); i++) {
+        if (i < maxPlayersInTeams) {
             spawnpoints[i].second = 1;
             spawnpoints[i].first = i + 1;
         } else {
             spawnpoints[i].second = height - 2;
-            spawnpoints[i].first = width - (i % playersInTeamCount) - 2;
+            spawnpoints[i].first = width - (i % maxPlayersInTeams) - 2;
         }
     }
 
-    for (unsigned short i = 0; i < playersInTeamCount * teamCount; i++) {
-        auto players = factory->createPlayer();
-        playerIds[i] = players.first;
-        players.second->setTeam((char) (i / playersInTeamCount));
+    auto heal = factory->createObject(healPot);
+    map->addObject(heal.first, width / 2, height / 2);
+    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
+    event.push(createHeal);
+
+    for (unsigned int i = 0; i < playerTeams.size(); i++) {
+        auto players = factory->createPlayer(playerTeams.at(i).first);
+        players.second->setTeam(playerTeams.at(i).second);
         players.second->saveSpawnpoint(spawnpoints[i]);
         players.second->setXY(players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
@@ -76,8 +84,8 @@ void Game::CreateMap() {
         map->addObject(players.first, players.second->getSpawnpoint().first, players.second->getSpawnpoint().second);
 
         EventMessage createPlayer(EventMessage::CREATE_PLAYER, players.first, players.second->getSpawnpoint().first,
-                                  players.second->getSpawnpoint().second, (i / playersInTeamCount));
-
+                                  players.second->getSpawnpoint().second, playerTeams.at(i).second);
+        std::cout << "PLAYER CREATED  ID:" << players.first << " X: " << players.second->getSpawnpoint().first << " Y:" << players.second->getSpawnpoint().second << " TEAM: " << playerTeams.at(i).second << std::endl;
         event.push(createPlayer);
         EventMessage setHealth(EventMessage::SET_HEALTH, players.first, 0, 0, DEFAULT_HEALTH_VALUE);
         event.push(setHealth);
@@ -104,7 +112,6 @@ void Game::CreateMap() {
 
 
 int Game::Iteration() {
-    long start = clock();
     while (state != END_OF_GAME) {
         switch (state) {
             case (PREINIT):
@@ -117,23 +124,48 @@ int Game::Iteration() {
                 }
                 break;
             case (INIT):
-                if (gameServer.init("0.0.0.0", "5000")) {
-                    state = WAITING_FOR_GAME;
-                } else {
-                    /// ADD "TRY AGAIN" MESSAGE
-                    std::cout << "Error during server start" << std::endl;
+                app.render(&event);
+                if (app.processInput(&request)) {
+
+                    /// Place for address output and port input
+                    if (gameServer.init("0.0.0.0", "5000")) {
+                        app.changeState();
+                        state = WAITING_FOR_GAME;
+
+                        BaseMessage connectedClient(gameServer::server::CONNECTING_CLIENT, 0);
+                        request.push(connectedClient);
+
+                        BaseMessage clientChooseTeam(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 0);
+                        request.push(clientChooseTeam);
+
+                    } else {
+                        /// ADD "TRY AGAIN" MESSAGE
+                        std::cout << "Error during server start" << std::endl;
+                    }
                 }
                 break;
-            case (WAITING_FOR_GAME):
+            case (WAITING_FOR_GAME): {
+                unsigned int receivedMsgCount = 0;
+                BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);
+                if (receivedMsg != nullptr) {
+                    for (unsigned int i = 0; i < receivedMsgCount; i++) {
+                        request.push(*receivedMsg[i]);
+                    }
+                }
+
+                if (!request.empty()) {
+                    waitingForGame();
+                }
                 app.render(&event);
                 if (app.processInput(&request)) {
                     /// Place for address output and port input
 
                     app.changeState();
-                    state = STARTED;
                     CreateMap();
+                    state = STARTED;
                 }
                 break;
+            }
             case (STARTED): {
                 while (!request.empty()) {
                     unsigned int initMsgCount = 0;
@@ -150,7 +182,19 @@ int Game::Iteration() {
                     request.pop();
                 }
 
-                while ((clock() - start) / CLOCKS_PER_SEC != GAME_TIME && !gameServer.closeGameReq) {
+                struct timespec start, finish;
+                long prev = 0;
+                clock_gettime(CLOCK_MONOTONIC, &start);
+                clock_gettime(CLOCK_MONOTONIC, &finish);
+                //finish = start;
+                std::cout << finish.tv_sec - start.tv_sec << std::endl;
+                std::cout << "START: " << start.tv_sec << " END: " << finish.tv_sec << std::endl;
+                //while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
+                while (finish.tv_sec - start.tv_sec < GAME_TIME) {
+                    if (finish.tv_sec - start.tv_sec - prev > 10) {
+                        prev = finish.tv_sec - start.tv_sec;
+                        EventMessage sendTime(EventMessage::SEND_TIME, prev, 0, 0, 0);
+                    }
                     unsigned int receivedMsgCount = 0;
 
                     BaseMessage **receivedMsg = gameServer.CheckRequests(&receivedMsgCount);
@@ -173,6 +217,8 @@ int Game::Iteration() {
                     if (app.processInput(&request)) {
                     }
                     start_game();
+                    clock_gettime(CLOCK_MONOTONIC, &finish);
+                    //std::cout << finish.tv_sec - start.tv_sec << std::endl;
                 }
                 app.changeState();
 
@@ -181,7 +227,7 @@ int Game::Iteration() {
                 state = GAME_OVER;
 
                 int res = getWinTeam();
-                EventMessage winTeam(EventMessage::WIN_TEAM, res, 0, 0, 0);
+                EventMessage winTeam((res < 0) ? EventMessage::DRAW_GAME : EventMessage::WIN_TEAM, res, 0, 0, 0);
                 event.push(winTeam);
                 std::cout << "WIN: " << res << std::endl;
                 break;
@@ -209,6 +255,33 @@ int Game::Iteration() {
     }
 
     return EXIT_SUCCESS;
+}
+
+void Game::waitingForGame() {
+    if (!request.empty()) {
+        BaseMessage newMessage = request.front();
+        if (newMessage.getType() == gameServer::server::CONNECTING_CLIENT && playersCount < maxPlayersInTeams * maxTeams) {
+            playerIds[playersCount] = newMessage.getID();
+            playersCount++;
+            request.pop();
+            unsigned short teamAvailable = 0;
+            for (unsigned int i = 0; i < maxTeams; ++i) {
+                if (playersInTeamsCount[i] < maxPlayersInTeams) {
+                    teamAvailable |= 1 << i;
+                }
+            }
+            EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);
+            event.push(availableTeamsMsg);
+        } else if (newMessage.getType() == gameServer::server::ADD_CLIENT_TO_TEAM) {
+            if (newMessage.getX() < maxTeams && playersInTeamsCount[newMessage.getX()] < maxPlayersInTeams) {
+                playersInTeamsCount[newMessage.getX()]++;
+                playerTeams.emplace_back(std::make_pair(newMessage.getID(), newMessage.getX()));
+            }
+            request.pop();
+            EventMessage addPlayer(EventMessage::PLAYER_ADDED_TO_TEAM, newMessage.getID(), 0, 0, newMessage.getX());
+            event.push(addPlayer);
+        }
+    }
 }
 
 void Game::start_game() {
@@ -239,11 +312,12 @@ bool Game::move(unsigned int x, unsigned int y) {
         std::pair<unsigned int, unsigned int> point = q.front();
         q.pop();
         unsigned int key = map->getObject(point.first, point.second);
-        std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
-        std::cout << "KEY: " << key << std::endl;
-        for (auto &elem: objects) {
+      
+        //std::cout << "X: " << point.first << " Y: " << point.second << std::endl;
+        //std::cout << "KEY: " << key << std::endl;
+        /*for (auto& elem : objects) {
             std::cout << "OBJECTS X: " << elem.second->getX() << " Y: " << elem.second->getY() << std::endl;
-        }
+        }*/
         map->out(&objects);
         auto it = objects.find(key);
         if (it == objects.end()) {
@@ -259,32 +333,33 @@ bool Game::move(unsigned int x, unsigned int y) {
             } else {
                 passed.emplace_back(std::make_pair(point.first, point.second));
 
-                if (point.first + 1 < map->getWidth() && point.first + 1 > 0 && point.second < map->getHeight() &&
-                    point.second > 0) {
+                if (point.first + 1 <= zone->getX() + zone->getRad() && point.first + 1 >= zone->getX() - zone->getRad()
+                    && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first + 1, point.second));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE1" << std::endl;
                     return false;
                 }
-                if (point.first < map->getWidth() && point.first > 0 && point.second + 1 < map->getHeight() &&
-                    point.second + 1 > 0) {
+                if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                    && point.second + 1 <= zone->getY() + zone->getRad() && point.second + 1 >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first, point.second + 1));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE2" << std::endl;
                     return false;
                 }
-                if (point.first < map->getWidth() && point.first > 0 && point.second - 1 < map->getHeight() &&
-                    point.second - 1 > 0) {
+
+                if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                    && point.second - 1 <= zone->getY() + zone->getRad() && point.second - 1 >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first, point.second - 1));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE3" << std::endl;
                     return false;
                 }
-                if (point.first - 1 < map->getWidth() && point.first - 1 > 0 && point.second < map->getHeight() &&
-                    point.second > 0) {
+                if (point.first - 1 <= zone->getX() + zone->getRad() && point.first - 1 >= zone->getX() - zone->getRad()
+                    && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                     q.push(std::make_pair(point.first - 1, point.second));
                 } else {
-                    std::cout << "FALSE" << std::endl;
+                    std::cout << "FALSE4" << std::endl;
                     return false;
                 }
 
@@ -300,37 +375,39 @@ bool Game::move(unsigned int x, unsigned int y) {
             if (flag) {
                 continue;
             } else {
+                std::cout << "HERE" << std::endl;
                 if (it->second->isItCover()) {
                     continue;
                 } else {
                     passed.emplace_back(std::make_pair(point.first, point.second));
 
-                    if (point.first + 1 < map->getWidth() && point.first + 1 > 0 && point.second < map->getHeight() &&
-                        point.second > 0) {
+                    if (point.first + 1 <= zone->getX() + zone->getRad() && point.first + 1 >= zone->getX() - zone->getRad()
+                        && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first + 1, point.second));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE1" << std::endl;
                         return false;
                     }
-                    if (point.first < map->getWidth() && point.first > 0 && point.second + 1 < map->getHeight() &&
-                        point.second + 1 > 0) {
+                    if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                        && point.second + 1 <= zone->getY() + zone->getRad() && point.second + 1 >= zone->getY() - zone->getRad()) {
+
                         q.push(std::make_pair(point.first, point.second + 1));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE2" << std::endl;
                         return false;
                     }
-                    if (point.first < map->getWidth() && point.first > 0 && point.second - 1 < map->getHeight() &&
-                        point.second - 1 > 0) {
+                    if (point.first <= zone->getX() + zone->getRad() && point.first >= zone->getX() - zone->getRad()
+                        && point.second - 1 <= zone->getY() + zone->getRad() && point.second - 1 >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first, point.second - 1));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE3" << std::endl;
                         return false;
                     }
-                    if (point.first - 1 < map->getWidth() && point.first - 1 > 0 && point.second < map->getHeight() &&
-                        point.second > 0) {
+                    if (point.first - 1 <= zone->getX() + zone->getRad() && point.first - 1 >= zone->getX() - zone->getRad()
+                        && point.second <= zone->getY() + zone->getRad() && point.second >= zone->getY() - zone->getRad()) {
                         q.push(std::make_pair(point.first - 1, point.second));
                     } else {
-                        std::cout << "FALSE" << std::endl;
+                        std::cout << "FALSE4" << std::endl;
                         return false;
                     }
                 }
@@ -345,20 +422,22 @@ bool Game::move(unsigned int x, unsigned int y) {
 
 int Game::getWinTeam() {
     std::vector<std::pair<int, int>> teams;
-    for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-        auto it = objects.find(playerIds[i]);
-        /*if ((it->second->getX() > zone->getX() - zone->getRad()) && (it->second->getX() < zone->getX() + zone->getRad())
+    for (int i = 0; i < playerTeams.size(); ++i) {
+        auto it = objects.find(playerTeams.at(i).first);   // playerIds[i]
+        if ((it->second->getX() > zone->getX() - zone->getRad()) && (it->second->getX() < zone->getX() + zone->getRad())
             && (it->second->getY() > zone->getY() - zone->getRad()) &&
-            (it->second->getY() < zone->getY() + zone->getRad()))*/
-        if (move(it->second->getX(), it->second->getY())) {
-            if (teams.empty()) {
-                teams.emplace_back(std::make_pair(1, it->second->getTeam()));
-            }
-            for (int k = 0; k < teams.size(); ++k) {  // ?????????????????????
-                if (teams.at(k).second == it->second->getTeam()) {
-                    teams.at(k).first += 1;
-                } else {
+            (it->second->getY() < zone->getY() + zone->getRad())) {
+            if (move(it->second->getX(), it->second->getY())) {
+
+                if (teams.empty()) {
                     teams.emplace_back(std::make_pair(1, it->second->getTeam()));
+                }
+                for (int k = 0; k < teams.size(); ++k) {  // ?????????????????????
+                    if (teams.at(k).second == it->second->getTeam()) {
+                        teams.at(k).first += 1;
+                    } else {
+                        teams.emplace_back(std::make_pair(1, it->second->getTeam()));
+                    }
                 }
             }
         }
@@ -389,23 +468,23 @@ int Game::getWinTeam() {
     // определяем киллы
     std::vector<int> finalTeams;
     if (res.empty()) {
-        auto killsTeam = new unsigned int[teamCount];
-        for (int i = 0; i < teamCount; ++i) {
+        auto killsTeam = new unsigned int[maxTeams]; //teamCount
+        for (int i = 0; i < maxTeams; ++i) {  // teamCount
             killsTeam[i] = 0;
         }
-        for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-            auto it = objects.find(playerIds[i]);
-            for (int j = 0; j < teamCount; ++j) {
+        for (int i = 0; i < playerTeams.size(); ++i) {
+            auto it = objects.find(playerTeams.at(i).first);  // playerIds[i]
+            for (int j = 0; j < maxTeams; ++j) {  //teamCount
                 if (it->second->getTeam() == j) {
                     killsTeam[j] += it->second->getKills();
                 }
             }
         }
-        for (int i = 0; i < teamCount; ++i) {
-        }
+        /*for (int i = 0; i < teamCount; ++i) {
+        }*/
         biggest = killsTeam[0];
         finalTeams.emplace_back(0);
-        for (int i = 1; i < teamCount; ++i) {
+        for (int i = 1; i < maxTeams; ++i) {   //teamCount
             if (killsTeam[i] > biggest) {
                 biggest = killsTeam[i];
                 finalTeams.clear();
@@ -421,9 +500,9 @@ int Game::getWinTeam() {
         return finalTeams.at(0);
     } else {
         std::vector<std::pair<unsigned int, int>> killsTeam;
-        for (int i = 0; i < teamCount * playersInTeamCount; ++i) {
-            auto it = objects.find(playerIds[i]);
-            for (int re: res) {
+        for (int i = 0; i < playerTeams.size(); ++i) {
+            auto it = objects.find(playerTeams.at(i).first);  //playerIds[i]
+            for (int re : res) {
                 if (it->second->getTeam() == re) {
                     for (int k = 0; k < killsTeam.size(); ++k) {  // ?????????????????????
                         if (killsTeam.at(k).second == it->second->getTeam()) {

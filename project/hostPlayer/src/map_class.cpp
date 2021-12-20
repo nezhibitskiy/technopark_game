@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <climits>
 
 #include "map_class.h"
 
@@ -10,10 +11,8 @@ Map::Map(unsigned int width, unsigned int height) : width(width), height(height)
 
     for (unsigned int i = 0; i < height; i++) {
         map[i] = new unsigned int[width];
-        for (unsigned int j = 0; j < width; j++) map[i][j] = 400000U;
+        for (unsigned int j = 0; j < width; j++) map[i][j] = UINT_MAX;
     }
-
-
 }
 
 Map::~Map() {

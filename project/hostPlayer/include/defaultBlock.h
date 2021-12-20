@@ -7,6 +7,8 @@
 
 #include "Object.h"
 
+#define STANDART_HEAL 2
+
 class DefaultBlock : public AbstractObject {
     bool Damagable() const override {
         return true;
@@ -23,7 +25,12 @@ class DefaultBlock : public AbstractObject {
     char getObjectSymbol() override {
         return '4';
     }
-    ~DefaultBlock() = default;
+
+    void ToDo(Object* player) override {
+        //player.
+    }
+
+    ~DefaultBlock() override = default;
 
     unsigned char health = 1;
 

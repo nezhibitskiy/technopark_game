@@ -7,17 +7,18 @@
 #include "player_class.h"
 #include "defaultBlock.h"
 #include "endBlock.h"
+#include "healingPotion.h"
 
 
 enum ObjectClass {
-    playerObject = 0,
-    defaultBlockObject = 1,
-    endBlockObject = 2,
+    defaultBlockObject = 0,
+    endBlockObject = 1,
+    healPot = 2
 };
 
 class Factory {
 public:
-    Factory() : id_count(0) {}
+    explicit Factory(char players) : id_count(players) {}
 
     //template <typename classObject>
     std::pair<unsigned int, Object *> createObject(unsigned short val) {
@@ -30,15 +31,19 @@ public:
                 auto block = new EndBlock();
                 return std::make_pair(id_count++, block);
             }
+            case healPot: {
+                auto heal = new healingPotion();
+                return std::make_pair(id_count++, heal);
+            }
             default: {
                 return std::make_pair(0, nullptr);
             }
         }
     }
 
-    std::pair<unsigned int, Player *> createPlayer() {
+    std::pair<unsigned int, Player *> createPlayer(unsigned int id_) {
         auto player = new Player();
-        return std::make_pair(id_count++, player);
+        return std::make_pair(id_, player);
     }
 
 private:
