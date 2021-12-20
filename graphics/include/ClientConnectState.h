@@ -3,7 +3,8 @@
 
 #include "State.h"
 #include "Text.h"
-
+#include "PlayerHandlers.h"
+#include <boost/asio/ip/address_v4.hpp>
 class ClientConnectState : public DrawState::State {
 public:
     ClientConnectState(StateStack &stack,Context context);
@@ -19,7 +20,7 @@ public:
 
     void ChangeState() override;
 
-    std::string &getIP();
+    static std::pair<std::string,std::string> &convertIP(std::string &ip);
 
 private:
     std::vector<Text *> textbuf;

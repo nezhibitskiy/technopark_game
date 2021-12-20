@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sstream>
+
 #include "ClientConnectState.h"
+
 
 ClientConnectState::ClientConnectState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
     Text *Join = new Text(*getContext().font, "Join the game", 50);
@@ -33,14 +35,11 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
-       /* int a,b,c,d;
-        char ch;
-        std::stringstream s(ipPlayer);
-        s >> a >> ch >> b >> ch >> c >> ch >> d;
-       // BaseMessage ip(a,b,c,d);
-       // request->push(ip);*/
-        BaseMessage o(1,0);
-        request->push(o);
+        auto *ip = new std::pair<std::string, std::string>;
+        *ip = convertIP(ipPlayer);
+        auto x  = boost::asio::ip::address_v4::from_string(ip->first).to_uint();
+        BaseMessage IpMessage(IpHandler::IP, 0, x, std::stol(ip->second));
+        request->push(IpMessage);
         return true;
 
     }
@@ -48,11 +47,11 @@ bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMess
 
     if (event.type == sf::Event::TextEntered) {
 
-        if (event.text.unicode > 45 &&  event.text.unicode < 60) {
-            std::cout << event.text.unicode<<std::endl;
+        if (event.text.unicode > 45 && event.text.unicode < 60) {
+            std::cout << event.text.unicode << std::endl;
             ipPlayer += static_cast<char>(event.text.unicode);
 
-        }else if(event.text.unicode == 8 ){
+        } else if (event.text.unicode == 8) {
             ipPlayer.pop_back();
         }
 
@@ -66,6 +65,26 @@ void ClientConnectState::ChangeState() {
     requestStackPush(States::Preparation);
 }
 
-std::string &ClientConnectState::getIP() {
-    return ipPlayer;
+std::pair<std::string, std::string> &ClientConnectState::convertIP(std::string &ip) {
+    std::string address;
+    std::string port;
+    int temp;
+    char ch;
+    std::stringstream s(ip);
+    while (s) {
+        s >> temp >> ch;
+        address += std::to_string(temp);
+        if (ch == ':') {
+            s >> port;
+            break;
+        } else address += ch;
+
+
+    }
+    auto *k = new std::pair<std::string, std::string>;
+    k->first = address;
+    k->second = port;
+    return *k;
+
 }
+
