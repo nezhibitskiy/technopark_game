@@ -94,6 +94,7 @@ ClientConnectState::IPAdr *ClientConnectState::convertIP(std::string &ip) {
 
 bool ClientConnectState::isValid() {
 
-    return (3 == std::count(ipPlayer.begin(), ipPlayer.end(), '.') && std::count(ipPlayer.begin(), ipPlayer.end(), ':') == 1);
+    return (3 == std::count(ipPlayer.begin(), ipPlayer.end(), '.') &&
+            std::count(ipPlayer.begin(), ipPlayer.end(), ':') == 1);
 }
 

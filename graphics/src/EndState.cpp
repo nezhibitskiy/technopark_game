@@ -21,21 +21,17 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     window.draw(backgroundShape);
 
     Text *IdTeam = nullptr;
+    std::string text;
     EventMessage endMessage = eventQueue->front();
-    if( endMessage.getType() == EventMessage::WIN_TEAM) {
+    if (endMessage.getType() == EventMessage::WIN_TEAM) {
+        text = "winner -  TEAM " + std::to_string(endMessage.getID());
 
-        if (endMessage.getID() == 65535) {
-            IdTeam = new Text(*getContext().font, " DRAW ", 40);
-        } else {
-            IdTeam = new Text(*getContext().font, "winner -  TEAM "+std::to_string(endMessage.getID()), 40);
-
-        }
-        IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 3.0f);
-        IdTeam->draw(window);
-
+    } else if (endMessage.getType() == EventMessage::DRAW_GAME) {
+        text = " DRAW ";
     }
-
-
+    IdTeam = new Text(*getContext().font, text, 40);
+    IdTeam->setPos(window.getSize().x / 2.0f, window.getSize().y / 3.0f);
+    IdTeam->draw(window);
 
 
     for (auto text: textbuf) {

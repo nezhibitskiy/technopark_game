@@ -1,6 +1,3 @@
-//
-// Created by ilyas on 07.12.2021.
-//
 
 #include "message.h"
 #include "game.h"
@@ -57,7 +54,13 @@ void Game::Iteration() {
                 }
                 break;
             case (WAITING_FOR_GAME):
-                app.render(event);
+
+                while (!event->empty()) {
+
+                    app.render(event);
+                    event->pop();
+
+                }
                 if (app.processInput(request)) {
                     app.changeState();
 

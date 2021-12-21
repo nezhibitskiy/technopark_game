@@ -6,6 +6,7 @@ Unit::Unit(unsigned int _id, const std::string &filename, size_t _sizePx) : id(_
         throw std::runtime_error("Failed to load texture" + filename);
     }
     texUnit.setSmooth(true);
+
     mUnit.setOrigin(texUnit.getSize().x * 0.5,
                     texUnit.getSize().y * 0.5);
     mUnit.setTexture(texUnit);
@@ -15,7 +16,7 @@ Unit::Unit(unsigned int _id, const std::string &filename, size_t _sizePx) : id(_
 
 void Unit::setPos(unsigned int x, unsigned int y) {
 
-    mUnit.setPosition(x * getSize() + getSize() / 2, y * getSize() + getSize() / 2);
+  mUnit.setPosition(x * getSize() + getSize() / 2, y * getSize() + getSize() / 2);
 }
 
 
@@ -46,6 +47,7 @@ void Unit::setID(unsigned short _id) {
         case 1:
             mUnit.setColor(sf::Color(80, 80, 255, 255));
             break;
+
     }
 }
 

@@ -3,7 +3,7 @@
 
 #define DEFAULT_SIZE 30
 
-DrawMap::DrawMap(sf::RenderWindow &mWindow) : mWindow(mWindow) {
+DrawMap::DrawMap(sf::RenderWindow &mWindow, sf::Font &font) : mWindow(mWindow), mfont(font) {
 
 }
 
@@ -16,7 +16,6 @@ DrawMap::~DrawMap() {
 void DrawMap::DrawBack() {
 
 
-
     for (int i = 0; i < width; ++i) {
         for (int j = 0; j < height; ++j) {
 
@@ -24,6 +23,17 @@ void DrawMap::DrawBack() {
             mBlocks[i][j].draw(mWindow);
         }
     }
+
+    /*for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            if (mObjects[i][j] != nullptr) {
+                mObjects[i][j]->setPos(i, j);
+                mObjects[i][j]->draw(mWindow);
+            }
+        }
+    }*/
+
+
     for (int i = 0; i < hp.size(); ++i) {
         hp[i]->setPos((i + 1), mWindow.getSize().y);
         hp[i]->draw(mWindow);
@@ -69,8 +79,8 @@ void DrawMap::SetHp(unsigned short id, int hpVal) {
 
 void DrawMap::SetUnits(unsigned short id, unsigned int x, unsigned int y) {
 
-    mUnits[id]->setPos(x, y);
 
+    mUnits[id]->setPos(x, y);
 
 }
 
@@ -98,14 +108,21 @@ void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned in
     height = _height;
 
 
-    mObjects.resize(width * height, nullptr);
-
     mBlocks = new Block *[width];
     for (int i = 0; i < width; ++i) {
         mBlocks[i] = new Block[height];
 
     }
 
+    mObjects = new Draw::Object **[width];
+    for (int i = 0; i < width; ++i) {
+        mObjects[i] = new Draw::Object *[height];
+    }
+    for(int i = 0 ; i< width; ++i){
+        for(int j = 0 ; j< height;++j){
+            mObjects[i][j] = nullptr;
+        }
+    }
 
 
     mUnits.resize(countUnits);
@@ -118,7 +135,10 @@ void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned in
 
 void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, unsigned int team) {
 
+
     mUnits[id]->setPos(x, y);
+
+
     if (id == 0 && team == 0) {
         mUnits[id]->setID(10);
     } else if (id == 0 && team == 1) {
@@ -126,6 +146,24 @@ void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, 
     } else mUnits[id]->setID(team + 1);
 
 }
+
+void DrawMap::SetTime(unsigned short id) {
+
+    Text *time = new Text(mfont, std::to_string(id), 30);
+    time->setPos(mWindow.getSize().x / 2, mWindow.getSize().y - time->getSize());
+    time->draw(mWindow);
+}
+
+void DrawMap::SetPotion(unsigned int x, unsigned int y) {
+    Heart *h = new Heart;
+    h->setID(10);
+    mObjects[x][y] = h;
+    mObjects[x][y]->setPos(x, y);
+
+
+
+}
+
 
 
 

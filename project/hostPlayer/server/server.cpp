@@ -142,8 +142,8 @@ namespace gameServer {
             BaseMessage connectedClient(CONNECTING_CLIENT, connectionVector.size() - 1);
             inputQueue[connectionVector.size() - 1]->push(connectedClient);
 
-            BaseMessage clientChooseTeam(ADD_CLIENT_TO_TEAM, connectionVector.size() - 1, connectionVector.size() % 2);
-            inputQueue[connectionVector.size() - 1]->push(clientChooseTeam);
+            //BaseMessage clientChooseTeam(ADD_CLIENT_TO_TEAM, connectionVector.size() - 1, connectionVector.size() % 2);
+            //inputQueue[connectionVector.size() - 1]->push(clientChooseTeam);
 
             connectionVector[connectionVector.size() - 1]->start();
         }
