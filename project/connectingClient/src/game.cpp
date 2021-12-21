@@ -30,14 +30,9 @@ void Game::Iteration() {
             case (INIT): // join write IP
                 app.render(event);
                 if (app.processInput(request)) {
-                    app.changeState();
-
                     if (request->empty()) break;
                     if (request->front().getType() == IpHandler::IP) {
                         try {
-//                            std::cout << ((request->front().getID() >> 8) & 0xFF) << "." << ((request->front().getID()) & 0xFF);
-//                            std::cout << "." << ((request->front().getX() >> 8) & 0xFF) << "." << ((request->front().getX()) & 0xFF);
-//                            std::cout << ":" << request->front().getY() << std::endl;
                             std::string ip = std::to_string(((request->front().getID() >> 8) & 0xFF)) + "."
                                     + std::to_string(((request->front().getID()) & 0xFF)) + "."
                                     + std::to_string(((request->front().getX() >> 8) & 0xFF)) + "."
@@ -52,8 +47,12 @@ void Game::Iteration() {
                         }
                         catch (std::exception &e) {
                             std::cout << "Exception: " << e.what() << "\n";
+//                            delete client;
+                            client = nullptr;
+                            break;
                         }
                         state = WAITING_FOR_GAME;
+                        app.changeState();
                     }
                 }
                 break;

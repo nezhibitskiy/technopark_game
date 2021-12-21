@@ -39,7 +39,7 @@ bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMess
             IPAdr *ip = convertIP(ipPlayer);
 
             BaseMessage IpMessage(IpHandler::IP, ((ip->ip[0] << 8) | ip->ip[1]),
-                                                            ((ip->ip[2] << 8) | ip->ip[3]), ip->port);
+                               ((ip->ip[2] << 8) | ip->ip[3]), ip->port);
             request->push(IpMessage);
             delete ip;
             return true;
