@@ -10,6 +10,8 @@
 
 
 #include "DrawHandlers.h"
+#include "PreparationHandlers.h"
+
 namespace Draw {
 
     class EventManager {
@@ -23,6 +25,7 @@ namespace Draw {
             healthHandler = new HealthHandler;
             deleteHandler = new DeleteHandler;
             playerHandler = new PlayerHandler;
+            timeHandler = new TimeHandler;
 
             Register(moveHandler);
             Register(mapHandler);
@@ -31,7 +34,7 @@ namespace Draw {
             Register(healthHandler);
             Register(deleteHandler);
             Register(playerHandler);
-
+            Register(timeHandler);
         }
 
         ~EventManager(){
@@ -41,7 +44,7 @@ namespace Draw {
             delete objectHandler;
             delete deleteHandler;
             delete healthHandler;
-
+            delete timeHandler;
             delete playerHandler;
 
 
@@ -68,10 +71,54 @@ namespace Draw {
         HealthHandler *healthHandler;
         ObjectHandler *objectHandler;
         DeleteHandler *deleteHandler;
-
+        TimeHandler *timeHandler;
         PlayerHandler *playerHandler;
+
         std::vector<EventHandler *> mHandlers;
     };
 
 }
+
+namespace Preparation {
+
+    class EventManager {
+    public:
+        EventManager() {
+            avaivableTeamsHandler = new AvaivableTeamsHandler;
+            playerToTeamHandler = new PlayerToTeamHandler;
+            Register(avaivableTeamsHandler);
+            Register(playerToTeamHandler);
+        }
+
+        ~EventManager(){
+            delete avaivableTeamsHandler;
+            delete playerToTeamHandler;
+
+
+
+        }
+        void EventHandle(EventMessage *event, ContextPreparation *action) {
+            for (auto i: mHandlers) {
+                if (i->CanHandle(event)) {
+                    i->Handler(event, action);
+                }
+            }
+        }
+
+
+
+        void Register(EventHandler *handler) {
+            mHandlers.push_back(handler);
+        }
+
+    private:
+        AvaivableTeamsHandler *avaivableTeamsHandler;
+        PlayerToTeamHandler *playerToTeamHandler;
+        std::vector<EventHandler *> mHandlers;
+    };
+
+}
+
+
+
 #endif //TEST_EVENTMANAGER_H

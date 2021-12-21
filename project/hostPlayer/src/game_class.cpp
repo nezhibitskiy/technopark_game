@@ -8,7 +8,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 30
+#define GAME_TIME 31
 
 
 Game::Game() : gameServer(4) {
@@ -134,8 +134,8 @@ int Game::Iteration() {
                         BaseMessage connectedClient(gameServer::server::CONNECTING_CLIENT, 0);
                         request.push(connectedClient);
 
-                        BaseMessage clientChooseTeam(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 0);
-                        request.push(clientChooseTeam);
+                        //BaseMessage clientChooseTeam(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 0);
+                        //request.push(clientChooseTeam);
 
                     } else {
                         /// ADD "TRY AGAIN" MESSAGE
@@ -156,7 +156,12 @@ int Game::Iteration() {
                 if (!request.empty()) {
                     waitingForGame();
                 }
-                app.render(&event);
+
+                while(!event.empty()) {
+                    gameServer.Run(event.front());
+                    app.render(&event);
+                    event.pop();
+                }
                 if (app.processInput(&request)) {
                     /// Place for address output and port input
 
@@ -278,7 +283,7 @@ void Game::waitingForGame() {
                 playerTeams.emplace_back(std::make_pair(newMessage.getID(), newMessage.getX()));
             }
             request.pop();
-            EventMessage addPlayer(EventMessage::PLAYER_ADDED_TO_TEAM, newMessage.getID(), 0, 0, newMessage.getX());
+            EventMessage addPlayer(EventMessage::PLAYER_ADDED_TO_TEAM, newMessage.getID(), newMessage.getX(), 0, newMessage.getX());
             event.push(addPlayer);
         }
     }

@@ -35,7 +35,7 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
-        if(!ipPlayer.empty() && isValid()) {
+        if (!ipPlayer.empty() && isValid()) {
             auto *ip = new std::pair<std::string, std::string>;
             *ip = convertIP(ipPlayer);
             auto x = boost::asio::ip::address_v4::from_string(ip->first).to_uint();
@@ -95,6 +95,7 @@ std::pair<std::string, std::string> &ClientConnectState::convertIP(std::string &
 
 bool ClientConnectState::isValid() {
 
-    return (3 == std::count(ipPlayer.begin(), ipPlayer.end(), '.') && std::count(ipPlayer.begin(), ipPlayer.end(), ':') == 1);
+    return (3 == std::count(ipPlayer.begin(), ipPlayer.end(), '.') &&
+            std::count(ipPlayer.begin(), ipPlayer.end(), ':') == 1);
 }
 

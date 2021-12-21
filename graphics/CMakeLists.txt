@@ -45,7 +45,16 @@ set(LIB_HEADERS
         include/PreparationState.h
         include/Map.h
         include/Block.h
-        include/Unit.h src/DrawHandlers.cpp include/DrawHandlers.h src/Heart.cpp include/Heart.h include/Handler.h include/EventManager.h src/Text.cpp include/Text.h src/EndState.cpp include/EndState.h include/TextField.cpp include/TextField.h src/ClientConnectState.cpp include/ClientConnectState.h)
+        include/Unit.h
+        include/DrawHandlers.h
+        include/Heart.h
+        include/Handler.h
+        include/EventManager.h
+        include/Text.h
+        include/EndState.h
+        include/TextField.h
+        include/ClientConnectState.h
+        include/PreparationHandlers.h src/ContextPreparation.cpp include/ContextPreparation.h)
 
 add_library(lib ${LIB_HEADERS} ${LIB_SOURCES})
 target_include_directories(lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

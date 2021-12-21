@@ -12,7 +12,9 @@ public:
 
     void setPos(unsigned int x, unsigned int y) override;
 
-    int getX() override {};
+    int getX() override {
+        return mText.getLocalBounds().width;
+    };
 
     int getY() override {};
 

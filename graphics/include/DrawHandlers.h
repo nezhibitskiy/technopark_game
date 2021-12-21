@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Handler.h"
 #include "message.h"
+#include "healingPotion.h"
 namespace Draw {
     class EventHandler : public BaseEventHandler<EventMessage, DrawMap> {
     };
@@ -99,6 +100,9 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
+            if(healingPotion::ID == event->getID()){
+                map->SetPotion(event->getX(), event->getY());
+            }
             map->SetBlocks(event->getID() , event->getX(), event->getY()); // getID - > getData
         }
 
@@ -143,24 +147,26 @@ namespace Draw {
 
     };
 
-    class WinHandler : public EventHandler {
+    class TimeHandler : public EventHandler {
     public:
         enum Type {
-            WIN_TEAM = 7
+            SEND_TIME = 9
         };
 
         bool CanHandle(EventMessage *event) override {
-            if (event->getType() == WinHandler::WIN_TEAM) {
+            if (event->getType() == TimeHandler::SEND_TIME) {
                 return true;
             } else return false;
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-
+            map->SetTime(event->getID());
         }
 
 
     };
+
+
 
 
 }

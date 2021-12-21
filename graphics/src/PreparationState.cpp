@@ -2,17 +2,23 @@
 #include "PreparationState.h"
 
 
-PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context) {
+
+PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context),action(*context.window,*context.font) {
 
 
     Text *Wait = new Text(*getContext().font, "Waiting room", 50);
     Wait->setPos(getContext().window->getSize().x / 2.0f, 0);
-    Wait->setColor(sf::Color::Red);
+    Wait->setColor(sf::Color::White);
     textbuf.push_back(Wait);
+
+    Text *Choice = new Text(*getContext().font, "Choose team", 25);
+    Choice ->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 6);
+    Choice ->setColor(sf::Color::White);
+    textbuf.push_back(Choice );
 
     Text *Tips = new Text(*getContext().font, "if you READY -> press enter", 20);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y * 0.8);
-    Tips->setColor(sf::Color::Red);
+    Tips->setColor(sf::Color::Green);
     textbuf.push_back(Tips);
 
     Text *Controller = new Text(*getContext().font, "UP - W\nDOWN - S\nLEFT - A\nRIGHT - D", 20);
@@ -31,9 +37,15 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
 }
 
 void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
-
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
+
+        eventManager.EventHandle(&eventQueue->front(), &action);
+        action.Draw();
+
+
+
+
 
 
 
@@ -58,23 +70,22 @@ bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessag
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
         std::cout << "change state to Game \n";
-
-
         return true;
 
     }
 
-
-    if (event.type == sf::Event::TextEntered) {
-
-        if (event.text.unicode > 45 &&  event.text.unicode < 60) {
-            std::cout << event.text.unicode<<std::endl;
-            ipPlayer += static_cast<char>(event.text.unicode);
-
-        }else if(event.text.unicode == 8 ){
-            ipPlayer.pop_back();
-        }
+    if (event.key.code == sf::Keyboard::Right) {
+        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0,1);
+        request->push(choice);
     }
+
+
+    if (event.key.code == sf::Keyboard::Left) {
+        // Increment and wrap-around
+        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0,0);
+        request->push(choice);
+    }
+
     return false;
 
 }
@@ -84,12 +95,7 @@ void PreparationState::ChangeState() {
     requestStackPush(States::Game);
 }
 
-std::string &PreparationState::getIP() {
-    return ipPlayer;
-}
 
-void PreparationState::DrawTeams() {
 
-}
 
 
