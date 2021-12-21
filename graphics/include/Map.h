@@ -49,6 +49,9 @@ private:
     unsigned int width = 0;
     unsigned int height = 0;
 
+    sf::Clock clock;
+    unsigned short flagTime = 0;
+    Text *time = nullptr;
     sf::Font &mfont;
     sf::RenderWindow &mWindow;
     std::vector<Unit *> mUnits;

@@ -10,13 +10,14 @@ GameState::GameState(StateStack &stack, Context context) : State(stack, context)
 
 void GameState::draw(std::queue<EventMessage> *eventQueue) {
 
+
     if (!eventQueue->empty()) {
         eventManager.EventHandle(&eventQueue->front(), &map);
     }
     getContext().window->clear(sf::Color::Black);
     map.DrawBack();
     map.Draw();
-    map.SetTime(floor(clock.getElapsedTime().asSeconds()));
+
     /*Text *time = new Text(*getContext().font, std::to_string(floor(clock.getElapsedTime().asSeconds())), 30);
     time->setPos(getContext().window->getSize().x / 2, getContext().window->getSize().y - time->getSize());
     time->draw(*getContext().window);*/

@@ -8,7 +8,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 240
+#define GAME_TIME 31
 
 
 Game::Game() : gameServer(4) {
@@ -207,6 +207,7 @@ int Game::Iteration() {
                         prev = finish.tv_sec - start.tv_sec;
                         std::cout << "SEND TIME: " << (unsigned short) prev << std::endl;
                         EventMessage sendTime(EventMessage::SEND_TIME, prev, 0, 0, 0);
+                        event.push(sendTime);
                     }
                     unsigned int receivedMsgCount = 0;
 
