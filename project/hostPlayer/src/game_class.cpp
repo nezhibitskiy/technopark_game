@@ -33,6 +33,9 @@ Game::~Game() {
     objects.clear();
     delete factory;
     delete zone;
+    delete playersInTeamsCount;
+    delete spawnpoints;
+    delete playerIds;
 }
 
 void Game::CreateMap() {
