@@ -59,7 +59,7 @@ void Game::CreateMap() {
     spawnpoints = new std::pair<unsigned int, unsigned int>[playersCount];
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {
-        if (i < maxPlayersInTeams) {
+        if (playerTeams.at(i).second == 0) {
             spawnpoints[i].second = 1;
             spawnpoints[i].first = i + 1;
         } else {
@@ -464,17 +464,20 @@ int Game::getWinTeam() {
             && (it->second->getY() > zone->getY() - zone->getRad()) &&
             (it->second->getY() < zone->getY() + zone->getRad())) {
             if (move(it->second->getX(), it->second->getY())) {
-                if (teams.empty()) {
+                /*if (teams.empty()) {
                     teams.emplace_back(std::make_pair(1, it->second->getTeam()));
-                }
+
+                }*/
                 for (int k = 0; k < teams.size(); ++k) {  // ?????????????????????
                     if (teams.at(k).second == it->second->getTeam()) {
                         teams.at(k).first += 1;
+                        std::cout << "PAST PARE:  kolvo:" << teams.at(k).first << " TEAM: " << teams.at(k).second << std::endl;
                         flag = true;
                     }
                 }
                 if (!flag) {
                     teams.emplace_back(std::make_pair(1, it->second->getTeam()));
+                    std::cout << "NEW PARE: kolvo: " << teams.at(teams.size() - 1).first << " TEAM: " << teams.at(teams.size() - 1).second << std::endl;
                 }
             }
         }
@@ -504,8 +507,17 @@ int Game::getWinTeam() {
     if (res.size() == 1) {
         return res.at(0);
     }
+    std::cout << "RES" << std::endl;
+    for (int i = 0; i < res.size(); ++i) {
+        std::cout << res.at(i) << " ";
+    }
+    std::cout << std::endl;
 
     // определяем киллы
+    for (int i = 0; i < playerTeams.size(); ++i) {
+        auto it = objects.find(playerTeams.at(i).first);
+        std::cout << "Player team " << (int)playerTeams.at(i).second << " KILLS: " << it->second->getKills() << std::endl;
+    }
     std::vector<int> finalTeams;
     if (res.empty()) {
         auto killsTeam = new unsigned int[maxTeams]; //teamCount
@@ -539,17 +551,22 @@ int Game::getWinTeam() {
         delete[] killsTeam;
         return finalTeams.at(0);
     } else {
+        std::cout << "ELSE " << std::endl;
+        bool fl = false;
         std::vector<std::pair<unsigned int, int>> killsTeam;
         for (int i = 0; i < playerTeams.size(); ++i) {
+            flag = false;
             auto it = objects.find(playerTeams.at(i).first);  //playerIds[i]
             for (int re: res) {
                 if (it->second->getTeam() == re) {
                     for (int k = 0; k < killsTeam.size(); ++k) {  // ?????????????????????
                         if (killsTeam.at(k).second == it->second->getTeam()) {
                             killsTeam.at(k).first += it->second->getKills();
-                        } else {
-                            killsTeam.emplace_back(std::make_pair(it->second->getKills(), it->second->getTeam()));
+                            flag = true;
                         }
+                    }
+                    if (!flag) {
+                        killsTeam.emplace_back(std::make_pair(it->second->getKills(), it->second->getTeam()));
                     }
                 }
             }
@@ -571,7 +588,7 @@ int Game::getWinTeam() {
             }
         }
         if (finalTeams.empty())
-            return 0;
+            return DRAW;
 
         return finalTeams.at(0);
 
