@@ -97,7 +97,10 @@ void DrawMap::Draw() {
     for (auto i: mUnits) {
         i->draw(mWindow);
     }
-
+    if(time != nullptr) {
+        time->draw(mWindow);
+    }
+    else SetTime(floor(clock.getElapsedTime().asSeconds()));
 
 }
 
@@ -149,9 +152,9 @@ void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, 
 
 void DrawMap::SetTime(unsigned short id) {
 
-    Text *time = new Text(mfont, std::to_string(id), 30);
+    time = new Text(mfont, std::to_string(id), 30);
     time->setPos(mWindow.getSize().x / 2, mWindow.getSize().y - time->getSize());
-    time->draw(mWindow);
+
 }
 
 void DrawMap::SetPotion(unsigned int x, unsigned int y) {
