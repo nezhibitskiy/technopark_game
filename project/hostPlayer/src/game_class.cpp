@@ -8,7 +8,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 30
+#define GAME_TIME 240
 
 
 Game::Game() : gameServer(4) {
@@ -272,6 +272,14 @@ void Game::waitingForGame() {
         BaseMessage newMessage = request.front();
         if (newMessage.getType() == gameServer::server::CONNECTING_CLIENT &&
             playersCount < maxPlayersInTeams * maxTeams) {
+
+            for (int i = 0; i < playersCount; ++i) {
+                if (playerIds[i] == newMessage.getID()) {
+                    request.pop();
+                    return;
+                }
+            }
+
             playerIds[playersCount] = newMessage.getID();
             playersCount++;
             request.pop();
@@ -283,6 +291,7 @@ void Game::waitingForGame() {
             }
             EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);
             event.push(availableTeamsMsg);
+            std::cout << "Connecting client. Avaliable teams: " << teamAvailable << std::endl;
         } else if (newMessage.getType() == gameServer::server::ADD_CLIENT_TO_TEAM) {
             if (newMessage.getX() < maxTeams && playersInTeamsCount[newMessage.getX()] < maxPlayersInTeams) {
                 for (int i = 0; i < playerTeams.size(); ++i) {
@@ -297,6 +306,7 @@ void Game::waitingForGame() {
                 EventMessage addPlayer(EventMessage::PLAYER_ADDED_TO_TEAM, newMessage.getID(), newMessage.getX(), 0,
                                        newMessage.getX());
                 event.push(addPlayer);
+                std::cout << "Add client to team. Team: " << newMessage.getX() << std::endl;
             }
             //std::cout << "request.size: " << request.size() << std::endl;
             request.pop();
