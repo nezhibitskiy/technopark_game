@@ -6,6 +6,11 @@
 #include "PlayerHandlers.h"
 #include <boost/asio/ip/address_v4.hpp>
 class ClientConnectState : public DrawState::State {
+private:
+    struct IPAdr {
+        unsigned char ip[4];
+        unsigned short port;
+    };
 public:
     ClientConnectState(StateStack &stack,Context context);
 
@@ -20,9 +25,11 @@ public:
 
     void ChangeState() override;
 
-    static std::pair<std::string,std::string> &convertIP(std::string &ip);
+    static ClientConnectState::IPAdr *convertIP(std::string &ip);
     bool isValid();
+
 private:
+
     std::vector<Text *> textbuf;
     sf::Font font;
     std::string ipPlayer;

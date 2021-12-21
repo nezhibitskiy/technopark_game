@@ -56,6 +56,10 @@ Client::Client(const std::string& server, const std::string& port,
                                         boost::asio::placeholders::results));
 }
 
+Client::~Client() {
+    endServer();
+}
+
 void Client::run() {
     for (std::size_t i = 0; i < 2; ++i)
     {
@@ -76,8 +80,10 @@ void Client::endServer() {
 
     // Wait for all threads in the pool to exit.
     io_context.stop();
-   for (std::size_t i = 0; i < threads.size(); ++i)
-        threads[i]->join();
+   for (std::size_t i = 0; i < threads.size(); ++i) {
+       threads[i]->join();
+   }
+   threads.clear();
 }
 
 void Client::handle_resolve(const boost::system::error_code& err,

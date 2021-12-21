@@ -289,7 +289,7 @@ void Game::waitingForGame() {
             unsigned short teamAvailable = 0;
             for (unsigned int i = 0; i < maxTeams; ++i) {
                 if (playersInTeamsCount[i] < maxPlayersInTeams) {
-                    teamAvailable |= 1 << i;
+                    teamAvailable |= 1U << i;
                 }
             }
             EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);

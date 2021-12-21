@@ -232,7 +232,7 @@ public:
 class IpHandler : public AbstractRequestHandler {
 public:
     enum Type {
-        IP = 6
+        IP = 8
     };
     EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
 
