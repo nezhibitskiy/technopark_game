@@ -267,7 +267,7 @@ void Game::waitingForGame() {
             unsigned short teamAvailable = 0;
             for (unsigned int i = 0; i < maxTeams; ++i) {
                 if (playersInTeamsCount[i] < maxPlayersInTeams) {
-                    teamAvailable |= 1 << i;
+                    teamAvailable |= 1U << i;
                 }
             }
             EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);
@@ -318,7 +318,7 @@ bool Game::move(unsigned int x, unsigned int y) {
         /*for (auto& elem : objects) {
             std::cout << "OBJECTS X: " << elem.second->getX() << " Y: " << elem.second->getY() << std::endl;
         }*/
-        map->out(&objects);
+//        map->out(&objects);
         auto it = objects.find(key);
         if (it == objects.end()) {
             bool flag = false;
@@ -375,7 +375,7 @@ bool Game::move(unsigned int x, unsigned int y) {
             if (flag) {
                 continue;
             } else {
-                std::cout << "HERE" << std::endl;
+//                std::cout << "HERE" << std::endl;
                 if (it->second->isItCover()) {
                     continue;
                 } else {

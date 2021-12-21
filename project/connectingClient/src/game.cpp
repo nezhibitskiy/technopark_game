@@ -31,16 +31,30 @@ void Game::Iteration() {
                 app.render(event);
                 if (app.processInput(request)) {
                     app.changeState();
-                    try {
 
-                        client = new Client("0.0.0.0", "5000", event, request);
+                    if (request->empty()) break;
+                    if (request->front().getType() == IpHandler::IP) {
+                        try {
+//                            std::cout << ((request->front().getID() >> 8) & 0xFF) << "." << ((request->front().getID()) & 0xFF);
+//                            std::cout << "." << ((request->front().getX() >> 8) & 0xFF) << "." << ((request->front().getX()) & 0xFF);
+//                            std::cout << ":" << request->front().getY() << std::endl;
+                            std::string ip = std::to_string(((request->front().getID() >> 8) & 0xFF)) + "."
+                                    + std::to_string(((request->front().getID()) & 0xFF)) + "."
+                                    + std::to_string(((request->front().getX() >> 8) & 0xFF)) + "."
+                                    + std::to_string(((request->front().getX()) & 0xFF));
+                            std::string port = std::to_string(request->front().getY());
 
-                        client->run();
+//                            std::cout << ip << ":" << port << std::endl;
+
+                            client = new Client(ip, port, event, request);
+
+                            client->run();
+                        }
+                        catch (std::exception &e) {
+                            std::cout << "Exception: " << e.what() << "\n";
+                        }
+                        state = WAITING_FOR_GAME;
                     }
-                    catch (std::exception &e) {
-                        std::cout << "Exception: " << e.what() << "\n";
-                    }
-                    state = WAITING_FOR_GAME;
                 }
                 break;
             case (WAITING_FOR_GAME):
