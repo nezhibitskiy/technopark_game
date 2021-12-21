@@ -6,27 +6,39 @@ ContextPreparation::ContextPreparation(sf::RenderWindow &mWindow, sf::Font &mFon
 
 
 void ContextPreparation::Draw() {
-    for (auto text: textbuf) {
-        text->draw(mWindow);
+
+    for (auto i : textbuf) {
+        i.second->draw(mWindow);
     }
+    /*if(Full){
+        Full->draw(mWindow);
+    }*/
 
 }
 
 void ContextPreparation::ShowTeams(unsigned short data) {
 
-    int count = 0;
+    /*int count = data;
     int size = 0;
 
-    while (data != 0) {
-        if ((data & 3) >> 1) {
-            count++;
-        }
-        if ((data | 3) >> 1) {
+    while (count != 0) {
+        if ((count | 3) >> 1) {
             size++;
         }
-        data >>= 1;
+        count >>= 1;
     }
 
+
+    bool *teams = new bool[size];
+
+    if (data / 2 == 0) {
+        teams[0] = false;
+    } else teams[0] = true;
+
+    data %= 2;
+    if (data % 2 == 0) {
+        teams[1] = false;
+    } else teams[1] = true;
 
 
     if (textbuf.empty()) {
@@ -34,32 +46,44 @@ void ContextPreparation::ShowTeams(unsigned short data) {
         for (int i = 0; i < size; ++i) {
             Text *Team = new Text(mFont, "Team " + std::to_string(i), 35);
             Team->setPos(mWindow.getSize().x * (i + 1) / (3.0f), mWindow.getSize().y / 4.0f);
-            Team->setColor(sf::Color::White);
             textbuf[i] = Team;
         }
     }
 
 
+*/
+    //textbuf.clear();
+    for (unsigned short i = 0; i < 2; i++) {
+        if ((data >> i) & 0b1) {
+
+            Text *Team = new Text(mFont, "Team " + std::to_string(i), 35);
+            Team->setPos(mWindow.getSize().x * (i + 1) / (3.0f), mWindow.getSize().y / 4.0f);
+            textbuf[i]= Team;
+        } else {
+
+        }
+
+    }
 }
 
 void ContextPreparation::PlayerTeam(unsigned short id, unsigned short team) {
 
 
-        for (int i = 0; i < textbuf.size(); ++i) {
-            if (team == i) {
-                switch (team) {
-                    case 0:
-                        textbuf[team]->setColor(sf::Color::Blue);
-                        break;
-                    case 1:
-                        textbuf[team]->setColor(sf::Color::Red);
-                        break;
-                    default:
-                        textbuf[team]->setColor(sf::Color::White);
-                }
-            } else textbuf[i]->setColor(sf::Color::White);
+    for (auto i : textbuf) {
+        if (team == i.first) {
+            switch (team) {
+                case 0:
+                    textbuf[team]->setColor(sf::Color::Blue);
+                    break;
+                case 1:
+                    textbuf[team]->setColor(sf::Color::Red);
+                    break;
+                default:
+                    textbuf[team]->setColor(sf::Color::White);
+            }
+        } //else textbuf[team]->setColor(sf::Color::White);
 
-        }
+    }
 
 
 }

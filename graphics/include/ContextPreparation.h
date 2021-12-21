@@ -20,7 +20,8 @@ public:
 private:
     sf::Font &mFont;
     sf::RenderWindow &mWindow;
-    std::vector<Text*> textbuf;
+    std::map<unsigned short,Text*>textbuf;
+    Text *Full;
 
 };
 

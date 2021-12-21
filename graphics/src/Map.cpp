@@ -97,7 +97,7 @@ void DrawMap::Draw() {
     for (auto i: mUnits) {
         i->draw(mWindow);
     }
-    
+
 
 }
 

@@ -2,8 +2,8 @@
 #include "PreparationState.h"
 
 
-
-PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context),action(*context.window,*context.font) {
+PreparationState::PreparationState(StateStack &stack, Context context) : State(stack, context),
+                                                                         action(*context.window, *context.font) {
 
 
     Text *Wait = new Text(*getContext().font, "Waiting room", 50);
@@ -12,9 +12,9 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
     textbuf.push_back(Wait);
 
     Text *Choice = new Text(*getContext().font, "Choose team", 25);
-    Choice ->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 6);
-    Choice ->setColor(sf::Color::White);
-    textbuf.push_back(Choice );
+    Choice->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 6);
+    Choice->setColor(sf::Color::White);
+    textbuf.push_back(Choice);
 
     Text *Tips = new Text(*getContext().font, "if you READY -> press enter", 20);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y * 0.8);
@@ -32,24 +32,15 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
     textbuf.push_back(Mouse);
 
 
-
-
 }
 
 void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
 
-        eventManager.EventHandle(&eventQueue->front(), &action);
-        action.Draw();
 
-
-
-
-
-
-
-
+    eventManager.EventHandle(&eventQueue->front(), &action);  // если закинуть под проверку пустой очереди не воркает на клиенте
+    action.Draw();
 
 
     Text *ip = new Text(*getContext().font, ipPlayer, 30);
@@ -60,7 +51,6 @@ void PreparationState::draw(std::queue<EventMessage> *eventQueue) {
 
         text->draw(*getContext().window);
     }
-
 
 
 }
@@ -74,15 +64,15 @@ bool PreparationState::handleEvent(const sf::Event &event, std::queue<BaseMessag
 
     }
 
-    if (event.key.code == sf::Keyboard::Right) {
-        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0,1);
+    if (event.key.code == sf::Keyboard::Num1) {
+        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 1);
         request->push(choice);
     }
 
 
-    if (event.key.code == sf::Keyboard::Left) {
+    if (event.key.code == sf::Keyboard::Num0) {
         // Increment and wrap-around
-        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0,0);
+        BaseMessage choice(gameServer::server::ADD_CLIENT_TO_TEAM, 0, 0);
         request->push(choice);
     }
 
