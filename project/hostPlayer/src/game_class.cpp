@@ -294,6 +294,7 @@ void Game::waitingForGame() {
             std::cout << "Connecting client. Avaliable teams: " << teamAvailable << std::endl;
         } else if (newMessage.getType() == gameServer::server::ADD_CLIENT_TO_TEAM) {
             if (newMessage.getX() < maxTeams && playersInTeamsCount[newMessage.getX()] < maxPlayersInTeams) {
+                std::cout << "Received client team choose" << std::endl;
                 for (int i = 0; i < playerTeams.size(); ++i) {
                     if (playerTeams.at(i).first == newMessage.getID()) {
                         request.pop();
@@ -312,7 +313,8 @@ void Game::waitingForGame() {
             request.pop();
             //std::cout << "request.size: " << request.size() << std::endl;
 
-        }
+        } else
+            request.pop();
     }
 }
 
