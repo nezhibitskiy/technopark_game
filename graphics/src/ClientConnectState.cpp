@@ -35,12 +35,13 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 bool ClientConnectState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
 
     if (event.key.code == sf::Keyboard::Return && event.type == sf::Event::KeyReleased) {
-        if (!ipPlayer.empty() && isValid()) {
-            auto *ip = new std::pair<std::string, std::string>;
-            *ip = convertIP(ipPlayer);
-            auto x = boost::asio::ip::address_v4::from_string(ip->first).to_uint();
-            BaseMessage IpMessage(IpHandler::IP, 0, x, std::stol(ip->second));
+        if(!ipPlayer.empty() && isValid()) {
+            IPAdr *ip = convertIP(ipPlayer);
+
+            BaseMessage IpMessage(IpHandler::IP, ((ip->ip[0] << 8) | ip->ip[1]),
+                               ((ip->ip[2] << 8) | ip->ip[3]), ip->port);
             request->push(IpMessage);
+            delete ip;
             return true;
         }
         ipPlayer = "";
@@ -70,27 +71,25 @@ void ClientConnectState::ChangeState() {
     requestStackPush(States::Preparation);
 }
 
-std::pair<std::string, std::string> &ClientConnectState::convertIP(std::string &ip) {
-    std::string address;
-    std::string port;
-    int temp;
+ClientConnectState::IPAdr *ClientConnectState::convertIP(std::string &ip) {
     char ch;
     std::stringstream s(ip);
+    auto *ipAdr = new IPAdr;
+    unsigned char i = 0;
+    unsigned short tmp = 0;
     while (s) {
-        s >> temp >> ch;
-        address += std::to_string(temp);
-        if (ch == ':') {
-            s >> port;
+        s >> tmp >> ch;
+        if (ch == '.') {
+            ipAdr->ip[i] = tmp;
+            i++;
+        } else if (ch == ':') {
+            ipAdr->ip[i] = tmp;
+            i++;
+            s >> ipAdr->port;
             break;
-        } else address += ch;
-
-
+        }
     }
-    auto *k = new std::pair<std::string, std::string>;
-    k->first = address;
-    k->second = port;
-    return *k;
-
+    return ipAdr;
 }
 
 bool ClientConnectState::isValid() {

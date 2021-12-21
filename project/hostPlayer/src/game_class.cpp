@@ -33,6 +33,9 @@ Game::~Game() {
     objects.clear();
     delete factory;
     delete zone;
+    delete playersInTeamsCount;
+    delete spawnpoints;
+    delete playerIds;
 }
 
 void Game::CreateMap() {
@@ -287,7 +290,7 @@ void Game::waitingForGame() {
             unsigned short teamAvailable = 0;
             for (unsigned int i = 0; i < maxTeams; ++i) {
                 if (playersInTeamsCount[i] < maxPlayersInTeams) {
-                    teamAvailable |= 1 << i;
+                    teamAvailable |= 1U << i;
                 }
             }
             EventMessage availableTeamsMsg(EventMessage::AVAILABLE_TEAMS, 0, 0, 0, teamAvailable);
@@ -295,6 +298,7 @@ void Game::waitingForGame() {
             std::cout << "Connecting client. Avaliable teams: " << teamAvailable << std::endl;
         } else if (newMessage.getType() == gameServer::server::ADD_CLIENT_TO_TEAM) {
             if (newMessage.getX() < maxTeams && playersInTeamsCount[newMessage.getX()] < maxPlayersInTeams) {
+                std::cout << "Received client team choose" << std::endl;
                 for (int i = 0; i < playerTeams.size(); ++i) {
                     if (playerTeams.at(i).first == newMessage.getID()) {
                         request.pop();
@@ -313,7 +317,8 @@ void Game::waitingForGame() {
             request.pop();
             //std::cout << "request.size: " << request.size() << std::endl;
 
-        }
+        } else
+            request.pop();
     }
 }
 
