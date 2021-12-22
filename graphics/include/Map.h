@@ -58,6 +58,7 @@ private:
     Draw::Object ***mObjects;
     Block **mBlocks;
     std::vector<Heart *> hp;
+    Heart *h;
 
 };
 

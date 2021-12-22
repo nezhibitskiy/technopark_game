@@ -122,7 +122,9 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            map->SetHp(event->getID(), event->getData());
+            if (event->getID() == 0) {
+                map->SetHp(event->getID(), event->getData());
+            }
         }
 
 
