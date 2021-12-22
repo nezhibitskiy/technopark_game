@@ -73,19 +73,26 @@ public:
         Object *object = objectNode->second;
         if (object->CanBeStandOn()) {
 
-            object->ToDo(player); // Необходимо добавить ответ в виде сообщений
+            EventMessage* new_mes = object->ToDo(player); // Необходимо добавить ответ в виде сообщений
             //???????????????????????????????????????????????????????????????????????????????????????????????????
 
 
             map->moveObject(player->getX(), player->getY(), x, y);
             player->setXY(x, y);
-
-            *returnMsgCount = 2;
+            if (new_mes != nullptr) {
+                *returnMsgCount = 3;
+            } else {
+                *returnMsgCount = 2;
+            }
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
             returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
             returnMessages[1] = new EventMessage(EventMessage::MOVE, playerNode->first, x, y);
-
             hashTable->erase(objectNode);
+
+            if (*returnMsgCount == 3) {
+                returnMessages[2] = new_mes;
+            }
+
 
             return returnMessages;
         }

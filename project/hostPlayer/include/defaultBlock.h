@@ -26,8 +26,8 @@ class DefaultBlock : public AbstractObject {
         return '4';
     }
 
-    void ToDo(Object* player) override {
-        //player.
+    EventMessage* ToDo(Object* player) override {
+        return nullptr;
     }
 
     ~DefaultBlock() override = default;
