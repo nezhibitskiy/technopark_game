@@ -141,17 +141,19 @@ public:
                         return returnMessages;
                     } else {
                         player->addKill();
+
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
                         // проверить, есть ли в этой клетке что-то
 
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
 
-                        *returnMsgCount = 2;
+                        *returnMsgCount = 3;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
                         returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, objectNode->first, x, y, DEFAULT_HEALTH_VALUE);
                         returnMessages[1] = new EventMessage(EventMessage::MOVE, objectNode->first, xSpawnpoint, ySpawnpoint);
-
+                        returnMessages[2] = new EventMessage(EventMessage::SEND_KILLS, playerNode->first, 0, 0, player->getKills());
+                        std::cout << "PLAYER" << playerNode->first << " KILLS: " << player->getKills() << std::endl;
                         return returnMessages;
                     }
                 }
