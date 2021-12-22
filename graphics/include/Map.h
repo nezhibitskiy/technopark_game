@@ -42,6 +42,8 @@ public:
 
     void SetPotion(unsigned int x, unsigned int y);
 
+    void DeleteDraw(unsigned short id, unsigned int x, unsigned int y);
+
     void Draw();
 
 private:

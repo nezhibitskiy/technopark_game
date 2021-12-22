@@ -180,6 +180,12 @@ void DrawMap::SetPotion(unsigned int x, unsigned int y) {
     h->setPos(x * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2  , y * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2 );
 }
 
+void DrawMap::DeleteDraw(unsigned short id, unsigned int x, unsigned int y) {
+
+    mObjects[x][y] = nullptr;
+
+}
+
 
 
 

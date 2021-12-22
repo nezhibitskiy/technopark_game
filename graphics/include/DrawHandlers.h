@@ -143,6 +143,9 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
+            if(healingPotion::ID == event->getID()){
+                map->DeleteDraw(event->getID(), event->getX(), event->getY());
+            }
             map->SetBlocks(event->getID(), event->getX(), event->getY());
         }
 
