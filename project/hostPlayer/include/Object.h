@@ -11,7 +11,7 @@ public:
     virtual unsigned char Damage(const unsigned char damageValue) = 0;
     virtual bool Respawn() = 0;
     virtual bool CanBeStandOn() const { return true; };
-    virtual void ToDo(Object *player) = 0;
+    virtual EventMessage* ToDo(Object *player) = 0;
     virtual char getObjectSymbol() = 0;
     virtual unsigned int getX() = 0;
     virtual unsigned int getY() = 0;
@@ -21,7 +21,7 @@ public:
     virtual bool isItCover() { return false; }
     virtual char getTeam() const = 0;
     virtual std::pair<unsigned int, unsigned int> getSpawnpoint() const = 0;
-    virtual void addHealth(char healthCount) {};
+    virtual EventMessage* addHealth(char healthCount) {};
     virtual ~Object() = default;
 };
 
@@ -34,7 +34,7 @@ public:
         return false;
     }
     virtual bool CanBeStandOn() const { return true; };
-    void ToDo(Object *player) override {}
+    EventMessage* ToDo(Object *player) override { return nullptr; }
     char getObjectSymbol() override {
         return '0';
     }
