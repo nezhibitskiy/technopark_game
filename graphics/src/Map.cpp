@@ -24,14 +24,7 @@ void DrawMap::DrawBack() {
         }
     }
 
-    /*for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
-            if (mObjects[i][j] != nullptr) {
-                mObjects[i][j]->setPos(i, j);
-                mObjects[i][j]->draw(mWindow);
-            }
-        }
-    }*/
+    
 
 
     for (int i = 0; i < hp.size(); ++i) {
@@ -57,13 +50,13 @@ void DrawMap::SetHp(unsigned short id, int hpVal) {
 
 
         if (hp.size() > hpVal) {
-            mUnits[id]->setID(5);
             for (int i = 0; i < hpVal; ++i) {
                 hp[i]->setID(1);
             }
             for (int i = hpVal; i < hp.size(); ++i) {
                 hp[i]->setID(0);
             }
+
         } else {
             hp.resize(hpVal);
             for (auto &i: hp) {
@@ -94,32 +87,34 @@ void DrawMap::SetBlocks(unsigned short id, unsigned int x, unsigned int y) {
 
 void DrawMap::Draw() {
 
-    for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
-            if (mObjects[i][j] != nullptr) {
-
-                mObjects[i][j]->draw(mWindow);
-            }
-        }
-    }
 
 
-    for (int i = 0 ; i < mUnits.size(); ++i) {
-        mUnits[i]->draw(mWindow);
+
+    for (auto i : mUnits) {
+        i->draw(mWindow);
 
     }
 
     if (time != nullptr) {
         time->draw(mWindow);
-    } else SetTime(floor(clock.getElapsedTime().asSeconds()));
+    }
 
     for(auto text : Kills){
         text->draw(mWindow);
     }
 
 
+
+
+
+
 }
 
+void DrawMap::ReturnUnitState(){
+    for(auto i : mUnits){
+        i->setID(i->getID());
+    }
+}
 
 void DrawMap::DrawMapInit(unsigned int _width, unsigned int _height, unsigned int countUnits) {
 
@@ -156,6 +151,7 @@ void DrawMap::DrawPlayerInit(unsigned short id, unsigned int x, unsigned int y, 
 
 
     mUnits[id]->setPos(x, y);
+
     if (id == 0 && team == 0) {
         mUnits[id]->setID(10);
     } else if (id == 0 && team == 1) {
@@ -213,11 +209,23 @@ void DrawMap::SetKills(unsigned short id, unsigned short kills) {
                 Kill->setColor(sf::Color::Blue);
                 break;
             case 1:
-                Kill->setColor(sf::Color::Red);
+                Kill->setColor(sf::Color::Green);
                 break;
         }
         Kills.push_back(Kill);
         t++;
+    }
+
+
+}
+
+void DrawMap::SetHit(unsigned short id, int hpVal) {
+
+
+    if (hp.size() > hpVal && hpVal != 0) {
+            mUnits[id]->setHit();
+    }else if(hpVal == hp.size()){
+        mUnits[id]->setID(mUnits[id]->getID());
     }
 
 

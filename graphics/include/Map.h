@@ -46,6 +46,11 @@ public:
 
     void SetKills(unsigned short id,unsigned short kills);
 
+    void SetHit(unsigned short id, int hpVal);
+
+    void ReturnUnitState();
+
+
     void Draw();
 
 private:
@@ -53,7 +58,7 @@ private:
     unsigned int width = 0;
     unsigned int height = 0;
 
-    sf::Clock clock;
+
 
     Text *time = nullptr;
     sf::Font &mfont;

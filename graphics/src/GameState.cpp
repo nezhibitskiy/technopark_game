@@ -5,13 +5,15 @@ GameState::GameState(StateStack &stack, Context context) : State(stack, context)
                                                            map(*context.window, *context.font) {
 
 
+
 }
 
 
 void GameState::draw(std::queue<EventMessage> *eventQueue) {
 
 
-
+    sf::Time dt = clock.restart();
+    duration += dt.asSeconds();
 
     if (!eventQueue->empty()) {
         eventManager.EventHandle(&eventQueue->front(), &map);
@@ -19,6 +21,13 @@ void GameState::draw(std::queue<EventMessage> *eventQueue) {
     getContext().window->clear(sf::Color::Black);
     map.DrawBack();
     map.Draw();
+    if (duration > 0.5f){
+        // Restart calculation of the duration
+        duration = 0;
+        map.ReturnUnitState();
+
+    }
+
 
     /*Text *time = new Text(*getContext().font, std::to_string(floor(clock.getElapsedTime().asSeconds())), 30);
     time->setPos(getContext().window->getSize().x / 2, getContext().window->getSize().y - time->getSize());

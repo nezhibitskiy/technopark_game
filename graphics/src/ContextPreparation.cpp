@@ -76,7 +76,7 @@ void ContextPreparation::PlayerTeam(unsigned short id, unsigned short team) {
                     textbuf[team]->setColor(sf::Color::Blue);
                     break;
                 case 1:
-                    textbuf[team]->setColor(sf::Color::Red);
+                    textbuf[team]->setColor(sf::Color::Green);
                     break;
                 default:
                     textbuf[team]->setColor(sf::Color::White);
