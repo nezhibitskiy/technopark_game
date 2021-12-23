@@ -24,8 +24,12 @@ void DrawMap::DrawBack() {
         }
     }
 
-    
-
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            if (mObjects[i][j] != nullptr)
+                mObjects[i][j]->draw(mWindow);
+        }
+    }
 
     for (int i = 0; i < hp.size(); ++i) {
         hp[i]->setPos((i + 1) * hp[i]->getSize(), mWindow.getSize().y - hp[i]->getSize());
@@ -49,29 +53,28 @@ void DrawMap::SetZone(unsigned int x, unsigned int y, unsigned int rad) {
 void DrawMap::SetHp(unsigned short id, int hpVal) {
 
 
-        if (hp.size() > hpVal) {
-            for (int i = 0; i < hpVal; ++i) {
-                hp[i]->setID(1);
-            }
-            for (int i = hpVal; i < hp.size(); ++i) {
-                hp[i]->setID(0);
-            }
-
-        } else {
-            hp.resize(hpVal);
-            for (auto &i: hp) {
-                i = new Heart;
-                i->setID(1);
-            }
-
+    if (hp.size() > hpVal) {
+        for (int i = 0; i < hpVal; ++i) {
+            hp[i]->setID(1);
         }
+        for (int i = hpVal; i < hp.size(); ++i) {
+            hp[i]->setID(0);
+        }
+
+    } else {
+        hp.resize(hpVal);
+        for (auto &i: hp) {
+            i = new Heart;
+            i->setID(1);
+        }
+
+    }
 
 
 }
 
 
 void DrawMap::SetUnits(unsigned short id, unsigned int x, unsigned int y) {
-
 
     mUnits[id]->setPos(x, y);
 
@@ -88,9 +91,7 @@ void DrawMap::SetBlocks(unsigned short id, unsigned int x, unsigned int y) {
 void DrawMap::Draw() {
 
 
-
-
-    for (auto i : mUnits) {
+    for (auto i: mUnits) {
         i->draw(mWindow);
 
     }
@@ -99,19 +100,15 @@ void DrawMap::Draw() {
         time->draw(mWindow);
     }
 
-    for(auto text : Kills){
+    for (auto text: Kills) {
         text->draw(mWindow);
     }
 
 
-
-
-
-
 }
 
-void DrawMap::ReturnUnitState(){
-    for(auto i : mUnits){
+void DrawMap::ReturnUnitState() {
+    for (auto i: mUnits) {
         i->setID(i->getID());
     }
 }
@@ -177,10 +174,11 @@ void DrawMap::SetTime(unsigned short id) {
 
 void DrawMap::SetPotion(unsigned int x, unsigned int y) {
 
-    Heart* h = new Heart;
+    Heart *h = new Heart;
     h->setID(10);
     mObjects[x][y] = h;
-    h->setPos(x * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2  , y * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2 );
+    h->setPos(x * mBlocks[0]->getSize() + mBlocks[0]->getSize() / 2,
+              y * mBlocks[0]->getSize() + mBlocks[0]->getSize() / 2);
 }
 
 void DrawMap::DeleteDraw(unsigned short id, unsigned int x, unsigned int y) {
@@ -193,18 +191,18 @@ void DrawMap::SetKills(unsigned short id, unsigned short kills) {
 
 
     Kills.clear();
-    Text* Name = new Text(mfont, "kills :", 30);
-    Name->setPos(mWindow.getSize().x * 0.7 , (height) * mBlocks[0]->getSize());
+    Text *Name = new Text(mfont, "kills :", 30);
+    Name->setPos(mWindow.getSize().x * 0.7, (height) * mBlocks[0]->getSize());
     Kills.push_back(Name);
 
-    if(killsCount[id] != kills){
+    if (killsCount[id] != kills) {
         killsCount[id] = kills;
     }
     int t = 0;
-    for(auto i : killsCount){
+    for (auto i: killsCount) {
         Text *Kill = new Text(mfont, std::to_string(i.second), 30);
-        Kill->setPos(mWindow.getSize().x * 0.85 + t*Kill->getSize() , (height) * mBlocks[0]->getSize());
-        switch (i.first){
+        Kill->setPos(mWindow.getSize().x * 0.85 + t * Kill->getSize(), (height) * mBlocks[0]->getSize());
+        switch (i.first) {
             case 0:
                 Kill->setColor(sf::Color::Blue);
                 break;
@@ -223,8 +221,8 @@ void DrawMap::SetHit(unsigned short id, int hpVal) {
 
 
     if (hp.size() > hpVal && hpVal != 0) {
-            mUnits[id]->setHit();
-    }else if(hpVal == hp.size()){
+        mUnits[id]->setHit();
+    } else if (hpVal == hp.size()) {
         mUnits[id]->setID(mUnits[id]->getID());
     }
 
