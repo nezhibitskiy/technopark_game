@@ -66,12 +66,12 @@ public:
         return false;
     }
 
-    EventMessage* addHealth(char healthCount) override {
+    EventMessage* addHealth(char healthCount, unsigned int id_) override {
         health += healthCount;
         if (health > DEFAULT_HEALTH_VALUE) {
             health = DEFAULT_HEALTH_VALUE;
         }
-        auto healtMsg = new EventMessage(EventMessage::SET_HEALTH, id, 0, 0, health);
+        auto healtMsg = new EventMessage(EventMessage::SET_HEALTH, id_, 0, 0, health);
         return healtMsg;
     }
 

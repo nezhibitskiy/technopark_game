@@ -22,8 +22,8 @@ class healingPotion : public AbstractObject {
 
     ~healingPotion() override = default;
 
-    EventMessage* ToDo(Object* player) override {
-        return player->addHealth(DEFAULT_HEALING);
+    EventMessage* ToDo(Object* player, unsigned int id_) override {
+        return player->addHealth(DEFAULT_HEALING, id_);
     }
 
     unsigned char health = 1;
