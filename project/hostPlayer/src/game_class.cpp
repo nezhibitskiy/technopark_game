@@ -72,8 +72,11 @@ void Game::CreateMap() {
     }
 
     auto heal = factory->createObject(healPot);
-    map->addObject(heal.first, width / 2, height / 2);
-    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
+    //map->addObject(heal.first, width / 2, height / 2);
+    //EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
+    map->addObject(heal.first, 3, 3);
+    objects.insert(heal);
+    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, 3, 3);
     event.push(createHeal);
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {

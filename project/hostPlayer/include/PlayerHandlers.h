@@ -19,7 +19,6 @@ public:
     EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
         if (request.getType() > MoveHandler::MOVE_RIGHT)
             return AbstractHandler::Handle(request, map, hashTable, returnMsgCount, factory);
-
         unsigned int x = 0;
         unsigned int y = 0;
 
@@ -72,6 +71,7 @@ public:
         }
         Object *object = objectNode->second;
         if (object->CanBeStandOn()) {
+            std::cout << "MOVE" << std::endl;
 
             EventMessage* new_mes = object->ToDo(player); // Необходимо добавить ответ в виде сообщений
             //???????????????????????????????????????????????????????????????????????????????????????????????????
@@ -80,8 +80,10 @@ public:
             map->moveObject(player->getX(), player->getY(), x, y);
             player->setXY(x, y);
             if (new_mes != nullptr) {
+                std::cout << "NO NULL" << std::endl;
                 *returnMsgCount = 3;
             } else {
+                std::cout << "NULL" << std::endl;
                 *returnMsgCount = 2;
             }
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
@@ -91,6 +93,7 @@ public:
 
             if (*returnMsgCount == 3) {
                 returnMessages[2] = new_mes;
+                std::cout << "HEAL PLAYER " << std::endl;
             }
 
 
