@@ -39,13 +39,16 @@ void Unit::setID(unsigned short _id) {
             mUnit.setColor(sf::Color(150, 150, 255, 255));
             break;
         case 20:
-            mUnit.setColor(sf::Color(255, 150, 150, 255));
+            mUnit.setColor(sf::Color(150, 255, 150, 255));
             break;
         case 2:
-            mUnit.setColor(sf::Color(255, 70, 70, 255));
+            mUnit.setColor(sf::Color(70, 255, 70, 255));
             break;
         case 1:
             mUnit.setColor(sf::Color(80, 80, 255, 255));
+            break;
+        case 5:
+            mUnit.setColor(sf::Color(255, 80, 80, 255));
             break;
 
     }

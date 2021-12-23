@@ -171,6 +171,25 @@ namespace Draw {
 
     };
 
+    class KillsHandler : public EventHandler {
+    public:
+        enum Type {
+            SEND_KILLS = 13
+        };
+
+        bool CanHandle(EventMessage *event) override {
+            if (event->getType() == KillsHandler::SEND_KILLS) {
+                return true;
+            } else return false;
+        }
+
+        void Handler(EventMessage *event, DrawMap *map) override {
+            map->SetKills(event->getX(),event->getData());
+        }
+
+
+    };
+
 
 
 

@@ -23,17 +23,12 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     window.draw(backgroundShape);
 
     Text *IdTeam;
-    Text *Kills;
+
     std::string text;
     std::string kills = "player kills - 0";
     EventMessage endMessage = eventQueue->front();
 
-    if (endMessage.getType() == EventMessage::SEND_KILLS) {
-        kills = std::to_string(endMessage.getID()) + "player kills - " + std::to_string(endMessage.getData());
-        Kills = new Text(*getContext().font, kills, 40);
-        Kills->setPos(window.getSize().x / 2.0f, window.getSize().y / 2.0f + textbuf.size() * 10);
-        textbuf.push_back(Kills);
-    }
+
 
 
     if (endMessage.getType() == EventMessage::WIN_TEAM) {

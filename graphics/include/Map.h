@@ -44,6 +44,8 @@ public:
 
     void DeleteDraw(unsigned short id, unsigned int x, unsigned int y);
 
+    void SetKills(unsigned short id,unsigned short kills);
+
     void Draw();
 
 private:
@@ -52,7 +54,7 @@ private:
     unsigned int height = 0;
 
     sf::Clock clock;
-    unsigned short flagTime = 0;
+
     Text *time = nullptr;
     sf::Font &mfont;
     sf::RenderWindow &mWindow;
@@ -60,7 +62,10 @@ private:
     Draw::Object ***mObjects;
     Block **mBlocks;
     std::vector<Heart *> hp;
-    Heart *h;
+    std::map<unsigned short,int> killsCount;
+    std::vector<Text*> Kills;
+   // Heart *h;
+
 
 };
 

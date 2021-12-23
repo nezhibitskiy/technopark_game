@@ -5,6 +5,8 @@
 #ifndef CHAINOFRESPONSABILITY_OBJECT_H
 #define CHAINOFRESPONSABILITY_OBJECT_H
 
+#include "message.h"
+
 class Object {
 public:
     virtual bool Damagable() const = 0;

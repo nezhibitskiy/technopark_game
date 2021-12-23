@@ -57,6 +57,7 @@ void DrawMap::SetHp(unsigned short id, int hpVal) {
 
 
         if (hp.size() > hpVal) {
+            mUnits[id]->setID(5);
             for (int i = 0; i < hpVal; ++i) {
                 hp[i]->setID(1);
             }
@@ -103,12 +104,18 @@ void DrawMap::Draw() {
     }
 
 
-    for (auto i: mUnits) {
-        i->draw(mWindow);
+    for (int i = 0 ; i < mUnits.size(); ++i) {
+        mUnits[i]->draw(mWindow);
+
     }
+
     if (time != nullptr) {
         time->draw(mWindow);
     } else SetTime(floor(clock.getElapsedTime().asSeconds()));
+
+    for(auto text : Kills){
+        text->draw(mWindow);
+    }
 
 
 }
@@ -174,7 +181,7 @@ void DrawMap::SetTime(unsigned short id) {
 
 void DrawMap::SetPotion(unsigned int x, unsigned int y) {
 
-    h = new Heart;
+    Heart* h = new Heart;
     h->setID(10);
     mObjects[x][y] = h;
     h->setPos(x * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2  , y * mBlocks[0]->getSize()+mBlocks[0]->getSize()/2 );
@@ -183,6 +190,36 @@ void DrawMap::SetPotion(unsigned int x, unsigned int y) {
 void DrawMap::DeleteDraw(unsigned short id, unsigned int x, unsigned int y) {
 
     mObjects[x][y] = nullptr;
+
+}
+
+void DrawMap::SetKills(unsigned short id, unsigned short kills) {
+
+
+    Kills.clear();
+    Text* Name = new Text(mfont, "kills :", 30);
+    Name->setPos(mWindow.getSize().x * 0.7 , (height) * mBlocks[0]->getSize());
+    Kills.push_back(Name);
+
+    if(killsCount[id] != kills){
+        killsCount[id] = kills;
+    }
+    int t = 0;
+    for(auto i : killsCount){
+        Text *Kill = new Text(mfont, std::to_string(i.second), 30);
+        Kill->setPos(mWindow.getSize().x * 0.85 + t*Kill->getSize() , (height) * mBlocks[0]->getSize());
+        switch (i.first){
+            case 0:
+                Kill->setColor(sf::Color::Blue);
+                break;
+            case 1:
+                Kill->setColor(sf::Color::Red);
+                break;
+        }
+        Kills.push_back(Kill);
+        t++;
+    }
+
 
 }
 

@@ -8,7 +8,7 @@
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 30
+#define GAME_TIME 240
 
 
 Game::Game() : gameServer(4) {

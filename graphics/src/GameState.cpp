@@ -2,13 +2,15 @@
 #include "GameState.h"
 
 GameState::GameState(StateStack &stack, Context context) : State(stack, context), mPlayer(*context.player),
-                                                           map(*context.window,*context.font) {
+                                                           map(*context.window, *context.font) {
 
 
 }
 
 
 void GameState::draw(std::queue<EventMessage> *eventQueue) {
+
+
 
 
     if (!eventQueue->empty()) {
@@ -21,6 +23,9 @@ void GameState::draw(std::queue<EventMessage> *eventQueue) {
     /*Text *time = new Text(*getContext().font, std::to_string(floor(clock.getElapsedTime().asSeconds())), 30);
     time->setPos(getContext().window->getSize().x / 2, getContext().window->getSize().y - time->getSize());
     time->draw(*getContext().window);*/
+
+
+
 }
 
 bool GameState::handleEvent(const sf::Event &event, std::queue<BaseMessage> *request) {
