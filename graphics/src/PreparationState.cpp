@@ -11,7 +11,7 @@ PreparationState::PreparationState(StateStack &stack, Context context) : State(s
 
     Text *Wait = new Text(*getContext().font, "Waiting room", 50);
     Wait->setPos(getContext().window->getSize().x / 2.0f, 0);
-    Wait->setColor(sf::Color(255, 255, 255, 255));
+    Wait->setColor(sf::Color::Yellow);
     textbuf.push_back(Wait);
 
     Text *Choice = new Text(*getContext().font, "Choose team", 25);

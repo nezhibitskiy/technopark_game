@@ -7,6 +7,7 @@ MenuState::MenuState(StateStack &stack, State::Context context) : State(stack, c
 
     Text *Menu = new Text(*getContext().font, "Menu", 50);
     Menu->setPos(getContext().window->getSize().x / 2.0f, 0);
+    Menu->setColor(sf::Color::Yellow);
     textbuf.push_back(Menu);
 
     Text *TipEnter = new Text(*getContext().font, "press space", 20);
