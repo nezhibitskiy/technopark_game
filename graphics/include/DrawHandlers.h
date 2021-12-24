@@ -102,7 +102,7 @@ namespace Draw {
         void Handler(EventMessage *event, DrawMap *map) override {
             if(healingPotion::ID == event->getID()){
                 map->SetPotion(event->getX(), event->getY());
-            }
+            }else
             map->SetBlocks(event->getID() , event->getX(), event->getY()); // getID - > getData
         }
 
@@ -144,9 +144,9 @@ namespace Draw {
         }
 
         void Handler(EventMessage *event, DrawMap *map) override {
-            if(healingPotion::ID == event->getID()){
+            if(healingPotion::ID == event->getData()){
                 map->DeleteDraw(event->getID(), event->getX(), event->getY());
-            }
+            }else
             map->SetBlocks(event->getID(), event->getX(), event->getY());
         }
 

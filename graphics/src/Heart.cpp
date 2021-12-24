@@ -38,6 +38,9 @@ void Heart::setID(unsigned short _id) {
         case 10:
             mHeart.setColor(sf::Color(255, 255, 100, 255));
             break;
+        case 100:
+            mHeart.setColor(sf::Color(255, 255, 100, 0));
+            break;
 
     }
 }
