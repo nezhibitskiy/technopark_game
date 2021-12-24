@@ -104,7 +104,7 @@ public:
     }
 };
 
-#define DEFAULT_ATTACK_RADIUS 2
+#define DEFAULT_ATTACK_RADIUS 1
 
 class AttackHandler : public AbstractRequestHandler {
 public:
@@ -141,12 +141,21 @@ public:
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
-                    std::cout << "KILLS   " << player->getKills() << std::endl;
+//                    std::cout << "KILLS   " << player->getKills() << std::endl;
                     if (!object->Respawn()) {
                         //Удалить объект
+                        short type = -1;
+                        EventMessage* new_mes = object->ToDo(player, objectNode->first, type); // Необходимо добавить ответ в виде сообщений
+
                         *returnMsgCount = 1;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-                        returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+
+                        if (new_mes != nullptr) {
+                            delete new_mes;
+                            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y, type);
+                        } else {
+                            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+                        }
 
                         hashTable->erase(objectNode);
                         return returnMessages;
