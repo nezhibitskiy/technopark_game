@@ -55,6 +55,7 @@ public:
     void CreateMap();
     void waitingForGame();
     int Iteration();
+    void createHeals();
     void start_game();
     bool move(unsigned int x, unsigned y);
     int getWinTeam();

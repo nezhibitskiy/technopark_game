@@ -3,7 +3,6 @@
 #include <ctime>
 #include <queue>
 #include <unordered_map>
-#include <ctime>
 
 #include "game_class.h"
 
@@ -58,7 +57,7 @@ void Game::CreateMap() {
     //playerIds = new unsigned int[teamCount * playersInTeamCount];
 
     objects.reserve(10);
-
+    createHeals();
     spawnpoints = new std::pair<unsigned int, unsigned int>[playersCount];
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {
@@ -71,13 +70,7 @@ void Game::CreateMap() {
         }
     }
 
-    auto heal = factory->createObject(healPot);
-    //map->addObject(heal.first, width / 2, height / 2);
-    //EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
-    map->addObject(heal.first, 3, 3);
-    objects.insert(heal);
-    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, 3, 3);
-    event.push(createHeal);
+
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {
         auto players = factory->createPlayer(playerTeams.at(i).first);
@@ -117,6 +110,18 @@ void Game::CreateMap() {
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
 }
 
+void Game::createHeals() {
+
+    for (unsigned long i = map->getWidth() / 5; i < map->getWidth() - 1; i += map->getWidth() / 5) {
+        for (unsigned long j = map->getHeight() / 5; j < map->getHeight() - 1; j += map->getHeight() / 5) {
+            auto heal = factory->createObject(healPot);
+            map->addObject(heal.first, i, j);
+            objects.insert(heal);
+            EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, i, j);
+            event.push(createHeal);
+        }
+    }
+}
 
 int Game::Iteration() {
     while (state != END_OF_GAME) {
