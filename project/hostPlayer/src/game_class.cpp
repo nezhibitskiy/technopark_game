@@ -130,6 +130,10 @@ void Game::createHeals() {
         std::uniform_int_distribution<std::mt19937::result_type> distX(prev, prev + map->getWidth() / 4 - 1);
         unsigned long x = distX(rng);
         unsigned long y = distY(rng);
+        unsigned int key = map->getObject(x, y);
+        if (objects.find(key) != objects.end()) {
+            continue;
+        }
         auto heal = factory->createObject(healPot);
         map->addObject(heal.first, x, y);
         objects.insert(heal);
@@ -228,12 +232,17 @@ int Game::Iteration() {
                 // while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
                 EventMessage sendTimeFirst(EventMessage::SEND_TIME, GAME_TIME, 0, 0, 0);
                 event.push(sendTimeFirst);
+                int counter = 1;
                 while (GAME_TIME - finish.tv_sec + start.tv_sec >= 0) {
                     if (finish.tv_sec - start.tv_sec - prev >= 1) {
                         prev = finish.tv_sec - start.tv_sec;
                         std::cout << "SEND TIME: " << GAME_TIME - (unsigned short) prev << std::endl;
                         EventMessage sendTime(EventMessage::SEND_TIME, GAME_TIME - prev, 0, 0, 0);
                         event.push(sendTime);
+                    }
+                    if (finish.tv_sec - start.tv_sec >= 30 * counter) {
+                        createHeals();
+                        counter++;
                     }
                     unsigned int receivedMsgCount = 0;
 
