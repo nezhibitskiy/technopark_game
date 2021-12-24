@@ -13,7 +13,7 @@ public:
     virtual unsigned char Damage(const unsigned char damageValue) = 0;
     virtual bool Respawn() = 0;
     virtual bool CanBeStandOn() const { return true; };
-    virtual EventMessage* ToDo(Object *player, unsigned int id_) = 0;
+    virtual EventMessage* ToDo(Object *player, unsigned int id_, short& type) = 0;
     virtual char getObjectSymbol() = 0;
     virtual unsigned int getX() = 0;
     virtual unsigned int getY() = 0;
@@ -36,7 +36,7 @@ public:
         return false;
     }
     virtual bool CanBeStandOn() const { return true; };
-    EventMessage* ToDo(Object *player, unsigned int id_) override { return nullptr; }
+    EventMessage* ToDo(Object *player, unsigned int id_, short& type) override { return nullptr; }
     char getObjectSymbol() override {
         return '0';
     }

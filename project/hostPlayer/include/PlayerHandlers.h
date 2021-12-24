@@ -73,7 +73,8 @@ public:
         if (object->CanBeStandOn()) {
             std::cout << "MOVE" << std::endl;
 
-            EventMessage* new_mes = object->ToDo(player, playerNode->first); // Необходимо добавить ответ в виде сообщений
+            short type = -1;
+            EventMessage* new_mes = object->ToDo(player, playerNode->first, type); // Необходимо добавить ответ в виде сообщений
             //???????????????????????????????????????????????????????????????????????????????????????????????????
 
 
@@ -87,7 +88,7 @@ public:
                 *returnMsgCount = 2;
             }
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y, type);
             returnMessages[1] = new EventMessage(EventMessage::MOVE, playerNode->first, x, y);
             hashTable->erase(objectNode);
 
