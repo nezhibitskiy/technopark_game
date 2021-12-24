@@ -11,7 +11,7 @@ class healingPotion : public AbstractObject {
     }
 
     unsigned char Damage(const unsigned char damageValue) override {
-        if (damageValue > health)
+        if (damageValue >= health)
             return 0;
         else return (health - damageValue);
     }
@@ -26,6 +26,7 @@ class healingPotion : public AbstractObject {
         type = ID;
         return player->addHealth(DEFAULT_HEALING, id_);
     }
+    EventMessage* addHealth(char healthCount, unsigned int id_) override {}
 
     unsigned char health = 1;
 public:
