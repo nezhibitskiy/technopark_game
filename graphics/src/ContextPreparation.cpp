@@ -52,17 +52,18 @@ void ContextPreparation::ShowTeams(unsigned short data) {
 
 
 */
-    //textbuf.clear();
-    for (unsigned short i = 0; i < 2; i++) {
-        if ((data >> i) & 0b1) {
+    if(textbuf.empty()) {
+        for (unsigned short i = 0; i < 2; i++) {
+            if ((data >> i) & 0b1) {
 
-            Text *Team = new Text(mFont, "Team " + std::to_string(i), 35);
-            Team->setPos(mWindow.getSize().x * (i + 1) / (3.0f), mWindow.getSize().y / 4.0f);
-            textbuf[i]= Team;
-        } else {
+                Text *Team = new Text(mFont, "Team " + std::to_string(i), 35);
+                Team->setPos(mWindow.getSize().x * (i + 1) / (3.0f), mWindow.getSize().y / 4.0f);
+                textbuf[i] = Team;
+            } else {
+
+            }
 
         }
-
     }
 }
 
@@ -78,8 +79,7 @@ void ContextPreparation::PlayerTeam(unsigned short id, unsigned short team) {
                 case 1:
                     textbuf[team]->setColor(sf::Color::Green);
                     break;
-                default:
-                    textbuf[team]->setColor(sf::Color::White);
+
             }
         } //else textbuf[team]->setColor(sf::Color::White);
 
