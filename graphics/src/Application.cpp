@@ -9,7 +9,7 @@
 
 Application::Application()
         : mWindow(sf::VideoMode(600,650), "BLOCK WARS", sf::Style::Close), mPlayer(mWindow),
-          mStateStack(DrawState::State::Context(mWindow, mPlayer, "../resources/Qore.otf")) {
+          mStateStack(DrawState::State::Context(mWindow, mPlayer, "../resources/Qore.otf","../resources/back.png")) {
     mWindow.setKeyRepeatEnabled(false);
     registerStates();
     mStateStack.pushState(States::Menu);

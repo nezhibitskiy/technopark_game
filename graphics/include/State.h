@@ -8,6 +8,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include "StateIdentifiers.h"
 #include <queue>
+#include <SFML/Graphics/Sprite.hpp>
 #include "message.h"
 class StateStack;
 
@@ -20,12 +21,17 @@ namespace DrawState {
         typedef std::unique_ptr<State> Ptr;
 
         struct Context {
-            Context(sf::RenderWindow &window, InputPlayer &player, std::string fontfile);
+            //Context(sf::RenderWindow &window, InputPlayer &player, std::string fontfile);
+
+            Context(sf::RenderWindow &window, InputPlayer &player, std::string _fontfile, std::string _back);
 
             std::string fontfile;
+            std::string backfile;
             sf::Font *font;
             sf::RenderWindow *window;
             InputPlayer *player;
+            sf::Texture *texBack;
+            sf::Sprite *Back;
         };
 
 

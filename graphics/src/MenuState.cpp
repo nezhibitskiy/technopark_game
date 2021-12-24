@@ -30,6 +30,10 @@ void MenuState::draw(std::queue<EventMessage> *eventQueue) {
 
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
+
+
+
+    window.draw(*getContext().Back);
     window.setView(window.getDefaultView());
 
     for (auto text: textbuf)
@@ -96,7 +100,7 @@ void MenuState::updateActiveText() {
         text->setColor(sf::Color::White);
 
     // Red the selected text
-    activeTextbuf[mOptionIndex]->setColor(sf::Color::Red);
+    activeTextbuf[mOptionIndex]->setColor(sf::Color::Yellow);
 }
 
 

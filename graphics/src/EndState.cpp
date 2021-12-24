@@ -4,12 +4,12 @@
 EndState::EndState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
     Text *GameOver = new Text(*getContext().font, "GAME OVER", 50);
     GameOver->setPos(getContext().window->getSize().x / 2.0f, 0);
-    GameOver->setColor(sf::Color::Red);
+    GameOver->setColor(sf::Color::Yellow);
     textbuf.push_back(GameOver);
 
     Text *Tips = new Text(*getContext().font, "click ESC for CLOSE", 20);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 1.5f);
-    Tips->setColor(sf::Color::Red);
+    Tips->setColor(sf::Color::Yellow);
     textbuf.push_back(Tips);
 
 }
