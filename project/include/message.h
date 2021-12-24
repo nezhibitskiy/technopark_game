@@ -50,14 +50,14 @@ public:
         SEND_KILLS = 13
     };
     EventMessage(unsigned short Type, unsigned short ID,
-                 unsigned int X, unsigned int Y, unsigned short Data = 0) :
+                 unsigned int X, unsigned int Y, short Data = 0) :
                     BaseMessage(Type, ID, X, Y), data(Data) {};
     unsigned short getData() const {
         return data;
     }
 
 private:
-    unsigned short data;
+    short data;
 };
 
 //template <typename T>
