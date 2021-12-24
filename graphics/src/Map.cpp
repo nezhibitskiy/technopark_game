@@ -195,9 +195,10 @@ void DrawMap::SetKills(unsigned short id, unsigned short kills) {
     Name->setPos(mWindow.getSize().x * 0.7, (height) * mBlocks[0]->getSize());
     Kills.push_back(Name);
 
-    if (killsCount[id] != kills) {
-        killsCount[id] = kills;
-    }
+
+
+    killsCount[id]++;
+
     int t = 0;
     for (auto i: killsCount) {
         Text *Kill = new Text(mfont, std::to_string(i.second), 30);
