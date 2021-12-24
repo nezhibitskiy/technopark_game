@@ -112,7 +112,7 @@ void Game::CreateMap() {
 
 void Game::createHeals() {
 
-    for (unsigned long i = map->getWidth() / 5; i < map->getWidth() - 1; i += map->getWidth() / 5) {
+    /*for (unsigned long i = map->getWidth() / 5; i < map->getWidth() - 1; i += map->getWidth() / 5) {
         for (unsigned long j = map->getHeight() / 5; j < map->getHeight() - 1; j += map->getHeight() / 5) {
             auto heal = factory->createObject(healPot);
             map->addObject(heal.first, i, j);
@@ -120,6 +120,22 @@ void Game::createHeals() {
             EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, i, j);
             event.push(createHeal);
         }
+    }*/
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> distY(2, map->getHeight() - 3);
+    //x = distX(rng);
+    unsigned int prev = 1;
+    for (int i = 1; i < 5; ++i) {
+        std::uniform_int_distribution<std::mt19937::result_type> distX(prev, prev + map->getWidth() / 4 - 1);
+        unsigned long x = distX(rng);
+        unsigned long y = distY(rng);
+        auto heal = factory->createObject(healPot);
+        map->addObject(heal.first, x, y);
+        objects.insert(heal);
+        EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, x, y);
+        event.push(createHeal);
+        prev += map->getWidth() / 4 - 1;
     }
 }
 
