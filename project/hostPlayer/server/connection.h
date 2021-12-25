@@ -7,12 +7,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <memory>
-
-#include "response.h"
-#include "request.h"
-// #include "router.h"
-#include "message.h"
 #include <queue>
+
+#include "message.h"
 
 namespace gameServer {
 

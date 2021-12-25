@@ -6,12 +6,9 @@
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <thread>
 
 #include "connection.h"
-#include "request.h"
-#include "response.h"
-#include <thread>
-#include "router.h"
 
 namespace gameServer {
 
