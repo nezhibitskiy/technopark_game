@@ -3,12 +3,11 @@
 #include <ctime>
 #include <queue>
 #include <unordered_map>
-#include <ctime>
 
 #include "game_class.h"
 
 #define DRAW -1
-#define GAME_TIME 31
+#define GAME_TIME 30
 
 
 Game::Game() : gameServer(4) {
@@ -58,7 +57,7 @@ void Game::CreateMap() {
     //playerIds = new unsigned int[teamCount * playersInTeamCount];
 
     objects.reserve(10);
-
+    createHeals();
     spawnpoints = new std::pair<unsigned int, unsigned int>[playersCount];
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {
@@ -71,10 +70,7 @@ void Game::CreateMap() {
         }
     }
 
-    auto heal = factory->createObject(healPot);
-    map->addObject(heal.first, width / 2, height / 2);
-    EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, width / 2, height / 2);
-    event.push(createHeal);
+
 
     for (unsigned int i = 0; i < playerTeams.size(); i++) {
         auto players = factory->createPlayer(playerTeams.at(i).first);
@@ -114,6 +110,38 @@ void Game::CreateMap() {
     moveHandler->SetNext(attackHandler)->SetNext(putBlockHandler);
 }
 
+void Game::createHeals() {
+
+    /*for (unsigned long i = map->getWidth() / 5; i < map->getWidth() - 1; i += map->getWidth() / 5) {
+        for (unsigned long j = map->getHeight() / 5; j < map->getHeight() - 1; j += map->getHeight() / 5) {
+            auto heal = factory->createObject(healPot);
+            map->addObject(heal.first, i, j);
+            objects.insert(heal);
+            EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, i, j);
+            event.push(createHeal);
+        }
+    }*/
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> distY(2, map->getHeight() - 3);
+    //x = distX(rng);
+    unsigned int prev = 1;
+    for (int i = 1; i < 5; ++i) {
+        std::uniform_int_distribution<std::mt19937::result_type> distX(prev, prev + map->getWidth() / 4 - 1);
+        unsigned long x = distX(rng);
+        unsigned long y = distY(rng);
+        unsigned int key = map->getObject(x, y);
+        if (objects.find(key) != objects.end()) {
+            continue;
+        }
+        auto heal = factory->createObject(healPot);
+        map->addObject(heal.first, x, y);
+        objects.insert(heal);
+        EventMessage createHeal(EventMessage::CREATE_OBJECT, healingPotion::ID, x, y);
+        event.push(createHeal);
+        prev += map->getWidth() / 4 - 1;
+    }
+}
 
 int Game::Iteration() {
     while (state != END_OF_GAME) {
@@ -202,12 +230,19 @@ int Game::Iteration() {
                 std::cout << finish.tv_sec - start.tv_sec << std::endl;
                 std::cout << "START: " << start.tv_sec << " END: " << finish.tv_sec << std::endl;
                 // while (finish.tv_sec - start.tv_sec < GAME_TIME && !gameServer.closeGameReq) {
-                while (finish.tv_sec - start.tv_sec < GAME_TIME) {
-                    if (finish.tv_sec - start.tv_sec - prev >= 10) {
+                EventMessage sendTimeFirst(EventMessage::SEND_TIME, GAME_TIME, 0, 0, 0);
+                event.push(sendTimeFirst);
+                int counter = 1;
+                while (GAME_TIME - finish.tv_sec + start.tv_sec >= 0) {
+                    if (finish.tv_sec - start.tv_sec - prev >= 1) {
                         prev = finish.tv_sec - start.tv_sec;
-                        std::cout << "SEND TIME: " << (unsigned short) prev << std::endl;
-                        EventMessage sendTime(EventMessage::SEND_TIME, prev, 0, 0, 0);
+                        std::cout << "SEND TIME: " << GAME_TIME - (unsigned short) prev << std::endl;
+                        EventMessage sendTime(EventMessage::SEND_TIME, GAME_TIME - prev, 0, 0, 0);
                         event.push(sendTime);
+                    }
+                    if (finish.tv_sec - start.tv_sec >= 30 * counter) {
+                        createHeals();
+                        counter++;
                     }
                     unsigned int receivedMsgCount = 0;
 

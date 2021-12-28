@@ -14,6 +14,8 @@ public:
     int getX() override;
     int getY() override;
     void setID(unsigned short _id) override;
+    void setHit();
+    unsigned short getID();
     void draw(sf::RenderWindow & l_window) override;
     size_t getSize() override;
 

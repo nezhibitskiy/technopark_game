@@ -7,6 +7,7 @@ MenuState::MenuState(StateStack &stack, State::Context context) : State(stack, c
 
     Text *Menu = new Text(*getContext().font, "Menu", 50);
     Menu->setPos(getContext().window->getSize().x / 2.0f, 0);
+    Menu->setColor(sf::Color::Yellow);
     textbuf.push_back(Menu);
 
     Text *TipEnter = new Text(*getContext().font, "press space", 20);
@@ -30,6 +31,10 @@ void MenuState::draw(std::queue<EventMessage> *eventQueue) {
 
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
+
+
+
+    window.draw(*getContext().Back);
     window.setView(window.getDefaultView());
 
     for (auto text: textbuf)
@@ -96,7 +101,7 @@ void MenuState::updateActiveText() {
         text->setColor(sf::Color::White);
 
     // Red the selected text
-    activeTextbuf[mOptionIndex]->setColor(sf::Color::Red);
+    activeTextbuf[mOptionIndex]->setColor(sf::Color::Yellow);
 }
 
 

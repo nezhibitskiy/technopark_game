@@ -46,17 +46,18 @@ public:
         SEND_TIME = 9,
         CLOSE_GAME = 10,
         AVAILABLE_TEAMS = 11,
-        PLAYER_ADDED_TO_TEAM = 12
+        PLAYER_ADDED_TO_TEAM = 12,
+        SEND_KILLS = 13
     };
     EventMessage(unsigned short Type, unsigned short ID,
-                 unsigned int X, unsigned int Y, unsigned short Data = 0) :
+                 unsigned int X, unsigned int Y, short Data = 0) :
                     BaseMessage(Type, ID, X, Y), data(Data) {};
     unsigned short getData() const {
         return data;
     }
 
 private:
-    unsigned short data;
+    short data;
 };
 
 //template <typename T>

@@ -5,6 +5,10 @@
 
 
 ClientConnectState::ClientConnectState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
+
+    context.texBack->loadFromFile("../resources/defback.png");
+    context.Back = new sf::Sprite(*context.texBack);
+
     Text *Join = new Text(*getContext().font, "Join the game", 50);
     Join->setPos(getContext().window->getSize().x / 2.0f, 0);
     textbuf.push_back(Join);
@@ -21,13 +25,14 @@ void ClientConnectState::draw(std::queue<EventMessage> *eventQueue) {
 
     sf::RenderWindow &window = *getContext().window;
     window.clear(sf::Color::Black);
+    window.draw(*getContext().Back);
 
     Text *ip = new Text(*getContext().font, ipPlayer, 30);
     ip->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 4.0f);
     ip->draw(*getContext().window);
 
     for (auto text: textbuf) {
-        text->setColor(sf::Color::Red);
+        text->setColor(sf::Color::Yellow);
         text->draw(*getContext().window);
     }
 }

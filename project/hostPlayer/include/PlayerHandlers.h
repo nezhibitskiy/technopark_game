@@ -19,7 +19,6 @@ public:
     EventMessage **Handle(BaseMessage request, Map *map, std::unordered_multimap<unsigned int, Object*> *hashTable, unsigned int *returnMsgCount, Factory* factory) override {
         if (request.getType() > MoveHandler::MOVE_RIGHT)
             return AbstractHandler::Handle(request, map, hashTable, returnMsgCount, factory);
-
         unsigned int x = 0;
         unsigned int y = 0;
 
@@ -72,20 +71,32 @@ public:
         }
         Object *object = objectNode->second;
         if (object->CanBeStandOn()) {
+            std::cout << "MOVE" << std::endl;
 
-            object->ToDo(player); // Необходимо добавить ответ в виде сообщений
+            short type = -1;
+            EventMessage* new_mes = object->ToDo(player, playerNode->first, type); // Необходимо добавить ответ в виде сообщений
             //???????????????????????????????????????????????????????????????????????????????????????????????????
 
 
             map->moveObject(player->getX(), player->getY(), x, y);
             player->setXY(x, y);
-
-            *returnMsgCount = 2;
+            if (new_mes != nullptr) {
+                std::cout << "NO NULL" << std::endl;
+                *returnMsgCount = 3;
+            } else {
+                std::cout << "NULL" << std::endl;
+                *returnMsgCount = 2;
+            }
             EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y, type);
             returnMessages[1] = new EventMessage(EventMessage::MOVE, playerNode->first, x, y);
-
             hashTable->erase(objectNode);
+
+            if (*returnMsgCount == 3) {
+                returnMessages[2] = new_mes;
+                std::cout << "HEAL PLAYER " << std::endl;
+            }
+
 
             return returnMessages;
         }
@@ -93,7 +104,7 @@ public:
     }
 };
 
-#define DEFAULT_ATTACK_RADIUS 2
+#define DEFAULT_ATTACK_RADIUS 1
 
 class AttackHandler : public AbstractRequestHandler {
 public:
@@ -130,28 +141,39 @@ public:
             if (object->Damagable()) {
                 unsigned char leftHealth = object->Damage(1);
                 if (leftHealth == 0) {
-                    std::cout << "KILLS   " << player->getKills() << std::endl;
+//                    std::cout << "KILLS   " << player->getKills() << std::endl;
                     if (!object->Respawn()) {
                         //Удалить объект
+                        short type = -1;
+                        EventMessage* new_mes = object->ToDo(player, objectNode->first, type); // Необходимо добавить ответ в виде сообщений
+
                         *returnMsgCount = 1;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
-                        returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+
+                        if (new_mes != nullptr) {
+                            delete new_mes;
+                            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y, type);
+                        } else {
+                            returnMessages[0] = new EventMessage(EventMessage::DELETE, objectNode->first, x, y);
+                        }
 
                         hashTable->erase(objectNode);
                         return returnMessages;
                     } else {
                         player->addKill();
+
                         unsigned int xSpawnpoint = object->getSpawnpoint().first;
                         unsigned int ySpawnpoint = object->getSpawnpoint().second;
                         // проверить, есть ли в этой клетке что-то
 
                         map->moveObject(x, y, xSpawnpoint, ySpawnpoint);
 
-                        *returnMsgCount = 2;
+                        *returnMsgCount = 3;
                         EventMessage **returnMessages = new EventMessage*[*returnMsgCount];
                         returnMessages[0] = new EventMessage(EventMessage::SET_HEALTH, objectNode->first, x, y, DEFAULT_HEALTH_VALUE);
                         returnMessages[1] = new EventMessage(EventMessage::MOVE, objectNode->first, xSpawnpoint, ySpawnpoint);
-
+                        returnMessages[2] = new EventMessage(EventMessage::SEND_KILLS, playerNode->first, playerNode->second->getTeam(), 0, player->getKills());
+                        std::cout << "PLAYER" << playerNode->first << " KILLS: " << player->getKills() << std::endl;
                         return returnMessages;
                     }
                 }

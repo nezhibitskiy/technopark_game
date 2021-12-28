@@ -11,7 +11,7 @@ Heart::Heart(const std::string &filename, size_t _sizePx) : sizePx(_sizePx) {
 
 void Heart::setPos(unsigned int x, unsigned int y) {
     mHeart.setOrigin(texHeart.getSize().x * 0.5, texHeart.getSize().y * 0.5);
-    mHeart.setPosition(x * getSize(), y - getSize());
+    mHeart.setPosition(x , y );
 }
 
 int Heart::getX() {
@@ -36,8 +36,12 @@ void Heart::setID(unsigned short _id) {
             mHeart.setColor(sf::Color(255, 255, 255, 255));
             break;
         case 10:
-            mHeart.setColor(sf::Color(255, 30, 255, 255));
+            mHeart.setColor(sf::Color(255, 255, 100, 255));
             break;
+        case 100:
+            mHeart.setColor(sf::Color(255, 255, 100, 0));
+            break;
+
     }
 }
 

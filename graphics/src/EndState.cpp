@@ -4,10 +4,12 @@
 EndState::EndState(StateStack &stack, DrawState::State::Context context) : State(stack, context) {
     Text *GameOver = new Text(*getContext().font, "GAME OVER", 50);
     GameOver->setPos(getContext().window->getSize().x / 2.0f, 0);
+    GameOver->setColor(sf::Color::Yellow);
     textbuf.push_back(GameOver);
 
     Text *Tips = new Text(*getContext().font, "click ESC for CLOSE", 20);
     Tips->setPos(getContext().window->getSize().x / 2.0f, getContext().window->getSize().y / 1.5f);
+    Tips->setColor(sf::Color::Yellow);
     textbuf.push_back(Tips);
 
 }
@@ -20,9 +22,15 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
     backgroundShape.setSize(window.getView().getSize());
     window.draw(backgroundShape);
 
-    Text *IdTeam = nullptr;
+    Text *IdTeam;
+
     std::string text;
+    std::string kills = "player kills - 0";
     EventMessage endMessage = eventQueue->front();
+
+
+
+
     if (endMessage.getType() == EventMessage::WIN_TEAM) {
         text = "winner -  TEAM " + std::to_string(endMessage.getID());
 
@@ -35,8 +43,7 @@ void EndState::draw(std::queue<EventMessage> *eventQueue) {
 
 
     for (auto text: textbuf) {
-        text->setColor(sf::Color::Red);
-        text->draw(*getContext().window);
+        text->draw(window);
     }
 }
 

@@ -22,7 +22,8 @@ public:
 
 private:
     //Text time;
-
+    sf::Clock clock;
+    float duration = float();
     InputPlayer mPlayer;
     DrawMap map;
     std::queue<BaseMessage> request;

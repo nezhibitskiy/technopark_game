@@ -11,20 +11,22 @@ class healingPotion : public AbstractObject {
     }
 
     unsigned char Damage(const unsigned char damageValue) override {
-        if (damageValue > health)
+        if (damageValue >= health)
             return 0;
         else return (health - damageValue);
     }
     bool CanBeStandOn() const override {
-        return false;        // ???????????????????????????????????????
+        return true;        // ???????????????????????????????????????
     }
     bool isItCover() override { return false; }
 
     ~healingPotion() override = default;
 
-    void ToDo(Object* player) override {
-        player->addHealth(DEFAULT_HEALING);
+    EventMessage* ToDo(Object* player, unsigned int id_, short& type) override {
+        type = ID;
+        return player->addHealth(DEFAULT_HEALING, id_);
     }
+    EventMessage* addHealth(char healthCount, unsigned int id_) override {}
 
     unsigned char health = 1;
 public:

@@ -42,6 +42,15 @@ public:
 
     void SetPotion(unsigned int x, unsigned int y);
 
+    void DeleteDraw(unsigned short id, unsigned int x, unsigned int y);
+
+    void SetKills(unsigned short id,unsigned short kills);
+
+    void SetHit(unsigned short id, int hpVal);
+
+    void ReturnUnitState();
+
+
     void Draw();
 
 private:
@@ -49,8 +58,8 @@ private:
     unsigned int width = 0;
     unsigned int height = 0;
 
-    sf::Clock clock;
-    unsigned short flagTime = 0;
+
+
     Text *time = nullptr;
     sf::Font &mfont;
     sf::RenderWindow &mWindow;
@@ -58,6 +67,10 @@ private:
     Draw::Object ***mObjects;
     Block **mBlocks;
     std::vector<Heart *> hp;
+    std::map<unsigned short,int> killsCount;
+    std::vector<Text*> Kills;
+   // Heart *h;
+
 
 };
 

@@ -32,6 +32,10 @@ int Unit::getY() {
     return mUnit.getPosition().y;
 }
 
+unsigned short Unit::getID(){
+    return id;
+}
+
 void Unit::setID(unsigned short _id) {
     id = _id;
     switch (id) {
@@ -39,14 +43,15 @@ void Unit::setID(unsigned short _id) {
             mUnit.setColor(sf::Color(150, 150, 255, 255));
             break;
         case 20:
-            mUnit.setColor(sf::Color(255, 150, 150, 255));
+            mUnit.setColor(sf::Color(150, 255, 150, 255));
             break;
         case 2:
-            mUnit.setColor(sf::Color(255, 70, 70, 255));
+            mUnit.setColor(sf::Color(70, 255, 70, 255));
             break;
         case 1:
             mUnit.setColor(sf::Color(80, 80, 255, 255));
             break;
+
 
     }
 }
@@ -58,6 +63,10 @@ size_t Unit::getSize() {
 void Unit::setSize(size_t size) {
     sizePx = size;
     mUnit.setScale(sizePx / texUnit.getSize().x, sizePx / texUnit.getSize().y);
+}
+
+void Unit::setHit() {
+    mUnit.setColor(sf::Color(255, 80, 80, 255));
 }
 
 
