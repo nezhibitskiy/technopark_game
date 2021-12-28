@@ -69,8 +69,6 @@ private:
     Map *map;
 
     std::pair<unsigned int, unsigned int> *spawnpoints;
-    //char teamCount;
-    //char playersInTeamCount;
     char playersCount;
     unsigned int* playersInTeamsCount;
     char maxPlayersInTeams;

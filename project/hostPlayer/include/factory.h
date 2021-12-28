@@ -20,7 +20,6 @@ class Factory {
 public:
     explicit Factory(char players) : id_count(players) {}
 
-    //template <typename classObject>
     std::pair<unsigned int, Object *> createObject(unsigned short val) {
         switch (val) {
             case defaultBlockObject: {
